@@ -1,0 +1,413 @@
+
+<!-- ============================================================ -->
+<!-- VOLUME 4 — PIPES E REDIRECIONAMENTOS -->
+<!-- ============================================================ -->
+ <link rel="stylesheet" href="/style.css">
+<div class="page-break"></div>
+<div class="volume-header" id="vol4">
+  <h2>📚 Volume 4 — Pipes e Redirecionamentos</h2>
+  <div class="vol-desc">A alma do Unix: composicao de programas simples para criar solucoes poderosas.</div>
+</div>
+
+<div class="section">
+<h3>4.1 Os Tres Fluxos de Dados</h3>
+<p>Todo processo no Linux tem tres fluxos de dados padrao:</p>
+
+<div class="ascii">
+  ┌─────────────────────────────────────┐
+  │           PROCESSO                  │
+  │                                     │
+  │  stdin (0)  ─────→  programa       │
+  │       ↑                             │
+  │  teclado / pipe / arquivo           │
+  │                                     │
+  │  stdout (1) ─────→  tela / pipe    │
+  │       ↓                             │
+  │  terminal / arquivo                 │
+  │                                     │
+  │  stderr (2) ─────→  tela / arquivo │
+  │       ↓                             │
+  │  terminal / arquivo                 │
+  └─────────────────────────────────────┘
+</div>
+
+<table>
+<tr><th>Fluxo</th><th>Descritor</th><th>Descricao</th><th>Uso Padrao</th></tr>
+<tr><td><strong>stdin</strong></td><td>0</td><td>Entrada padrao</td><td>Teclado</td></tr>
+<tr><td><strong>stdout</strong></td><td>1</td><td>Saida padrao</td><td>Terminal</td></tr>
+<tr><td><strong>stderr</strong></td><td>2</td><td>Saida de erro</td><td>Terminal</td></tr>
+</table>
+
+<p>Esses fluxos sao implementados como <strong>arquivos</strong> no Linux. O kernel abre tres descritores de arquivo (file descriptors) para cada processo: 0 para stdin, 1 para stdout, e 2 para stderr.</p>
+</div>
+
+<div class="section">
+<h3>4.2 Redirecionamento de Saida (stdout) — &gt; e &gt;&gt;</h3>
+
+<h4>4.2.1 Sobrescrever Arquivo (&gt;)</h4>
+<pre><code># Salvar saida em arquivo (SOBRESCREVE se existir)
+$ echo "Hello" &gt; arquivo.txt
+
+# Salvar saida de comando
+$ ls -la &gt; lista.txt
+
+# Salvar saida de programa
+$ ./programa &gt; saida.log
+
+# Redirecionar para /dev/null (descartar)
+$ ./programa &gt; /dev/null
+</code></pre>
+
+<div class="box box-danger">
+  <div class="box-title">🚨 &gt; SOBRESCREVE sem aviso!</div>
+  <p>Se <code>arquivo.txt</code> ja existir, <code>&gt;</code> o apaga e cria um novo. Nao ha lixeira. Use <code>&gt;&gt;</code> para anexar, ou <code>set -o noclobber</code> no bash para prevenir sobrescrita acidental.</p>
+</div>
+
+<h4>4.2.2 Anexar a Arquivo (&gt;&gt;)</h4>
+<pre><code># Anexar saida ao final do arquivo
+$ echo "Nova linha" &gt;&gt; arquivo.txt
+
+# Acumular logs
+$ ./programa &gt;&gt; log.txt
+
+# Adicionar ao .bashrc
+$ echo 'alias ll="ls -la"' &gt;&gt; ~/.bashrc
+</code></pre>
+
+<h4>4.2.3 noclobber — Prevenir Sobrescrita</h4>
+<pre><code># Habilitar protecao
+$ set -o noclobber
+
+# Agora isso falha se arquivo existir
+$ echo "teste" &gt; arquivo_existente.txt
+bash: arquivo_existente.txt: cannot overwrite existing file
+
+# Forcar sobrescrita mesmo com noclobber
+$ echo "teste" &gt;| arquivo_existente.txt
+
+# Desabilitar protecao
+$ set +o noclobber
+</code></pre>
+</div>
+
+<div class="section">
+<h3>4.3 Redirecionamento de Entrada (stdin) — &lt;</h3>
+
+<pre><code># Usar arquivo como entrada
+$ sort &lt; nomes.txt
+
+# Contar palavras de arquivo
+$ wc -w &lt; texto.txt
+
+# Usar heredoc como entrada
+$ cat &lt;&lt; EOF
+Linha 1
+Linha 2
+EOF
+
+# Usar here-string
+$ tr 'a-z' 'A-Z' &lt;&lt;&lt; "hello"
+HELLO
+
+# Redirecionar entrada e saida
+$ sort &lt; nomes.txt &gt; nomes_ordenados.txt
+</code></pre>
+
+<h4>4.3.1 Heredoc (&lt;&lt;)</h4>
+<pre><code># Heredoc basico
+$ cat &lt;&lt; EOF
+Este eh um texto
+com multiplas linhas
+EOF
+
+# Heredoc sem expansao de variaveis (aspas no delimitador)
+$ cat &lt;&lt; 'EOF'
+$HOME nao sera expandido
+EOF
+
+# Heredoc com tab stripping (&lt;&lt;-)
+$ cat &lt;&lt;- EOF
+	Esta linha tera o tab removido
+		Esta tambem
+EOF
+
+# Heredoc em script SQL
+$ mysql -u root &lt;&lt; 'SQL'
+SELECT * FROM usuarios;
+SQL
+</code></pre>
+
+<h4>4.3.2 Here-string (&lt;&lt;&lt;)</h4>
+<pre><code># Passar string como stdin
+$ grep "padrao" &lt;&lt;&lt; "texto com padrao aqui"
+
+# Usar com comando que espera arquivo
+$ base64 &lt;&lt;&lt; "senha123"
+
+# Processar variavel
+$ texto="hello world"
+$ tr 'a-z' 'A-Z' &lt;&lt;&lt; "$texto"
+</code></pre>
+</div>
+
+<div class="section">
+<h3>4.4 Redirecionamento de Erro (stderr) — 2&gt; e 2&gt;&gt;</h3>
+
+<pre><code># Redirecionar apenas erros para arquivo
+$ ./programa 2&gt; erros.log
+
+# Redirecionar erros e descartar
+$ ./programa 2&gt; /dev/null
+
+# Acumular erros
+$ ./programa 2&gt;&gt; erros.log
+
+# Separar stdout e stderr
+$ ./programa &gt; saida.log 2&gt; erros.log
+
+# Juntar stdout e stderr no mesmo arquivo
+$ ./programa &gt; tudo.log 2&gt;&amp;1
+
+# Ordem importa! Isso funciona:
+$ ./programa &gt; tudo.log 2&gt;&amp;1
+
+# Isso NAO funciona como esperado (stderr vai para tela):
+$ ./programa 2&gt;&amp;1 &gt; tudo.log
+</code></pre>
+
+<h4>4.4.1 Combinando stdout e stderr</h4>
+<pre><code># Ambos para o mesmo arquivo
+$ comando &gt; arquivo.log 2&gt;&amp;1
+
+# Ambos para /dev/null
+$ comando &gt; /dev/null 2&gt;&amp;1
+# Atalho em bash 4+: &amp;&gt; /dev/null
+
+# stdout para arquivo, stderr para outro
+$ comando &gt; saida.log 2&gt; erros.log
+
+# stdout para pipe, stderr para arquivo
+$ comando 2&gt; erros.log | outro_comando
+
+# stderr para stdout, depois pipe
+$ comando 2&gt;&amp;1 | grep "erro"
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 Por que 2&gt;&amp;1 e nao 2&gt;1?</div>
+  <p><code>2&gt;1</code> redirecionaria stderr para um <em>arquivo</em> chamado "1". <code>2&gt;&amp;1</code> significa "redirecione stderr (2) para onde stdout (1) esta apontando". O <code>&amp;</code> indica que o numero seguinte eh um descritor de arquivo, nao um nome de arquivo.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>4.5 Pipe (|) — Conectar Comandos</h3>
+<p>O pipe conecta o <strong>stdout</strong> de um comando ao <strong>stdin</strong> de outro. E a caracteristica mais poderosa do shell Unix.</p>
+
+<pre><code># Pipeline basica
+$ ls -la | grep ".txt"
+
+# Multiplos pipes
+$ cat log.txt | grep "erro" | sort | uniq -c | sort -n -r
+
+# Contar processos
+$ ps aux | wc -l
+
+# Top 10 maiores diretorios
+$ du -h /home | sort -h -r | head -10
+
+# Filtrar e processar
+$ cat /etc/passwd | grep "/bin/bash" | cut -d: -f1
+
+# Pipeline com awk
+$ ps aux | awk '{print $2, $11}' | grep "firefox"
+
+# Pipeline com sed
+$ ifconfig | grep "inet " | sed 's/inet //' | awk '{print $1}'
+</code></pre>
+
+<h4>4.5.1 Pipe com stderr</h4>
+<pre><code># Pipe apenas stdout
+$ comando | grep "padrao"
+
+# Pipe stdout e stderr juntos
+$ comando 2&gt;&amp;1 | grep "padrao"
+
+# Pipe apenas stderr (troca stdout e stderr)
+$ comando 3&gt;&amp;1 1&gt;&amp;2 2&gt;&amp;3 | grep "erro"
+</code></pre>
+
+<h4>4.5.2 Process Substitution (&lt;())</h4>
+<pre><code># Comparar saida de dois comandos
+$ diff &lt;(ls dir1) &lt;(ls dir2)
+
+# Usar saida de comando como arquivo
+$ grep "padrao" &lt;(cat arquivo1.txt arquivo2.txt)
+
+# Combinar multiplas saidas
+$ cat &lt;(echo "Header") &lt;(cat dados.txt) &lt;(echo "Footer")
+
+# Process substitution com escrita
+$ tee &gt;(gzip &gt; backup.gz) &lt; arquivo.txt
+</code></pre>
+</div>
+
+<div class="section">
+<h3>4.6 tee — Lê stdin e Escreve em stdout e Arquivos</h3>
+<p>O <code>tee</code> resolve o problema de querer ver a saida na tela E salvar em arquivo ao mesmo tempo.</p>
+
+<pre><code># Ver na tela e salvar em arquivo
+$ ls -la | tee lista.txt
+
+# Anexar em vez de sobrescrever
+$ echo "nova linha" | tee -a log.txt
+
+# Escrever em multiplos arquivos
+$ comando | tee arquivo1.txt arquivo2.txt
+
+# Usar com sudo (permite redirecionamento com privilegios)
+$ echo "config" | sudo tee /etc/arquivo.conf
+
+# Pipe para tee e depois para outro comando
+$ comando | tee log.txt | grep "erro"
+
+# Tee com process substitution
+$ comando | tee &gt;(grep "erro" &gt; erros.log) &gt;(grep "aviso" &gt; avisos.log)
+
+# Tee para /dev/null (apenas log)
+$ comando | tee /dev/tty | gzip &gt; saida.gz
+</code></pre>
+
+<div class="ascii">
+       comando
+          │
+          ▼ stdout
+       ┌─────┐
+       │ tee │──────→ stdout (tela)
+       └─────┘
+          │
+          ▼
+      arquivo.txt
+</div>
+</div>
+
+<div class="section">
+<h3>4.7 Redirecionamentos Avancados</h3>
+
+<h4>4.7.1 Redirecionar Múltiplos Descritores</h4>
+<pre><code># Fechar stdin
+$ comando &lt;&amp;-
+
+# Fechar stdout
+$ comando &gt;&amp;-
+
+# Duplicar descritores
+$ comando 3&gt;&amp;1  # fd 3 aponta para stdout
+$ comando 1&gt;&amp;3  # stdout aponta para fd 3
+
+# Trocar stdout e stderr
+$ comando 3&gt;&amp;1 1&gt;&amp;2 2&gt;&amp;3
+
+# Redirecionar stdin e stdout de/para o mesmo arquivo
+$ sed -i 's/foo/bar/' arquivo.txt
+# (sed -i faz isso internamente)
+</code></pre>
+
+<h4>4.7.2 Here-document em Scripts</h4>
+<pre><code>#!/bin/bash
+
+# Criar arquivo de configuracao
+config=$(cat &lt;&lt;- 'CFG'
+[database]
+host=localhost
+port=3306
+user=admin
+pass=secret
+
+[server]
+port=8080
+debug=false
+CFG
+)
+
+echo "$config" &gt; config.ini
+
+# Executar SQL
+mysql -u root &lt;&lt;- 'SQL'
+CREATE DATABASE IF NOT EXISTS meu_db;
+USE meu_db;
+CREATE TABLE usuarios (id INT, nome VARCHAR(100));
+SQL
+</code></pre>
+
+<h4>4.7.3 /dev/null e /dev/zero</h4>
+<pre><code># Descartar toda saida
+$ comando &gt; /dev/null 2&gt;&amp;1
+
+# Fornecer zeros como entrada
+$ dd if=/dev/zero of=arquivo.img bs=1M count=100
+
+# Fornecer dados aleatorios
+$ head -c 100 /dev/urandom &gt; aleatorio.bin
+
+# Fornecer dados aleatorios criptograficamente seguros
+$ head -c 100 /dev/random &gt; seguro.bin
+# /dev/random pode bloquear esperando entropia
+</code></pre>
+
+<h4>4.7.4 Named Pipes (FIFOs)</h4>
+<pre><code># Criar named pipe
+$ mkfifo meu_pipe
+
+# Em um terminal: escrever no pipe
+$ echo "dados" &gt; meu_pipe
+
+# Em outro terminal: ler do pipe
+$ cat meu_pipe
+dados
+
+# Usar em pipeline complexo
+$ mkfifo pipe1 pipe2
+$ comando1 &gt; pipe1 &amp;
+$ comando2 &lt; pipe1 &gt; pipe2 &amp;
+$ comando3 &lt; pipe2
+
+# Remover pipe
+$ rm meu_pipe
+</code></pre>
+
+<div class="box box-success">
+  <div class="box-title">✅ Resumo de Redirecionamentos</div>
+  <table>
+  <tr><th>Redirecionamento</th><th>Significado</th></tr>
+  <tr><td><code>cmd &gt; file</code></td><td>stdout para arquivo (sobrescreve)</td></tr>
+  <tr><td><code>cmd &gt;&gt; file</code></td><td>stdout para arquivo (anexa)</td></tr>
+  <tr><td><code>cmd 2&gt; file</code></td><td>stderr para arquivo</td></tr>
+  <tr><td><code>cmd &amp;&gt; file</code></td><td>stdout e stderr para arquivo</td></tr>
+  <tr><td><code>cmd &gt; file 2&gt;&amp;1</code></td><td>stdout e stderr para arquivo</td></tr>
+  <tr><td><code>cmd &lt; file</code></td><td>stdin de arquivo</td></tr>
+  <tr><td><code>cmd &lt;&lt; EOF</code></td><td>stdin de heredoc</td></tr>
+  <tr><td><code>cmd &lt;&lt;&lt; string</code></td><td>stdin de here-string</td></tr>
+  <tr><td><code>cmd1 | cmd2</code></td><td>stdout de cmd1 para stdin de cmd2</td></tr>
+  <tr><td><code>cmd | tee file</code></td><td>stdout para tela E arquivo</td></tr>
+  <tr><td><code>cmd &gt; /dev/null</code></td><td>Descarta stdout</td></tr>
+  </table>
+</div>
+</div>
+
+<!-- EXERCICIOS VOLUME 4 -->
+<div class="exercise">
+<h4>🏋️ Exercicios — Volume 4</h4>
+<ol>
+  <li>Execute <code>ls /nao_existe &gt; saida.txt 2&gt; erro.txt</code>. Verifique o conteudo de cada arquivo. O que acontece?</li>
+  <li>Execute <code>ls /nao_existe &gt; tudo.txt 2&gt;&amp;1</code>. Verifique o arquivo. Por que a ordem <code>2&gt;&amp;1</code> importa?</li>
+  <li>Crie uma pipeline que: lista todos os processos, filtra os do seu usuario, ordena por %CPU, e mostra os top 5.</li>
+  <li>Use <code>tee</code> para executar <code>ps aux</code>, salvar em <code>processos.txt</code>, e filtrar apenas "firefox" na tela.</li>
+  <li>Crie um heredoc que gere um arquivo HTML completo com <code>cat &gt; pagina.html</code>.</li>
+  <li>Use process substitution para comparar <code>ls /bin</code> e <code>ls /usr/bin</code> com <code>diff</code>.</li>
+  <li>Crie um script que execute um comando, salve stdout em <code>ok.log</code> e stderr em <code>erro.log</code>, separadamente.</li>
+  <li>Use <code>find</code> com <code>-exec</code> e redirecionamento para criar um arquivo com a lista de todos os <code>.conf</code> em <code>/etc</code>.</li>
+  <li>Crie um named pipe e use-o para passar dados entre dois terminais.</li>
+  <li>Escreva uma pipeline de 5+ comandos que processe <code>/var/log/syslog</code> e gere um relatorio de erros por hora.</li>
+</ol>
+</div>
+

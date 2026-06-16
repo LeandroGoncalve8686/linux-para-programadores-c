@@ -1,0 +1,937 @@
+
+<!-- ============================================================ -->
+<!-- VOLUME 3 — BUSCA E MANIPULAÇÃO DE TEXTO -->
+<!-- ============================================================ -->
+ <link rel="stylesheet" href="/style.css">
+<div class="page-break"></div>
+<div class="volume-header" id="vol3">
+  <h2>📚 Volume 3 — Busca e Manipulação de Texto</h2>
+  <div class="vol-desc">grep, find, sed, awk e as ferramentas que transformam dados em informação.</div>
+</div>
+
+<div class="section">
+<h3>3.1 grep — Global Regular Expression Print</h3>
+<p>O <code>grep</code> busca padrões em texto usando expressões regulares. É uma das ferramentas mais poderosas do terminal.</p>
+
+<h4>3.1.1 Uso Básico</h4>
+<pre><code># Buscar palavra em arquivo
+$ grep "erro" log.txt
+
+# Buscar em múltiplos arquivos
+$ grep "erro" *.log
+
+# Buscar recursivamente em diretórios
+$ grep -r "erro" /var/log/
+
+# Buscar ignorando case
+$ grep -i "erro" log.txt
+# Encontra: erro, ERRO, Erro, eRrO
+
+# Inverter match (linhas que NÃO contêm o padrão)
+$ grep -v "sucesso" log.txt
+
+# Mostrar número da linha
+$ grep -n "erro" log.txt
+
+# Mostrar apenas contagem
+$ grep -c "erro" log.txt
+
+# Mostrar nome do arquivo (com múltiplos arquivos)
+$ grep -l "erro" *.log
+
+# Mostrar linhas que NÃO contêm o padrão
+$ grep -L "erro" *.log
+
+# Mostrar contexto (linhas ao redor)
+$ grep -C 2 "erro" log.txt   # 2 linhas antes e depois
+$ grep -B 2 "erro" log.txt   # 2 linhas antes
+$ grep -A 2 "erro" log.txt   # 2 linhas depois
+</code></pre>
+
+<h4>3.1.2 Expressões Regulares com grep</h4>
+<pre><code># Buscar no início da linha (^)
+$ grep "^erro" log.txt
+
+# Buscar no final da linha ($)
+$ grep "erro$" log.txt
+
+# Qualquer caractere (.)
+$ grep "e.r.o" log.txt
+# Encontra: erro, e1r2o, e r o
+
+# Conjunto de caracteres ([])
+$ grep "[Ee]rro" log.txt
+# Encontra: erro, Erro
+
+# Range de caracteres
+$ grep "[a-z]erro" log.txt
+# Encontra: aerro, berro, ..., zerro
+
+# Negar conjunto
+$ grep "[^0-9]erro" log.txt
+# Encontra erro precedido por algo que nao eh numero
+
+# Quantificadores
+$ grep "erro*" log.txt    # 0 ou mais 'r'
+$ grep "erro+" log.txt    # 1 ou mais 'r' (grep -E)
+$ grep "erro?" log.txt    # 0 ou 1 'r' (grep -E)
+$ grep "erro{2,3}" log.txt # 2 a 3 'r' (grep -E)
+
+# Alternativa (OR)
+$ grep -E "erro|falha" log.txt
+
+# Grupos
+$ grep -E "(erro|falha) critica" log.txt
+
+# Palavra completa (\b)
+$ grep -w "erro" log.txt
+# Nao encontra "errores", apenas "erro" isolado
+
+# grep estendido (ERE)
+$ grep -E "padrao+" arquivo.txt
+# ou
+$ egrep "padrao+" arquivo.txt
+</code></pre>
+
+<h4>3.1.3 grep Avancado</h4>
+<pre><code># Buscar apenas palavras completas
+$ grep -w "root" /etc/passwd
+
+# Limitar numero de matches
+$ grep -m 5 "erro" log.txt
+
+# Buscar em arquivo binario (tratar como texto)
+$ grep -a "texto" arquivo.bin
+
+# Mostrar posicao do match
+$ grep -o "erro" log.txt
+# Apenas o texto matchado, nao a linha inteira
+
+# Buscar com arquivo de padroes
+$ grep -f padroes.txt log.txt
+# padroes.txt contem um padrao por linha
+
+# Excluir arquivos/diretorios na busca recursiva
+$ grep -r "erro" /var/log/ --exclude="*.gz"
+$ grep -r "erro" /var/log/ --exclude-dir="archive"
+
+# Colorir output
+$ grep --color=auto "erro" log.txt
+
+# Contar ocorrencias por arquivo
+$ grep -c "erro" *.log
+
+# Mostrar apenas arquivos SEM match
+$ grep -L "erro" *.log
+
+# Usar com process substitution
+$ grep "erro" &lt;(dmesg)
+
+# grep com Perl regex (PCRE)
+$ grep -P "\d{3}-\d{2}-\d{4}" arquivo.txt
+# Busca SSN: 123-45-6789
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 grep vs. egrep vs. fgrep</div>
+  <ul>
+    <li><code>grep</code>: Basico (BRE - Basic Regular Expressions)</li>
+    <li><code>egrep</code> ou <code>grep -E</code>: Estendido (ERE - Extended Regular Expressions)</li>
+    <li><code>fgrep</code> ou <code>grep -F</code>: Fixed strings (sem regex, busca literal)</li>
+    <li><code>grep -P</code>: Perl Compatible Regular Expressions (PCRE)</li>
+  </ul>
+</div>
+</div>
+
+<div class="section">
+<h3>3.2 find — Search for Files</h3>
+<p>O <code>find</code> busca arquivos e diretorios no sistema de arquivos. E extremamente poderoso e flexivel.</p>
+
+<h4>3.2.1 Busca Basica</h4>
+<pre><code># Buscar por nome
+$ find /home -name "*.txt"
+
+# Buscar ignorando case
+$ find /home -iname "*.TXT"
+
+# Buscar por tipo
+$ find /home -type f          # arquivos regulares
+$ find /home -type d          # diretorios
+$ find /home -type l          # links simbolicos
+$ find /home -type b          # dispositivos de bloco
+$ find /home -type c          # dispositivos de caractere
+$ find /home -type p          # named pipes
+$ find /home -type s          # sockets
+
+# Buscar por tamanho
+$ find /home -size +100M      # maior que 100MB
+$ find /home -size -1k        # menor que 1KB
+$ find /home -size 10M        # exatamente 10MB
+$ find /home -size +1G -size -5G  # entre 1GB e 5GB
+
+# Buscar por tempo de modificacao
+$ find /home -mtime -1        # modificado nas ultimas 24h
+$ find /home -mtime +7        # modificado ha mais de 7 dias
+$ find /home -mtime 1         # modificado entre 24h e 48h atras
+
+# Buscar por tempo de acesso
+$ find /home -atime +30       # nao acessado ha 30+ dias
+
+# Buscar por tempo de mudanca (ctime)
+$ find /home -ctime -1
+
+# Buscar por minutos (mais preciso)
+$ find /home -mmin -60        # modificado na ultima hora
+</code></pre>
+
+<h4>3.2.2 Operadores Logicos</h4>
+<pre><code># AND (padrao)
+$ find /home -name "*.txt" -size +1M
+
+# OR
+$ find /home \( -name "*.txt" -o -name "*.log" \)
+
+# NOT
+$ find /home ! -name "*.txt"
+
+# Combinados
+$ find /home -type f \( -name "*.tmp" -o -name "*.bak" \) -size +10M
+
+# Precedencia (use parenteses)
+$ find /home \( -type f -a -name "*.log" \) -o -type d
+</code></pre>
+
+<h4>3.2.3 Acoes com find</h4>
+<pre><code># Executar comando para cada arquivo encontrado
+$ find /home -name "*.log" -exec ls -lh {} \;
+
+# Executar com multiplos arquivos de uma vez (mais eficiente)
+$ find /home -name "*.log" -exec ls -lh {} +
+
+# Deletar arquivos encontrados
+$ find /tmp -name "*.tmp" -type f -delete
+
+# Ou com exec
+$ find /tmp -name "*.tmp" -type f -exec rm {} \;
+
+# Copiar arquivos encontrados
+$ find /home -name "*.conf" -exec cp {} /backup/ \;
+
+# Mover arquivos
+$ find /home -name "*.old" -exec mv {} /arquivo/ \;
+
+# Executar script
+$ find /home -name "*.sh" -exec bash {} \;
+
+# Chmod em arquivos encontrados
+$ find /home -type f -exec chmod 644 {} \;
+$ find /home -type d -exec chmod 755 {} \;
+
+# Usar -ok para confirmacao interativa
+$ find /home -name "*.txt" -ok rm {} \;
+</code></pre>
+
+<h4>3.2.4 find Avancado</h4>
+<pre><code># Buscar por permissoes
+$ find /home -perm 644
+$ find /home -perm /u=s       # SUID
+$ find /home -perm -g=w       # grupo tem escrita
+
+# Buscar por dono
+$ find /home -user root
+$ find /home -group sudo
+
+# Buscar por inode
+$ find / -inum 123456
+
+# Buscar links para um arquivo especifico
+$ find / -samefile /path/to/file
+
+# Buscar arquivos vazios
+$ find /home -type f -empty
+
+# Buscar diretorios vazios
+$ find /home -type d -empty
+
+# Limitar profundidade
+$ find /home -maxdepth 2 -name "*.txt"
+$ find /home -mindepth 2 -name "*.txt"
+
+# Nao seguir links simbolicos (padrao)
+$ find /home -name "*.txt"
+
+# Seguir links simbolicos
+$ find /home -follow -name "*.txt"
+
+# Buscar em multiplos diretorios
+$ find /home /var /tmp -name "*.log"
+
+# Excluir diretorios da busca
+$ find /home -path "*/node_modules" -prune -o -name "*.js" -print
+
+# Usar -printf para formatar saida
+$ find /home -type f -printf "%p %s %TY-%Tm-%Td\n"
+# path, size, data
+
+# Buscar com regex (caminho completo)
+$ find /home -regex ".*\.txt$"
+
+# Buscar com regex ignorando case
+$ find /home -iregex ".*\.TXT$"
+</code></pre>
+
+<div class="box box-success">
+  <div class="box-title">✅ find + xargs eh mais eficiente que find -exec</div>
+  <p>Para processar muitos arquivos, <code>find ... | xargs comando</code> eh mais eficiente que <code>find ... -exec comando {} \;</code> porque xargs passa multiplos arquivos de uma vez. Use <code>find ... -print0 | xargs -0 comando</code> para nomes com espacos.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>3.3 locate — Find Files by Name</h3>
+<p>O <code>locate</code> busca em um banco de dados pre-construido, sendo muito mais rapido que <code>find</code> para buscas por nome. O banco de dados eh atualizado pelo <code>updatedb</code>.</p>
+
+<pre><code># Instalar mlocate
+$ sudo apt install mlocate
+
+# Buscar arquivo por nome
+$ locate arquivo.txt
+
+# Buscar ignorando case
+$ locate -i arquivo.txt
+
+# Mostrar apenas N resultados
+$ locate -n 10 arquivo.txt
+
+# Mostrar arquivos existentes (verifica se existem)
+$ locate -e arquivo.txt
+
+# Atualizar banco de dados manualmente
+$ sudo updatedb
+
+# Buscar com regex
+$ locate -r "\.conf$"
+
+# Buscar arquivos de um usuario especifico
+$ locate -u usuario arquivo.txt
+
+# Estatisticas do banco de dados
+$ locate -S
+# Mostra: arquivos, diretorios, tamanho do DB, etc.
+
+# Buscar apenas arquivos (nao diretorios)
+$ locate -r "\.txt$"
+
+# Excluir padroes do updatedb
+# Edite /etc/updatedb.conf para excluir /tmp, /proc, etc.
+</code></pre>
+
+<div class="box box-warning">
+  <div class="box-title">⚠️ locate nao encontra arquivos recem-criados</div>
+  <p>O banco de dados do <code>locate</code> eh atualizado periodicamente (geralmente uma vez por dia via cron). Arquivos criados apos a ultima atualizacao nao aparecerao. Use <code>find</code> para buscas em tempo real.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>3.4 which — Locate a Command</h3>
+<p>O <code>which</code> mostra o caminho completo do executavel que seria executado se voce digitasse o comando.</p>
+
+<pre><code># Localizar comando
+$ which ls
+/bin/ls
+
+$ which python3
+/usr/bin/python3
+
+# Mostrar todos os caminhos (se houver aliases)
+$ which -a python
+/usr/bin/python
+/usr/local/bin/python
+
+# Verificar se comando existe
+$ which nginx
+# (sem saida = nao encontrado)
+
+# Usar em scripts
+$ if which nginx &gt;/dev/null; then echo "nginx instalado"; fi
+</code></pre>
+</div>
+
+<div class="section">
+<h3>3.5 whereis — Locate Binary, Source, and Manual Page</h3>
+<p>O <code>whereis</code> busca binarios, codigo-fonte e man pages de um comando.</p>
+
+<pre><code># Localizar tudo sobre um comando
+$ whereis ls
+ls: /bin/ls /usr/share/man/man1/ls.1.gz
+
+# Buscar apenas binarios
+$ whereis -b ls
+
+# Buscar apenas man pages
+$ whereis -m ls
+
+# Buscar apenas codigo-fonte
+$ whereis -s ls
+
+# Buscar em caminhos nao padrao
+$ whereis -B /usr/local/bin -f ls
+
+# Limitar resultados
+$ whereis -l ls
+# Mostra os caminhos de busca efetivos
+</code></pre>
+</div>
+
+<div class="section">
+<h3>3.6 sort — Sort Lines of Text</h3>
+<p>O <code>sort</code> ordena linhas de texto. Suporta ordenacao numerica, por data, por campo, e mais.</p>
+
+<pre><code># Ordenar alfabeticamente
+$ sort arquivo.txt
+
+# Ordenar inversamente
+$ sort -r arquivo.txt
+
+# Ordenar numericamente
+$ sort -n numeros.txt
+
+# Ordenar por tamanho (human-readable)
+$ sort -h tamanhos.txt
+
+# Ordenar ignorando case
+$ sort -f arquivo.txt
+
+# Ordenar removendo duplicatas
+$ sort -u arquivo.txt
+
+# Ordenar por campo especifico
+$ sort -k 3 arquivo.txt     # 3o campo (padrao: tab/space)
+$ sort -k 2,2n arquivo.txt  # 2o campo, numerico
+$ sort -t: -k 3n /etc/passwd # delimitador ':', 3o campo numerico
+
+# Ordenar por multiplos campos
+$ sort -t: -k 3n -k 1,1 /etc/passwd
+
+# Ordenar aleatoriamente (shuffle)
+$ sort -R arquivo.txt
+
+# Ordenar e verificar se ja esta ordenado
+$ sort -c arquivo.txt
+
+# Ordenar com locale especifico
+$ LC_ALL=C sort arquivo.txt
+
+# Ordenar arquivo grande (merge sort externo)
+$ sort -S 50% arquivo_grande.txt
+# Usa 50% da RAM
+
+# Ordenar saida de comando
+$ ps aux | sort -k 3 -n -r  # por CPU%, numerico, reverso
+$ du -h /home | sort -h -r  # por tamanho, maior primeiro
+</code></pre>
+
+<h4>3.6.1 Exemplos Praticos</h4>
+<pre><code># Top 10 processos por uso de memoria
+$ ps aux | sort -k 4 -n -r | head -10
+
+# Ordenar /etc/passwd por UID
+$ sort -t: -k 3n /etc/passwd
+
+# Ordenar arquivos por tamanho
+$ ls -l | sort -k 5 -n
+
+# Ordenar IPs numericamente
+$ sort -t. -k1,1n -k2,2n -k3,3n -k4,4n ips.txt
+</code></pre>
+</div>
+
+<div class="section">
+<h3>3.7 uniq — Remove Duplicate Lines</h3>
+<p>O <code>uniq</code> remove ou conta linhas duplicadas adjacentes. <strong>Importante:</strong> so remove duplicatas adjacentes — use <code>sort | uniq</code> para remover todas.</p>
+
+<pre><code># Remover duplicatas adjacentes
+$ uniq arquivo.txt
+
+# Contar ocorrencias
+$ uniq -c arquivo.txt
+
+# Mostrar apenas duplicatas
+$ uniq -d arquivo.txt
+
+# Mostrar apenas unicas (nao duplicadas)
+$ uniq -u arquivo.txt
+
+# Ignorar primeiros N caracteres
+$ uniq -s 5 arquivo.txt
+
+# Comparar apenas primeiros N caracteres
+$ uniq -w 10 arquivo.txt
+
+# Ignorar case
+$ uniq -i arquivo.txt
+
+# Combinar com sort (remover TODAS as duplicatas)
+$ sort arquivo.txt | uniq
+# ou mais eficiente:
+$ sort -u arquivo.txt
+
+# Contar ocorrencias de cada linha (histograma)
+$ sort arquivo.txt | uniq -c | sort -n -r
+
+# Mostrar duplicatas com contexto
+$ uniq -D arquivo.txt
+</code></pre>
+</div>
+
+<div class="section">
+<h3>3.8 wc — Word Count</h3>
+<p>O <code>wc</code> conta linhas, palavras e bytes em arquivos ou entrada padrao.</p>
+
+<pre><code># Contar linhas, palavras e bytes
+$ wc arquivo.txt
+  10   50  300 arquivo.txt
+# 10 linhas, 50 palavras, 300 bytes
+
+# Apenas linhas
+$ wc -l arquivo.txt
+
+# Apenas palavras
+$ wc -w arquivo.txt
+
+# Apenas bytes
+$ wc -c arquivo.txt
+
+# Apenas caracteres (multibyte)
+$ wc -m arquivo.txt
+
+# Maior largura de linha
+$ wc -L arquivo.txt
+
+# Contar linhas de multiplos arquivos
+$ wc -l *.txt
+
+# Contar linhas de saida de comando
+$ ps aux | wc -l
+$ find /home -type f | wc -l
+
+# Contar arquivos em diretorio
+$ ls -1 | wc -l
+
+# Contar palavras em string
+$ echo "Hello World" | wc -w
+</code></pre>
+</div>
+
+<div class="section">
+<h3>3.9 cut — Remove Sections from Lines</h3>
+<p>O <code>cut</code> extrai colunas/bytes de cada linha. Util para processar arquivos delimitados.</p>
+
+<pre><code># Extrair por campo (delimitador padrao: tab)
+$ cut -f 1 arquivo.txt      # 1o campo
+$ cut -f 1,3 arquivo.txt    # 1o e 3o campos
+$ cut -f 1-3 arquivo.txt    # campos 1 a 3
+
+# Extrair com delimitador customizado
+$ cut -d: -f 1 /etc/passwd    # usuarios
+$ cut -d: -f 1,3 /etc/passwd  # usuario e UID
+$ cut -d: -f 6 /etc/passwd    # home directory
+
+# Extrair por bytes
+$ cut -b 1-10 arquivo.txt
+
+# Extrair por caracteres
+$ cut -c 1-10 arquivo.txt
+
+# Extrair complemento (tudo EXCETO)
+$ cut --complement -d: -f 2 /etc/passwd
+# Todos os campos EXCETO o 2o
+
+# Combinar com outros comandos
+$ ps aux | cut -c 1-10      # primeiros 10 chars
+$ df -h | cut -d' ' -f 1    # filesystems
+</code></pre>
+
+<h4>3.9.1 Exemplos Praticos</h4>
+<pre><code># Listar apenas nomes de usuarios
+$ cut -d: -f1 /etc/passwd
+
+# Listar IPs de conexoes ativas
+$ ss -tuln | cut -d: -f2 | cut -d' ' -f2
+
+# Extrair 2o campo de CSV
+$ cut -d, -f2 dados.csv
+
+# Extrair PID de processos
+$ ps aux | cut -c 10-15
+</code></pre>
+</div>
+
+<div class="section">
+<h3>3.10 paste — Merge Lines of Files</h3>
+<p>O <code>paste</code> combina linhas de multiplos arquivos lado a lado (horizontalmente).</p>
+
+<pre><code># Combinar dois arquivos lado a lado
+$ paste arquivo1.txt arquivo2.txt
+
+# Combinar com delimitador customizado
+$ paste -d, nomes.txt emails.txt &gt; contatos.csv
+
+# Combinar em formato de tabela
+$ paste -d'\t' col1.txt col2.txt col3.txt
+
+# Combinar multiplos arquivos
+$ paste arquivo1.txt arquivo2.txt arquivo3.txt
+
+# Combinar linhas de um unico arquivo (serial)
+$ paste -s -d',' numeros.txt
+# 1,2,3,4,5 (tudo em uma linha)
+
+# Usar com process substitution
+$ paste &lt;(cut -d: -f1 /etc/passwd) &lt;(cut -d: -f6 /etc/passwd)
+</code></pre>
+</div>
+
+<div class="section">
+<h3>3.11 tr — Translate or Delete Characters</h3>
+<p>O <code>tr</code> traduz, comprime ou deleta caracteres. Opera apenas em stdin (nao aceita arquivo como argumento).</p>
+
+<pre><code># Converter minusculas para maiusculas
+$ echo "hello" | tr 'a-z' 'A-Z'
+HELLO
+
+# Converter maiusculas para minusculas
+$ echo "HELLO" | tr 'A-Z' 'a-z'
+hello
+
+# Deletar caracteres
+$ echo "hello 123 world" | tr -d '0-9'
+hello  world
+
+# Deletar espacos
+$ echo "hello world" | tr -d ' '
+helloworld
+
+# Comprimir caracteres repetidos
+$ echo "hello    world" | tr -s ' '
+hello world
+
+# Substituir espacos por tabs
+$ echo "col1 col2 col3" | tr ' ' '\t'
+
+# Substituir newlines por espacos
+$ cat arquivo.txt | tr '\n' ' '
+
+# Remover caracteres nao imprimiveis
+$ tr -cd '[:print:]\n' &lt; arquivo.txt
+
+# Usar classes de caracteres
+$ echo "hello123" | tr '[:lower:]' '[:upper:]'
+$ echo "hello 123" | tr -d '[:digit:]'
+$ echo "hello!!!" | tr -d '[:punct:]'
+
+# Rot13 (cifra simples)
+$ echo "hello" | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+uryyb
+
+# Criar senha aleatoria
+$ tr -dc 'A-Za-z0-9' &lt; /dev/urandom | head -c 16
+
+# Contar caracteres unicos
+$ echo "hello" | tr 'a-z' '\n' | sort | uniq -c
+</code></pre>
+
+<h4>3.11.1 Classes de Caracteres do tr</h4>
+<table>
+<tr><th>Classe</th><th>Descricao</th></tr>
+<tr><td><code>[:alnum:]</code></td><td>Alfanumericos</td></tr>
+<tr><td><code>[:alpha:]</code></td><td>Letras</td></tr>
+<tr><td><code>[:digit:]</code></td><td>Digitos</td></tr>
+<tr><td><code>[:lower:]</code></td><td>Minusculas</td></tr>
+<tr><td><code>[:upper:]</code></td><td>Maiusculas</td></tr>
+<tr><td><code>[:space:]</code></td><td>Espacos</td></tr>
+<tr><td><code>[:punct:]</code></td><td>Pontuacao</td></tr>
+<tr><td><code>[:print:]</code></td><td>Imprimiveis</td></tr>
+<tr><td><code>[:cntrl:]</code></td><td>Controle</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>3.12 sed — Stream Editor</h3>
+<p>O <code>sed</code> eh um editor de streams nao-interativo. Pode substituir, deletar, inserir, e transformar texto linha por linha.</p>
+
+<h4>3.12.1 Substituicao (s///)</h4>
+<pre><code># Substituir primeira ocorrencia por linha
+$ sed 's/erro/ERRO/' log.txt
+
+# Substituir TODAS as ocorrencias (global)
+$ sed 's/erro/ERRO/g' log.txt
+
+# Substituir apenas No ocorrencia
+$ sed 's/erro/ERRO/2' log.txt   # 2a ocorrencia
+$ sed 's/erro/ERRO/2g' log.txt  # da 2a em diante
+
+# Substituir com regex
+$ sed 's/erro[0-9]*/ERRO/g' log.txt
+
+# Usar delimitador diferente (uteis para paths)
+$ sed 's|/home/usuario|/home/novo|g' arquivo.txt
+$ sed 's#/usr/local#/opt#g' arquivo.txt
+
+# Substituir e salvar no mesmo arquivo (in-place)
+$ sed -i 's/erro/ERRO/g' log.txt
+
+# Backup antes de editar
+$ sed -i.bak 's/erro/ERRO/g' log.txt
+# Cria log.txt.bak
+
+# Substituir com referencia ao match
+$ sed 's/\(erro\)/[\1]/g' log.txt
+# [erro]
+
+# Substituir com grupos numerados
+$ echo "2024-06-14" | sed 's/\([0-9]*\)-\([0-9]*\)-\([0-9]*\)/\3\/\2\/\1/'
+14/06/2024
+</code></pre>
+
+<h4>3.12.2 Deletar Linhas</h4>
+<pre><code># Deletar linha 5
+$ sed '5d' arquivo.txt
+
+# Deletar linhas 5 a 10
+$ sed '5,10d' arquivo.txt
+
+# Deletar linhas que contem padrao
+$ sed '/erro/d' log.txt
+
+# Deletar linhas que NAO contem padrao
+$ sed '/erro/!d' log.txt
+
+# Deletar linhas em branco
+$ sed '/^$/d' arquivo.txt
+
+# Deletar linhas comentadas
+$ sed '/^#/d' arquivo.txt
+
+# Deletar primeira e ultima linha
+$ sed '1d;$d' arquivo.txt
+
+# Deletar a ultima linha
+$ sed '$d' arquivo.txt
+</code></pre>
+
+<h4>3.12.3 Inserir e Adicionar</h4>
+<pre><code># Inserir antes da linha 1
+$ sed '1i\# Header' arquivo.txt
+
+# Adicionar depois da linha 1
+$ sed '1a\Nova linha' arquivo.txt
+
+# Inserir antes de linhas com padrao
+$ sed '/erro/i\--- ERRO ENCONTRADO ---' log.txt
+
+# Adicionar ao final do arquivo
+$ sed '$a\Fim do arquivo' arquivo.txt
+
+# Substituir linha inteira
+$ sed '5c\Nova linha 5' arquivo.txt
+</code></pre>
+
+<h4>3.12.4 sed Avancado</h4>
+<pre><code># Imprimir apenas linhas com padrao
+$ sed -n '/erro/p' log.txt
+# Equivalente a: grep "erro" log.txt
+
+# Imprimir linhas 5 a 10
+$ sed -n '5,10p' arquivo.txt
+
+# Imprimir ultima linha
+$ sed -n '$p' arquivo.txt
+
+# Ler arquivo e inserir conteudo
+$ sed '3r outro_arquivo.txt' arquivo.txt
+
+# Executar multiplos comandos
+$ sed -e 's/erro/ERRO/g' -e 's/falha/FALHA/g' log.txt
+
+# Script sed em arquivo
+$ sed -f script.sed arquivo.txt
+
+# Usar expressoes estendidas
+$ sed -E 's/([0-9]+)/[\1]/g' arquivo.txt
+
+# Substituir newline por espaco (modo multilinha)
+$ sed ':a;N;$!ba;s/\n/ /g' arquivo.txt
+
+# Remover espacos no inicio das linhas
+$ sed 's/^[ \t]*//' arquivo.txt
+
+# Remover espacos no final das linhas
+$ sed 's/[ \t]*$//' arquivo.txt
+
+# Remover espacos no inicio e fim
+$ sed 's/^[ \t]*//;s/[ \t]*$//' arquivo.txt
+
+# Duplicar cada linha
+$ sed 'p' arquivo.txt
+
+# Inverter linhas (tac com sed)
+$ sed '1!G;h;$!d' arquivo.txt
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 sed -i eh PERIGOSO</div>
+  <p><code>sed -i</code> modifica o arquivo original. Sempre teste sem <code>-i</code> primeiro, ou use <code>sed -i.bak</code> para criar backup. Para processamento critico, redirecione para novo arquivo: <code>sed 's/.../.../' arquivo.txt &gt; arquivo_novo.txt</code></p>
+</div>
+</div>
+
+<div class="section">
+<h3>3.13 awk — Pattern Scanning and Processing</h3>
+<p>O <code>awk</code> eh uma linguagem de programacao completa para processamento de texto. Pode fazer calculos, condicionais, loops, e manipular dados estruturados.</p>
+
+<h4>3.13.1 Uso Basico</h4>
+<pre><code># Imprimir campo especifico (delimitador padrao: espaco/tab)
+$ awk '{print $1}' arquivo.txt
+
+# Imprimir multiplos campos
+$ awk '{print $1, $3}' arquivo.txt
+
+# Usar delimitador customizado
+$ awk -F: '{print $1}' /etc/passwd
+
+# Imprimir com formato
+$ awk '{print "Usuario:", $1, "- UID:", $3}' /etc/passwd
+
+# Imprimir numero de campos
+$ awk '{print NF}' arquivo.txt
+
+# Imprimir linha inteira
+$ awk '{print $0}' arquivo.txt
+
+# Imprimir ultimo campo
+$ awk '{print $NF}' arquivo.txt
+
+# Imprimir com separador de saida
+$ awk -F: -v OFS=' | ' '{print $1, $6}' /etc/passwd
+</code></pre>
+
+<h4>3.13.2 Padroes e Condicoes</h4>
+<pre><code># Filtrar linhas com padrao
+$ awk '/erro/' log.txt
+
+# Filtrar por valor de campo
+$ awk '$3 &gt; 100' arquivo.txt
+
+# Filtrar com regex no campo
+$ awk '$2 ~ /^[0-9]/' arquivo.txt
+
+# Multiplas condicoes
+$ awk '$3 &gt; 100 &amp;&amp; $5 == "ativo"' arquivo.txt
+
+# Usar BEGIN e END
+$ awk 'BEGIN {print "Inicio"} {print $0} END {print "Fim"}' arquivo.txt
+
+# Contar linhas
+$ awk 'END {print NR}' arquivo.txt
+
+# Somar valores de campo
+$ awk '{soma += $3} END {print "Total:", soma}' arquivo.txt
+
+# Media
+$ awk '{soma += $3; count++} END {print "Media:", soma/count}' arquivo.txt
+
+# Maximo e minimo
+$ awk 'NR==1 {max=$3; min=$3} $3&gt;max {max=$3} $3&lt;min {min=$3} END {print "Max:", max, "Min:", min}' arquivo.txt
+</code></pre>
+
+<h4>3.13.3 awk Avancado</h4>
+<pre><code># Usar variaveis
+$ awk -v limite=100 '$3 &gt; limite' arquivo.txt
+
+# Usar arrays
+$ awk '{count[$1]++} END {for (u in count) print u, count[u]}' log.txt
+
+# Ordenar saida (pipe para sort)
+$ awk '{count[$1]++} END {for (u in count) print count[u], u}' log.txt | sort -n -r
+
+# Formatar saida com printf
+$ awk '{printf "%-15s %10d\n", $1, $3}' arquivo.txt
+
+# Processar CSV
+$ awk -F, '{print $2}' dados.csv
+
+# Substituir dentro do awk
+$ awk '{gsub(/erro/, "ERRO"); print}' log.txt
+
+# Substr (extrair parte do campo)
+$ awk '{print substr($1, 1, 3)}' arquivo.txt
+
+# Length (tamanho da linha/campo)
+$ awk '{print length($0)}' arquivo.txt
+
+# Split (dividir campo)
+$ awk '{split($1, a, "."); print a[1]}' arquivo.txt
+
+# Match (encontrar posicao do regex)
+$ awk '{if (match($0, /[0-9]+/)) print substr($0, RSTART, RLENGTH)}' arquivo.txt
+
+# Ler multiplos arquivos
+$ awk '{print FILENAME, $0}' arquivo1.txt arquivo2.txt
+
+# Processar registros multilinha
+$ awk 'BEGIN {RS=""; FS="\n"} {print $1}' arquivo.txt
+</code></pre>
+
+<h4>3.13.4 Exemplos Praticos de awk</h4>
+<pre><code># Top 5 processos por memoria
+$ ps aux | awk '{print $4, $11}' | sort -n -r | head -5
+
+# Soma de uso de disco por usuario
+$ du -sh /home/* | awk '{sum += $1} END {print sum}'
+
+# Extrair IPs de log
+$ awk '{print $1}' /var/log/apache2/access.log | sort | uniq -c | sort -n -r
+
+# Contar status HTTP
+$ awk '{print $9}' /var/log/apache2/access.log | sort | uniq -c
+
+# Relatorio de tamanho de diretorios
+$ du -sh /home/* | awk '{printf "%-20s %10s\n", $2, $1}'
+
+# Filtrar /etc/passwd: usuarios com UID &gt;= 1000
+$ awk -F: '$3 &gt;= 1000 {print $1, $6}' /etc/passwd
+
+# Calcular tempo total de processos
+$ ps -eo time | awk -F: '{sum += $1*3600 + $2*60 + $3} END {print sum "s"}'
+</code></pre>
+
+<div class="box box-success">
+  <div class="box-title">✅ Quando usar grep, sed ou awk?</div>
+  <table>
+  <tr><th>Ferramenta</th><th>Quando usar</th></tr>
+  <tr><td><code>grep</code></td><td>Buscar padroes, filtrar linhas</td></tr>
+  <tr><td><code>sed</code></td><td>Substituir texto, deletar/inserir linhas</td></tr>
+  <tr><td><code>awk</code></td><td>Processar campos, calculos, relatorios</td></tr>
+  </table>
+  <p>Muitas vezes voce os usara juntos: <code>grep</code> para filtrar, <code>sed</code> para limpar, <code>awk</code> para processar.</p>
+</div>
+</div>
+
+<!-- EXERCICIOS VOLUME 3 -->
+<div class="exercise">
+<h4>🏋️ Exercicios — Volume 3</h4>
+<ol>
+  <li>Use <code>grep</code> para encontrar todas as linhas que comecam com "#" em <code>/etc/services</code>. Conte quantas sao.</li>
+  <li>Use <code>grep -E</code> para buscar linhas que contenham "tcp" OU "udp" em <code>/etc/services</code>.</li>
+  <li>Use <code>find</code> para listar todos os arquivos <code>.conf</code> em <code>/etc</code> maiores que 1KB. Ordene por tamanho.</li>
+  <li>Use <code>find</code> para encontrar arquivos modificados nas ultimas 24h no seu home. Execute <code>ls -lh</code> para cada um.</li>
+  <li>Use <code>sort</code> e <code>uniq -c</code> para criar um histograma das shells usadas em <code>/etc/passwd</code> (campo 7).</li>
+  <li>Use <code>cut</code> para extrair apenas os nomes de usuario e diretorios home de <code>/etc/passwd</code>, formatados como "usuario → home".</li>
+  <li>Use <code>tr</code> para converter o conteudo de um arquivo para maiusculas e contar quantos caracteres sao digitos.</li>
+  <li>Use <code>sed</code> para remover TODOS os comentarios (linhas comecando com #) de um arquivo de configuracao.</li>
+  <li>Use <code>sed</code> para substituir todas as ocorrencias de "localhost" por "127.0.0.1" em um arquivo, salvando backup.</li>
+  <li>Use <code>awk</code> para criar um relatorio de <code>ps aux</code> mostrando: usuario, %CPU, %MEM, comando — ordenado por %CPU.</li>
+  <li>Use <code>awk</code> para processar <code>/etc/passwd</code> e mostrar apenas usuarios com UID &gt;= 1000, formatados em tabela.</li>
+  <li>Crie uma pipeline que: lista arquivos <code>.log</code> em <code>/var/log</code>, filtra os que contem "error", extrai a data, e conta ocorrencias por dia.</li>
+</ol>
+</div>
+

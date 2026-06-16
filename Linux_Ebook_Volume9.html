@@ -1,0 +1,622 @@
+
+<!-- ============================================================ -->
+<!-- VOLUME 9 — FERRAMENTAS PARA DESENVOLVIMENTO -->
+<!-- ============================================================ -->
+ <link rel="stylesheet" href="/style.css">
+<div class="page-break"></div>
+<div class="volume-header" id="vol9">
+  <h2>📚 Volume 9 — Ferramentas para Desenvolvimento</h2>
+  <div class="vol-desc">Compilar, depurar, versionar e transferir codigo como um profissional.</div>
+</div>
+
+<div class="section">
+<h3>9.1 gcc — GNU Compiler Collection</h3>
+<p>O <code>gcc</code> é o compilador C padrão no Linux. Compila codigo C em executaveis, bibliotecas e objetos.</p>
+
+<h4>9.1.1 Compilacao Basica</h4>
+<pre><code># Compilar um arquivo C
+$ gcc programa.c -o programa
+
+# Compilar e executar
+$ gcc programa.c -o programa &amp;&amp; ./programa
+
+# Compilar com warnings
+$ gcc -Wall programa.c -o programa
+
+# Compilar com warnings extras
+$ gcc -Wall -Wextra programa.c -o programa
+
+# Compilar com todas as warnings
+$ gcc -Wall -Wextra -Wpedantic programa.c -o programa
+
+# Compilar com debug info
+$ gcc -g programa.c -o programa
+
+# Compilar com otimizacao
+$ gcc -O2 programa.c -o programa
+
+# Compilar com otimizacao maxima
+$ gcc -O3 programa.c -o programa
+
+# Compilar sem otimizacao (para debug)
+$ gcc -O0 -g programa.c -o programa
+
+# Compilar com sanitizers (deteccao de erros em runtime)
+$ gcc -fsanitize=address programa.c -o programa
+$ gcc -fsanitize=undefined programa.c -o programa
+</code></pre>
+
+<h4>9.1.2 Flags Importantes do gcc</h4>
+<table>
+<tr><th>Flag</th><th>Significado</th></tr>
+<tr><td><code>-o arquivo</code></td><td>Nome do arquivo de saida</td></tr>
+<tr><td><code>-c</code></td><td>Compilar apenas (nao linkar)</td></tr>
+<tr><td><code>-S</code></td><td>Gerar assembly</td></tr>
+<tr><td><code>-E</code></td><td>Preprocessar apenas</td></tr>
+<tr><td><code>-g</code></td><td>Incluir informacoes de debug</td></tr>
+<tr><td><code>-O0</code></td><td>Sem otimizacao</td></tr>
+<tr><td><code>-O1</code></td><td>Otimizacao basica</td></tr>
+<tr><td><code>-O2</code></td><td>Otimizacao padrao</td></tr>
+<tr><td><code>-O3</code></td><td>Otimizacao agressiva</td></tr>
+<tr><td><code>-Os</code></td><td>Otimizar para tamanho</td></tr>
+<tr><td><code>-Wall</code></td><td>Warnings comuns</td></tr>
+<tr><td><code>-Wextra</code></td><td>Warnings extras</td></tr>
+<tr><td><code>-Werror</code></td><td>Tratar warnings como erros</td></tr>
+<tr><td><code>-std=c11</code></td><td>Padrao C11</td></tr>
+<tr><td><code>-std=c17</code></td><td>Padrao C17</td></tr>
+<tr><td><code>-I dir</code></td><td>Diretorio de includes</td></tr>
+<tr><td><code>-L dir</code></td><td>Diretorio de bibliotecas</td></tr>
+<tr><td><code>-l lib</code></td><td>Linkar com biblioteca</td></tr>
+<tr><td><code>-static</code></td><td>Linkagem estatica</td></tr>
+<tr><td><code>-shared</code></td><td>Criar biblioteca compartilhada</td></tr>
+<tr><td><code>-fPIC</code></td><td>Position Independent Code</td></tr>
+<tr><td><code>-D MACRO</code></td><td>Definir macro</td></tr>
+<tr><td><code>-U MACRO</code></td><td>Remover macro</td></tr>
+<tr><td><code>-M</code></td><td>Gerar dependencias</td></tr>
+<tr><td><code>-MM</code></td><td>Gerar dependencias (sem sistema)</td></tr>
+</table>
+
+<h4>9.1.3 Compilacao em Multiplos Passos</h4>
+<pre><code># 1. Preprocessar
+$ gcc -E programa.c -o programa.i
+
+# 2. Compilar para assembly
+$ gcc -S programa.i -o programa.s
+
+# 3. Montar (assembler)
+$ gcc -c programa.s -o programa.o
+
+# 4. Linkar
+$ gcc programa.o -o programa
+
+# Ou tudo de uma vez:
+$ gcc programa.c -o programa
+
+# Compilar multiplos arquivos
+$ gcc -c main.c -o main.o
+$ gcc -c utils.c -o utils.o
+$ gcc main.o utils.o -o programa
+</code></pre>
+
+<div class="ascii">
+Codigo C (.c)
+    |
+    v
+Preprocessador (cpp)  →  Codigo preprocessado (.i)
+    |
+    v
+Compilador (cc1)      →  Assembly (.s)
+    |
+    v
+Assembler (as)        →  Objeto (.o)
+    |
+    v
+Linker (ld)           →  Executavel
+</div>
+</div>
+
+<div class="section">
+<h3>9.2 make — Build Automation</h3>
+<p>O <code>make</code> automatiza a compilacao, gerenciando dependencias entre arquivos.</p>
+
+<h4>9.2.1 Makefile Basico</h4>
+<pre><code># Makefile
+
+CC = gcc
+CFLAGS = -Wall -Wextra -g -O2
+TARGET = programa
+SRCS = main.c utils.c
+OBJS = $(SRCS:.c=.o)
+
+.PHONY: all clean
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CC) $(OBJS) -o $(TARGET)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $&lt; -o $@
+
+clean:
+	rm -f $(OBJS) $(TARGET)
+
+# Uso:
+# make        → compila tudo
+# make clean  → remove objetos e executavel
+# make main.o → compila apenas main.c
+</code></pre>
+
+<h4>9.2.2 Variaveis Automaticas do make</h4>
+<table>
+<tr><th>Variavel</th><th>Significado</th></tr>
+<tr><td><code>$@</code></td><td>Nome do alvo (target)</td></tr>
+<tr><td><code>$&lt;</code></td><td>Primeira dependencia</td></tr>
+<tr><td><code>$^</code></td><td>Todas as dependencias</td></tr>
+<tr><td><code>$?</code></td><td>Dependencias mais novas que o alvo</td></tr>
+<tr><td><code>$*</code></td><td>Stem (parte do padrao %)</td></tr>
+</table>
+
+<h4>9.2.3 Makefile Avancado</h4>
+<pre><code># Makefile avancado
+
+CC = gcc
+CFLAGS = -Wall -Wextra -g -O2
+LDFLAGS = -lm -lpthread
+TARGET = programa
+SRCDIR = src
+OBJDIR = obj
+BINDIR = bin
+
+SRCS = $(wildcard $(SRCDIR)/*.c)
+OBJS = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCS))
+
+.PHONY: all clean dirs debug release
+
+all: dirs $(BINDIR)/$(TARGET)
+
+dirs:
+	mkdir -p $(OBJDIR) $(BINDIR)
+
+$(BINDIR)/$(TARGET): $(OBJS)
+	$(CC) $(OBJS) -o $@ $(LDFLAGS)
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	$(CC) $(CFLAGS) -c $&lt; -o $@
+
+clean:
+	rm -rf $(OBJDIR) $(BINDIR)
+
+debug: CFLAGS = -Wall -Wextra -g -O0 -DDEBUG
+debug: all
+
+release: CFLAGS = -Wall -Wextra -O3 -DNDEBUG
+release: all
+
+# Uso:
+# make          → build padrao
+# make debug    → build com debug
+# make release  → build otimizada
+# make clean    → limpa tudo
+</code></pre>
+</div>
+
+<div class="section">
+<h3>9.3 gdb — GNU Debugger</h3>
+<p>O <code>gdb</code> é o depurador para C/C++. Permite inspecionar variaveis, breakpoints, stack trace, e muito mais.</p>
+
+<h4>9.3.1 Iniciar o gdb</h4>
+<pre><code># Compilar com debug info
+$ gcc -g programa.c -o programa
+
+# Iniciar gdb
+$ gdb ./programa
+
+# Iniciar e passar argumentos
+$ gdb --args ./programa arg1 arg2
+
+# Analisar core dump
+$ gdb ./programa core
+
+# Anexar a processo em execucao
+$ gdb -p 1234
+</code></pre>
+
+<h4>9.3.2 Comandos do gdb</h4>
+<table>
+<tr><th>Comando</th><th>Abrev</th><th>Descricao</th></tr>
+<tr><td><code>run</code></td><td><code>r</code></td><td>Executar programa</td></tr>
+<tr><td><code>break</code></td><td><code>b</code></td><td>Definir breakpoint</td></tr>
+<tr><td><code>continue</code></td><td><code>c</code></td><td>Continuar execucao</td></tr>
+<tr><td><code>next</code></td><td><code>n</code></td><td>Proxima linha (nao entra em funcoes)</td></tr>
+<tr><td><code>step</code></td><td><code>s</code></td><td>Proxima linha (entra em funcoes)</td></tr>
+<tr><td><code>finish</code></td><td></td><td>Executa ate sair da funcao atual</td></tr>
+<tr><td><code>print</code></td><td><code>p</code></td><td>Imprimir valor de expressao</td></tr>
+<tr><td><code>display</code></td><td></td><td>Mostrar valor a cada parada</td></tr>
+<tr><td><code>backtrace</code></td><td><code>bt</code></td><td>Stack trace</td></tr>
+<tr><td><code>info locals</code></td><td></td><td>Variaveis locais</td></tr>
+<tr><td><code>info args</code></td><td></td><td>Argumentos da funcao</td></tr>
+<tr><td><code>list</code></td><td><code>l</code></td><td>Mostrar codigo fonte</td></tr>
+<tr><td><code>set var</code></td><td></td><td>Alterar valor de variavel</td></tr>
+<tr><td><code>watch</code></td><td></td><td>Breakpoint em mudanca de valor</td></tr>
+<tr><td><code>delete</code></td><td><code>d</code></td><td>Remover breakpoints</td></tr>
+<tr><td><code>quit</code></td><td><code>q</code></td><td>Sair</td></tr>
+</table>
+
+<h4>9.3.3 Exemplo de Sessao gdb</h4>
+<pre><code>$ gdb ./programa
+(gdb) break main
+(gdb) run
+(gdb) next
+(gdb) print variavel
+(gdb) continue
+(gdb) backtrace
+(gdb) info locals
+(gdb) quit
+</code></pre>
+
+<h4>9.3.4 gdb Avancado</h4>
+<pre><code># Breakpoint condicional
+(gdb) break main.c:25 if x &gt; 10
+
+# Breakpoint em funcao
+(gdb) break minha_funcao
+
+# Breakpoint com comando automatico
+(gdb) break main.c:30
+(gdb) commands
+&gt; silent
+&gt; print variavel
+&gt; continue
+&gt; end
+
+# Watchpoint (parar quando valor muda)
+(gdb) watch variavel
+(gdb) watch *(int*)0x12345678
+
+# Reverse debugging
+(gdb) record
+(gdb) reverse-next
+(gdb) reverse-step
+(gdb) reverse-continue
+
+# Core dump analysis
+$ ulimit -c unlimited
+$ ./programa  # gera core dump em crash
+$ gdb ./programa core
+(gdb) bt full
+(gdb) info registers
+(gdb) x/10i $pc
+
+# TUI mode (interface grafica no terminal)
+(gdb) layout src
+(gdb) layout asm
+(gdb) layout regs
+(gdb) focus cmd
+
+# Pretty printing
+(gdb) set print pretty on
+(gdb) p array
+
+# Scripts gdb
+$ gdb -x script.gdb ./programa
+</code></pre>
+</div>
+
+<div class="section">
+<h3>9.4 git — Version Control</h3>
+<p>O <code>git</code> é o sistema de controle de versao mais usado no mundo. Essencial para qualquer desenvolvedor.</p>
+
+<h4>9.4.1 Comandos Essenciais</h4>
+<pre><code># Inicializar repositorio
+$ git init
+
+# Clonar repositorio
+$ git clone https://github.com/usuario/repo.git
+$ git clone https://github.com/usuario/repo.git meu_repo
+
+# Ver status
+$ git status
+
+# Adicionar arquivo ao stage
+$ git add arquivo.txt
+$ git add .                    # todos
+$ git add -p                   # interativo (patch)
+
+# Commit
+$ git commit -m "Mensagem do commit"
+$ git commit -am "Mensagem"    # add + commit (arquivos rastreados)
+
+# Ver log
+$ git log
+$ git log --oneline
+$ git log --graph --oneline --all
+$ git log -p                   # com diff
+$ git log --stat               # com estatisticas
+
+# Ver diff
+$ git diff                     # working vs staged
+$ git diff --staged            # staged vs last commit
+$ git diff HEAD~1              # diff com commit anterior
+</code></pre>
+
+<h4>9.4.2 Branches</h4>
+<pre><code># Listar branches
+$ git branch
+$ git branch -a                # todas (incluindo remotas)
+$ git branch -v                # com ultimo commit
+
+# Criar branch
+$ git branch nova-feature
+
+# Mudar de branch
+$ git checkout nova-feature
+$ git switch nova-feature      # novo comando (git 2.23+)
+
+# Criar e mudar
+$ git checkout -b nova-feature
+$ git switch -c nova-feature   # novo comando
+
+# Merge
+$ git checkout main
+$ git merge nova-feature
+
+# Rebase
+$ git checkout nova-feature
+$ git rebase main
+
+# Deletar branch
+$ git branch -d nova-feature   # merged
+$ git branch -D nova-feature   # force delete
+
+# Renomear branch
+$ git branch -m novo-nome
+</code></pre>
+
+<h4>9.4.3 Remoto</h4>
+<pre><code># Ver remotos
+$ git remote -v
+
+# Adicionar remoto
+$ git remote add origin https://github.com/usuario/repo.git
+
+# Fetch (baixa sem merge)
+$ git fetch origin
+
+# Pull (fetch + merge)
+$ git pull origin main
+
+# Push
+$ git push origin main
+$ git push -u origin main    # upstream
+
+# Push de nova branch
+$ git push -u origin nova-feature
+
+# Deletar branch remota
+$ git push origin --delete nova-feature
+
+# Tags
+$ git tag v1.0.0
+$ git push origin v1.0.0
+$ git push origin --tags
+</code></pre>
+
+<h4>9.4.4 Desfazer e Corrigir</h4>
+<pre><code># Desfazer alteracoes nao staged
+$ git checkout -- arquivo.txt
+$ git restore arquivo.txt      # novo comando
+
+# Unstage
+$ git reset HEAD arquivo.txt
+$ git restore --staged arquivo.txt  # novo comando
+
+# Amend (alterar ultimo commit)
+$ git commit --amend -m "Nova mensagem"
+$ git commit --amend --no-edit   # sem alterar mensagem
+
+# Reset
+$ git reset --soft HEAD~1        # desfaz commit, mantem staged
+$ git reset --mixed HEAD~1       # desfaz commit, mantem working
+$ git reset --hard HEAD~1        # desfaz TUDO (CUIDADO!)
+
+# Stash
+$ git stash
+$ git stash push -m "mensagem"
+$ git stash list
+$ git stash pop                  # aplica e remove
+$ git stash apply                # aplica sem remover
+$ git stash drop                 # remove
+$ git stash clear                # remove todos
+
+# Cherry-pick
+$ git cherry-pick abc1234
+
+# Revert (cria commit que desfaz)
+$ git revert abc1234
+</code></pre>
+
+<h4>9.4.5 git Avancado</h4>
+<pre><code># Bisect (encontrar commit que introduziu bug)
+$ git bisect start
+$ git bisect bad                 # commit atual tem bug
+$ git bisect good v1.0           # versao boa
+# git testa commits intermediarios
+$ git bisect good                # ou bad
+$ git bisect reset               # termina
+
+# Reflog (historico de todas as operacoes)
+$ git reflog
+
+# Blame (quem escreveu cada linha)
+$ git blame arquivo.c
+
+# Log com filtro
+$ git log --author="Joao"
+$ git log --since="2 weeks ago"
+$ git log --grep="bugfix"
+
+# Diff entre branches
+$ git diff main..feature
+
+# Submodules
+$ git submodule add https://github.com/usuario/lib.git
+$ git submodule update --init --recursive
+
+# Worktree (multiplos working directories)
+$ git worktree add ../repo-fix fix-branch
+
+# Hooks
+$ ls .git/hooks/
+# pre-commit, post-commit, pre-push, etc.
+</code></pre>
+</div>
+
+<div class="section">
+<h3>9.5 ssh — Secure Shell</h3>
+<p>O <code>ssh</code> permite acesso remoto seguro a servidores Linux.</p>
+
+<h4>9.5.1 Conexao Basica</h4>
+<pre><code># Conectar a servidor remoto
+$ ssh usuario@servidor.com
+
+# Conectar com porta especifica
+$ ssh -p 2222 usuario@servidor.com
+
+# Conectar com chave privada
+$ ssh -i ~/.ssh/minha_chave usuario@servidor.com
+
+# Executar comando remoto
+$ ssh usuario@servidor.com "ls -la"
+
+# Executar comando remoto com stdin local
+$ cat arquivo.txt | ssh usuario@servidor.com "cat &gt; /remoto/arquivo.txt"
+</code></pre>
+
+<h4>9.5.2 Gerenciamento de Chaves</h4>
+<pre><code># Gerar par de chaves
+$ ssh-keygen -t ed25519 -C "email@example.com"
+$ ssh-keygen -t rsa -b 4096 -C "email@example.com"
+
+# Copiar chave publica para servidor
+$ ssh-copy-id usuario@servidor.com
+
+# Ou manualmente:
+$ cat ~/.ssh/id_ed25519.pub | ssh usuario@servidor.com "mkdir -p ~/.ssh &amp;&amp; cat &gt;&gt; ~/.ssh/authorized_keys"
+
+# Iniciar agente SSH
+$ eval "$(ssh-agent -s)"
+$ ssh-add ~/.ssh/id_ed25519
+
+# Listar chaves no agente
+$ ssh-add -l
+
+# Remover chave do agente
+$ ssh-add -d ~/.ssh/id_ed25519
+
+# Remover todas as chaves
+$ ssh-add -D
+</code></pre>
+
+<h4>9.5.3 Configuracao SSH</h4>
+<pre><code># ~/.ssh/config
+
+Host meu-servidor
+    HostName servidor.com
+    User usuario
+    Port 2222
+    IdentityFile ~/.ssh/minha_chave
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+
+Host github
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/github_key
+
+# Uso:
+$ ssh meu-servidor
+$ git clone github:usuario/repo.git
+</code></pre>
+
+<h4>9.5.4 Tunelamento (Port Forwarding)</h4>
+<pre><code># Local forward: porta local -> porta remota
+$ ssh -L 8080:localhost:80 usuario@servidor.com
+# Acesse localhost:8080 para chegar ao servidor:80
+
+# Remote forward: porta remota -> porta local
+$ ssh -R 9090:localhost:3000 usuario@servidor.com
+# No servidor, acesse localhost:9090 para chegar ao seu :3000
+
+# Dynamic forward (SOCKS proxy)
+$ ssh -D 1080 usuario@servidor.com
+# Configure navegador para usar SOCKS5 localhost:1080
+
+# Background (nao trava terminal)
+$ ssh -f -N -L 8080:localhost:80 usuario@servidor.com
+
+# Gateway ports (permitir acesso externo ao tunnel)
+$ ssh -L 0.0.0.0:8080:localhost:80 usuario@servidor.com
+</code></pre>
+</div>
+
+<div class="section">
+<h3>9.6 scp — Secure Copy</h3>
+<p>O <code>scp</code> copia arquivos entre hosts via SSH.</p>
+
+<pre><code># Copiar local para remoto
+$ scp arquivo.txt usuario@servidor:/home/usuario/
+
+# Copiar remoto para local
+$ scp usuario@servidor:/home/usuario/arquivo.txt ./
+
+# Copiar diretorio recursivamente
+$ scp -r diretorio/ usuario@servidor:/home/usuario/
+
+# Copiar com porta especifica
+$ scp -P 2222 arquivo.txt usuario@servidor:/home/usuario/
+
+# Copiar com chave especifica
+$ scp -i ~/.ssh/minha_chave arquivo.txt usuario@servidor:/home/usuario/
+
+# Copiar preservando atributos
+$ scp -p arquivo.txt usuario@servidor:/home/usuario/
+
+# Copiar com compressao
+$ scp -C arquivo.txt usuario@servidor:/home/usuario/
+
+# Copiar com limite de banda (KB/s)
+$ scp -l 1000 arquivo.txt usuario@servidor:/home/usuario/
+
+# Copiar multiplos arquivos
+$ scp arquivo1.txt arquivo2.txt usuario@servidor:/home/usuario/
+
+# Copiar com verbose
+$ scp -v arquivo.txt usuario@servidor:/home/usuario/
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 Preferencia moderna: rsync</div>
+  <p>Para transferencias frequentes ou grandes, <code>rsync</code> eh geralmente preferido ao <code>scp</code> porque resume transferencias interrompidas, sincroniza apenas diferencas, e eh mais eficiente:</p>
+  <pre><code>$ rsync -avz --progress arquivo.txt usuario@servidor:/home/usuario/
+$ rsync -avz --delete diretorio/ usuario@servidor:/home/usuario/diretorio/</code></pre>
+</div>
+</div>
+
+<!-- EXERCICIOS VOLUME 9 -->
+<div class="exercise">
+<h4>🏋️ Exercicios — Volume 9</h4>
+<ol>
+  <li>Escreva um programa C simples, compile com <code>gcc -Wall -Wextra -g</code>, e execute. Depois compile com <code>-O3</code> e compare o tamanho do executavel.</li>
+  <li>Crie um Makefile para um projeto com <code>main.c</code> e <code>utils.c</code>. Teste <code>make</code>, <code>make clean</code>, e <code>make debug</code>.</li>
+  <li>Escreva um programa C com um bug (ex: acesso a array fora dos limites). Compile com <code>-g</code> e depure com <code>gdb</code>. Encontre o bug usando <code>break</code>, <code>run</code>, e <code>backtrace</code>.</li>
+  <li>Inicialize um repositorio git, faca 3 commits com mensagens descritivas, e use <code>git log --oneline --graph</code> para visualizar.</li>
+  <li>Crie uma branch, faca alteracoes, faca merge de volta para main, e depois delete a branch.</li>
+  <li>Use <code>git diff</code> para ver as diferencas entre working directory e staged. Use <code>git diff --staged</code> para ver staged vs last commit.</li>
+  <li>Gere um par de chaves SSH com <code>ssh-keygen</code> e configure o <code>~/.ssh/config</code> para um servidor ficticio.</li>
+  <li>Use <code>scp</code> para transferir um arquivo para um servidor remoto (ou simule com localhost).</li>
+  <li>Crie um tunel SSH local (<code>ssh -L</code>) e acesse um servico remoto atraves de uma porta local.</li>
+  <li>Use <code>git stash</code> para guardar alteracoes nao commitadas, faca outra tarefa, e depois recupere com <code>git stash pop</code>.</li>
+</ol>
+</div>
+

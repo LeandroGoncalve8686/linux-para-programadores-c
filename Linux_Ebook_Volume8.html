@@ -1,0 +1,605 @@
+
+<!-- ============================================================ -->
+<!-- VOLUME 8 — BASH SCRIPTING -->
+<!-- ============================================================ -->
+ <link rel="stylesheet" href="/style.css">
+<div class="page-break"></div>
+<div class="volume-header" id="vol8">
+  <h2>📚 Volume 8 — Bash Scripting</h2>
+  <div class="vol-desc">Automatize tarefas, crie ferramentas e domine a programacao no shell.</div>
+</div>
+
+<div class="section">
+<h3>8.1 Shebang e Estrutura de um Script</h3>
+
+<pre><code>#!/bin/bash
+#===============================================================================
+# Nome: backup.sh
+# Descricao: Faz backup de diretorios importantes
+# Autor: Seu Nome
+# Data: 2024-06-14
+# Uso: ./backup.sh [diretorio]
+#===============================================================================
+
+set -euo pipefail
+# -e: sai se algum comando falhar
+# -u: erro ao usar variavel nao definida
+# -o pipefail: pipeline falha se qualquer comando falhar
+
+# Variaveis
+BACKUP_DIR="/backup"
+DATA=$(date +%Y-%m-%d)
+LOG="$BACKUP_DIR/backup_$DATA.log"
+
+# Funcoes
+log() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG"
+}
+
+# Codigo principal
+log "Iniciando backup..."
+# ...
+log "Backup concluido!"
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 Shebangs Comuns</div>
+  <table>
+  <tr><th>Shebang</th><th>Significado</th></tr>
+  <tr><td><code>#!/bin/bash</code></td><td>Bash (caminho absoluto)</td></tr>
+  <tr><td><code>#!/usr/bin/env bash</code></td><td>Bash (mais portavel)</td></tr>
+  <tr><td><code>#!/bin/sh</code></td><td>Shell POSIX (mais portavel ainda)</td></tr>
+  <tr><td><code>#!/bin/bash -x</code></td><td>Modo debug (mostra cada comando)</td></tr>
+  <tr><td><code>#!/bin/bash -e</code></td><td>Exit on error</td></tr>
+  </table>
+</div>
+</div>
+
+<div class="section">
+<h3>8.2 Variaveis</h3>
+
+<h4>8.2.1 Declaracao e Uso</h4>
+<pre><code>#!/bin/bash
+
+# Declaracao (SEM espacos ao redor de =)
+NOME="Joao"
+IDADE=25
+PI=3.14159
+
+# Uso (com $)
+echo "Ola, $NOME!"
+echo "Voce tem ${IDADE} anos"
+
+# Variavel nao definida (com -u, gera erro)
+# echo "$NAO_EXISTE"  # ERRO!
+
+# Valor padrao
+echo "${NAO_EXISTE:-padrao}"    # imprime "padrao"
+echo "${NAO_EXISTE:=padrao}"    # define e imprime "padrao"
+echo "${EXISTE:?"nao definida"}" # erro se nao definida
+
+# Remover prefixo/sufixo
+ARQUIVO="documento.txt"
+echo "${ARQUIVO%.txt}"     # documento
+
+echo "${ARQUIVO#doc}"      # umento.txt
+
+# Substituicao
+TEXTO="hello world hello"
+echo "${TEXTO/hello/HI}"   # HI world hello (primeira)
+echo "${TEXTO//hello/HI}"  # HI world HI (todas)
+
+# Maiusculas/minusculas
+echo "${TEXTO^^}"          # HELLO WORLD HELLO
+echo "${TEXTO,,}"          # hello world hello
+
+# Comprimento
+echo "${#TEXTO}"           # 17
+
+# Substring
+TEXTO="abcdef"
+echo "${TEXTO:2}"          # cdef (a partir do indice 2)
+echo "${TEXTO:2:3}"        # cde (3 caracteres a partir do 2)
+</code></pre>
+
+<h4>8.2.2 Variaveis de Ambiente</h4>
+<pre><code># Ver todas
+$ env
+$ printenv
+
+# Ver uma especifica
+$ echo $HOME
+$ echo $PATH
+$ echo $USER
+$ echo $SHELL
+
+# Definir temporariamente
+$ VAR=valor comando
+
+# Exportar para subprocessos
+$ export MINHA_VAR="valor"
+
+# Remover
+$ unset MINHA_VAR
+
+# Variaveis importantes do bash
+$ echo $0        # nome do script
+$ echo $1 $2 $3  # argumentos posicionais
+$ echo $@        # todos os argumentos (lista)
+$ echo $*        # todos os argumentos (string)
+$ echo $#        # numero de argumentos
+$ echo $?        # codigo de saida do ultimo comando
+$ echo $$        # PID do shell atual
+$ echo $!        # PID do ultimo job em background
+$ echo $_        # ultimo argumento do ultimo comando
+</code></pre>
+
+<h4>8.2.3 Arrays</h4>
+<pre><code>#!/bin/bash
+
+# Declarar array
+FRUTAS=("maca" "banana" "laranja")
+
+# Acessar elementos
+echo "${FRUTAS[0]}"     # maca
+echo "${FRUTAS[1]}"     # banana
+
+# Todos os elementos
+echo "${FRUTAS[@]}"     # maca banana laranja
+echo "${FRUTAS[*]}"     # maca banana laranja
+
+# Numero de elementos
+echo "${#FRUTAS[@]}"    # 3
+
+# Adicionar elemento
+FRUTAS+=("uva")
+
+# Iterar
+for fruta in "${FRUTAS[@]}"; do
+    echo "Fruta: $fruta"
+done
+
+# Iterar com indice
+for i in "${!FRUTAS[@]}"; do
+    echo "$i: ${FRUTAS[$i]}"
+done
+
+# Remover elemento
+unset FRUTAS[1]
+
+# Array associativo (bash 4+)
+declare -A USUARIOS
+USUARIOS[joao]=25
+USUARIOS[maria]=30
+echo "${USUARIOS[joao]}"  # 25
+
+# Todas as chaves
+echo "${!USUARIOS[@]}"    # joao maria
+</code></pre>
+</div>
+
+<div class="section">
+<h3>8.3 Condicionais — if, case</h3>
+
+<h4>8.3.1 if</h4>
+<pre><code>#!/bin/bash
+
+# Basico
+if [ "$IDADE" -ge 18 ]; then
+    echo "Maior de idade"
+fi
+
+# if-else
+if [ "$IDADE" -ge 18 ]; then
+    echo "Maior de idade"
+else
+    echo "Menor de idade"
+fi
+
+# if-elif-else
+if [ "$NOTA" -ge 90 ]; then
+    echo "A"
+elif [ "$NOTA" -ge 80 ]; then
+    echo "B"
+elif [ "$NOTA" -ge 70 ]; then
+    echo "C"
+else
+    echo "D"
+fi
+
+# Testes com && e ||
+[ -f "$ARQUIVO" ] &amp;&amp; echo "Existe" || echo "Nao existe"
+
+# Teste inverso
+if ! [ -f "$ARQUIVO" ]; then
+    echo "Arquivo nao existe"
+fi
+</code></pre>
+
+<h4>8.3.2 Operadores de Teste</h4>
+<table>
+<tr><th>Operador</th><th>Significado</th></tr>
+<tr><td colspan="2"><strong>Strings</strong></td></tr>
+<tr><td><code>-z "$VAR"</code></td><td>String vazia</td></tr>
+<tr><td><code>-n "$VAR"</code></td><td>String nao vazia</td></tr>
+<tr><td><code>"$A" = "$B"</code></td><td>Iguais</td></tr>
+<tr><td><code>"$A" != "$B"</code></td><td>Diferentes</td></tr>
+<tr><td colspan="2"><strong>Numeros</strong></td></tr>
+<tr><td><code>-eq</code></td><td>Igual (equal)</td></tr>
+<tr><td><code>-ne</code></td><td>Diferente (not equal)</td></tr>
+<tr><td><code>-lt</code></td><td>Menor que (less than)</td></tr>
+<tr><td><code>-le</code></td><td>Menor ou igual</td></tr>
+<tr><td><code>-gt</code></td><td>Maior que (greater than)</td></tr>
+<tr><td><code>-ge</code></td><td>Maior ou igual</td></tr>
+<tr><td colspan="2"><strong>Arquivos</strong></td></tr>
+<tr><td><code>-e</code></td><td>Existe</td></tr>
+<tr><td><code>-f</code></td><td>Arquivo regular</td></tr>
+<tr><td><code>-d</code></td><td>Diretorio</td></tr>
+<tr><td><code>-L</code></td><td>Link simbolico</td></tr>
+<tr><td><code>-r</code></td><td>Legivel</td></tr>
+<tr><td><code>-w</code></td><td>Gravavel</td></tr>
+<tr><td><code>-x</code></td><td>Executavel</td></tr>
+<tr><td><code>-s</code></td><td>Nao vazio (tem conteudo)</td></tr>
+<tr><td><code>-N</code></td><td>Mais novo que</td></tr>
+<tr><td><code>-O</code></td><td>Dono eh o usuario atual</td></tr>
+<tr><td><code>-G</code></td><td>Grupo eh o grupo atual</td></tr>
+</table>
+
+<h4>8.3.3 case</h4>
+<pre><code>#!/bin/bash
+
+case "$1" in
+    start)
+        echo "Iniciando servico..."
+        ;;
+    stop)
+        echo "Parando servico..."
+        ;;
+    restart)
+        echo "Reiniciando servico..."
+        ;;
+    status)
+        echo "Status do servico..."
+        ;;
+    *)
+        echo "Uso: $0 {start|stop|restart|status}"
+        exit 1
+        ;;
+esac
+
+# case com padroes
+ case "$EXT" in
+     *.txt|*.md)
+         echo "Texto"
+         ;;
+     *.jpg|*.png|*.gif)
+         echo "Imagem"
+         ;;
+     *.mp3|*.wav)
+         echo "Audio"
+         ;;
+     *)
+         echo "Desconhecido"
+         ;;
+ esac
+</code></pre>
+</div>
+
+<div class="section">
+<h3>8.4 Loops — for, while, until</h3>
+
+<h4>8.4.1 for</h4>
+<pre><code>#!/bin/bash
+
+# Iterar sobre lista
+for i in 1 2 3 4 5; do
+    echo "Numero: $i"
+done
+
+# Range (bash 4+)
+for i in {1..10}; do
+    echo "$i"
+done
+
+# Range com passo
+for i in {1..10..2}; do
+    echo "$i"  # 1, 3, 5, 7, 9
+ done
+
+# Iterar sobre array
+for fruta in "${FRUTAS[@]}"; do
+    echo "$fruta"
+done
+
+# Iterar sobre arquivos
+for arquivo in *.txt; do
+    echo "Processando: $arquivo"
+done
+
+# C-style for
+for ((i=0; i&lt;10; i++)); do
+    echo "$i"
+done
+
+# Ler linhas de arquivo
+while IFS= read -r linha; do
+    echo "$linha"
+done &lt; arquivo.txt
+
+# Iterar sobre saida de comando
+for usuario in $(cut -d: -f1 /etc/passwd); do
+    echo "Usuario: $usuario"
+done
+
+# Iterar com find (seguro para nomes com espacos)
+while IFS= read -r -d '' arquivo; do
+    echo "Arquivo: $arquivo"
+done &lt; &lt;(find . -name "*.txt" -print0)
+</code></pre>
+
+<h4>8.4.2 while</h4>
+<pre><code>#!/bin/bash
+
+# Loop basico
+CONTADOR=0
+while [ "$CONTADOR" -lt 10 ]; do
+    echo "$CONTADOR"
+    ((CONTADOR++))
+done
+
+# Ler arquivo linha por linha
+while IFS= read -r linha; do
+    echo "Linha: $linha"
+done &lt; arquivo.txt
+
+# Loop infinito
+while true; do
+    echo "Executando..."
+    sleep 5
+done
+
+# Loop com condicao de arquivo
+while [ -f "/tmp/lock" ]; do
+    echo "Aguardando..."
+    sleep 1
+done
+
+# Loop com read (input do usuario)
+while true; do
+    read -p "Digite 'sair' para encerrar: " resposta
+    [ "$resposta" = "sair" ] &amp;&amp; break
+done
+</code></pre>
+
+<h4>8.4.3 until</h4>
+<pre><code>#!/bin/bash
+
+# Executa ATE a condicao ser verdadeira
+CONTADOR=0
+until [ "$CONTADOR" -ge 10 ]; do
+    echo "$CONTADOR"
+    ((CONTADOR++))
+done
+
+# Esperar arquivo aparecer
+until [ -f "/tmp/pronto" ]; do
+    echo "Aguardando arquivo..."
+    sleep 1
+done
+</code></pre>
+
+<h4>8.4.4 Controle de Loop</h4>
+<pre><code>#!/bin/bash
+
+# break: sai do loop
+for i in {1..10}; do
+    [ "$i" -eq 5 ] &amp;&amp; break
+    echo "$i"
+done
+# Sai no 5, imprime 1-4
+
+# continue: pula para proxima iteracao
+for i in {1..10}; do
+    [ "$i" -eq 5 ] &amp;&amp; continue
+    echo "$i"
+done
+# Pula o 5, imprime 1-4, 6-10
+
+# break N: sai de N niveis de loop
+for i in {1..3}; do
+    for j in {1..3}; do
+        [ "$j" -eq 2 ] &amp;&amp; break 2
+        echo "$i-$j"
+    done
+done
+# Sai dos dois loops
+</code></pre>
+</div>
+
+<div class="section">
+<h3>8.5 Funcoes</h3>
+
+<pre><code>#!/bin/bash
+
+# Declaracao basica
+minha_funcao() {
+    echo "Ola da funcao!"
+}
+
+# Ou
+function minha_funcao {
+    echo "Ola da funcao!"
+}
+
+# Chamada
+minha_funcao
+
+# Com parametros
+soma() {
+    local a=$1
+    local b=$2
+    echo $((a + b))
+}
+
+RESULTADO=$(soma 5 3)
+echo "Resultado: $RESULTADO"
+
+# Retorno (codigo de saida)
+verificar_arquivo() {
+    if [ -f "$1" ]; then
+        return 0  # sucesso
+    else
+        return 1  # falha
+    fi
+}
+
+if verificar_arquivo "/etc/passwd"; then
+    echo "Arquivo existe"
+else
+    echo "Arquivo nao existe"
+fi
+
+# Variaveis locais
+funcao() {
+    local VAR="local"
+    echo "$VAR"
+}
+funcao
+echo "$VAR"  # vazio (nao definido no escopo global)
+
+# Funcao recursiva
+fatorial() {
+    local n=$1
+    if [ "$n" -le 1 ]; then
+        echo 1
+    else
+        local prev=$(fatorial $((n - 1)))
+        echo $((n * prev))
+    fi
+}
+
+echo "5! = $(fatorial 5)"
+
+# Passar array para funcao
+processar_array() {
+    local arr=("$@")
+    for item in "${arr[@]}"; do
+        echo "Item: $item"
+    done
+}
+
+processar_array "${FRUTAS[@]}"
+</code></pre>
+</div>
+
+<div class="section">
+<h3>8.6 Parametros e Argumentos</h3>
+
+<pre><code>#!/bin/bash
+
+# Nome do script
+SCRIPT="$0"
+
+# Argumentos posicionais
+PRIMEIRO="$1"
+SEGUNDO="$2"
+TERCEIRO="$3"
+
+# Todos os argumentos
+TODOS="$@"
+TODOS_STRING="$*"
+
+# Numero de argumentos
+NUMERO="$#"
+
+# Ultimo argumento
+ULTIMO="${!#}"
+
+# Shift (remove primeiro argumento)
+shift
+echo "Agora \$1 eh: $1"
+
+# Shift N
+shift 2
+
+# getopts (parse de opcoes)
+while getopts "a:b:vh" opt; do
+    case $opt in
+        a)
+            ARG_A="$OPTARG"
+            ;;
+        b)
+            ARG_B="$OPTARG"
+            ;;
+        v)
+            VERBOSE=1
+            ;;
+        h)
+            echo "Uso: $0 -a valor -b valor [-v] [-h]"
+            exit 0
+            ;;
+        \?)
+            echo "Opcao invalida: -$OPTARG" &gt;&amp;2
+            exit 1
+            ;;
+    esac
+done
+shift $((OPTIND - 1))
+
+# Uso: ./script.sh -a valor1 -b valor2 -v arquivo.txt
+
+# Argumentos restantes apos getopts
+echo "Arquivos: $@"
+</code></pre>
+</div>
+
+<div class="section">
+<h3>8.7 Variaveis Especiais</h3>
+
+<table>
+<tr><th>Variavel</th><th>Significado</th></tr>
+<tr><td><code>$0</code></td><td>Nome do script/comando</td></tr>
+<tr><td><code>$1, $2, ... $9</code></td><td>Argumentos posicionais</td></tr>
+<tr><td><code>${10}, ${11}, ...</code></td><td>Argumentos apos o 9o</td></tr>
+<tr><td><code>$@</code></td><td>Todos os argumentos (lista)</td></tr>
+<tr><td><code>$*</code></td><td>Todos os argumentos (string)</td></tr>
+<tr><td><code>$#</code></td><td>Numero de argumentos</td></tr>
+<tr><td><code>$?</code></td><td>Codigo de saida do ultimo comando</td></tr>
+<tr><td><code>$$</code></td><td>PID do shell atual</td></tr>
+<tr><td><code>$!</code></td><td>PID do ultimo job em background</td></tr>
+<tr><td><code>$_</code></td><td>Ultimo argumento do ultimo comando</td></tr>
+<tr><td><code>$-</code></td><td>Flags do shell atuais</td></tr>
+</table>
+
+<h4>8.7.1 Codigos de Saida</h4>
+<table>
+<tr><th>Codigo</th><th>Significado</th></tr>
+<tr><td><code>0</code></td><td>Sucesso</td></tr>
+<tr><td><code>1</code></td><td>Erro generico</td></tr>
+<tr><td><code>2</code></td><td>Uso incorreto do comando</td></tr>
+<tr><td><code>126</code></td><td>Comando nao executavel</td></tr>
+<tr><td><code>127</code></td><td>Comando nao encontrado</td></tr>
+<tr><td><code>128+N</code></td><td>Morto pelo sinal N</td></tr>
+<tr><td><code>130</code></td><td>Morto por Ctrl+C (SIGINT = 2, 128+2=130)</td></tr>
+<tr><td><code>137</code></td><td>Morto por SIGKILL (9, 128+9=137)</td></tr>
+<tr><td><code>255</code></td><td>Erro de saida</td></tr>
+</table>
+</div>
+
+<!-- EXERCICIOS VOLUME 8 -->
+<div class="exercise">
+<h4>🏋️ Exercicios — Volume 8</h4>
+<ol>
+  <li>Crie um script com shebang, comentarios de cabecalho, e <code>set -euo pipefail</code>.</li>
+  <li>Crie um script que receba um nome como argumento e diga "Ola, [nome]!". Use valor padrao se nenhum argumento for passado.</li>
+  <li>Crie um script que verifique se um arquivo existe, se eh legivel, e se tem conteudo. Use operadores de teste.</li>
+  <li>Crie um script com <code>case</code> que simule um menu: 1=backup, 2=restaurar, 3=status, 4=sair.</li>
+  <li>Crie um script com <code>for</code> que processe todos os arquivos <code>.txt</code> de um diretorio e conte as linhas de cada um.</li>
+  <li>Crie um script com <code>while</code> que leia <code>/etc/passwd</code> e imprima apenas usuarios com UID >= 1000.</li>
+  <li>Crie uma funcao que receba dois numeros e retorne a soma. Teste com diferentes valores.</li>
+  <li>Crie um script que use <code>getopts</code> para aceitar <code>-f arquivo</code>, <code>-v</code> (verbose), e <code>-h</code> (ajuda).</li>
+  <li>Crie um array com 5 linguagens de programacao e itere sobre ele, imprimindo cada uma em maiusculas.</li>
+  <li>Crie um script que monitore um diretorio: se um arquivo novo aparecer, imprima uma mensagem (use loop infinito).</li>
+</ol>
+</div>
+

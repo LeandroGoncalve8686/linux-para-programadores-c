@@ -1,0 +1,1001 @@
+
+<!-- ============================================================ -->
+<!-- VOLUME 2 — TERMINAL: COMANDOS ESSENCIAIS -->
+<!-- ============================================================ -->
+ <link rel="stylesheet" href="/style.css">
+<div class="page-break"></div>
+<div class="volume-header" id="vol2">
+  <h2>📚 Volume 2 — Terminal: Comandos Essenciais</h2>
+  <div class="vol-desc">Os comandos que você usará todos os dias. Cada comando com dezenas de exemplos, flags e casos de uso reais.</div>
+</div>
+
+<div class="section">
+<h3>2.1 pwd — Print Working Directory</h3>
+<p>O comando <code>pwd</code> exibe o caminho absoluto do diretório atual. Simples, mas fundamental para saber onde você está no sistema de arquivos.</p>
+
+<pre><code>$ pwd
+/home/usuario/projetos/linux
+
+# pwd lógico (respeita links simbólicos)
+$ pwd -L
+/home/usuario/link_para_projetos
+
+# pwd físico (resolve links simbólicos)
+$ pwd -P
+/home/usuario/projetos/linux
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 Dica</div>
+  <p>Seu prompt (PS1) geralmente já mostra o diretório atual, mas <code>pwd</code> é útil em scripts onde você precisa capturar o caminho em uma variável: <code>DIR_ATUAL=$(pwd)</code></p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.2 ls — List Directory Contents</h3>
+<p>O comando <code>ls</code> é um dos mais usados no terminal. Lista arquivos e diretórios com diversas opções de formatação.</p>
+
+<h4>2.2.1 Opções Essenciais</h4>
+<pre><code># Listagem básica
+$ ls
+arquivo1.txt  diretorio/  script.sh
+
+# Listagem detalhada (long format)
+$ ls -l
+drwxr-xr-x 2 usuario grupo 4096 Jun 14 10:00 diretorio
+-rw-r--r-- 1 usuario grupo 1234 Jun 14 09:30 arquivo.txt
+-rwxr-xr-x 1 usuario grupo  512 Jun 14 08:00 script.sh
+
+# Listagem com tamanhos human-readable
+$ ls -lh
+-rw-r--r-- 1 usuario grupo 1.2K Jun 14 09:30 arquivo.txt
+-rw-r--r-- 1 usuario grupo 2.4M Jun 14 09:45 video.mp4
+
+# Mostrar arquivos ocultos (começam com .)
+$ ls -la
+.  ..  .bashrc  .profile  arquivo.txt  diretorio/
+
+# Ordenar por data de modificação (mais recente primeiro)
+$ ls -lt
+
+# Ordenar por data de acesso
+$ ls -ltu
+
+# Ordenar por tamanho (maior primeiro)
+$ ls -lhS
+
+# Ordenar reverso
+$ ls -ltr   # mais antigo primeiro
+
+# Mostrar tipo de arquivo (indicador no final)
+$ ls -F
+arquivo.txt  diretorio/  link_simbolico@  executavel*
+
+# Listar recursivamente
+$ ls -R
+
+# Listar com inode number
+$ ls -i
+123456 arquivo.txt
+
+# Listar apenas diretórios
+$ ls -d */
+
+# Listar com cores (auto-detecta terminal)
+$ ls --color=auto
+
+# Mostrar UID/GID numéricos
+$ ls -ln
+
+# Mostrar tempo completo
+$ ls -l --time-style=full-iso
+</code></pre>
+
+<h4>2.2.2 Combinações Poderosas</h4>
+<pre><code># Listar todos os arquivos, ordenados por tamanho, com tamanhos legíveis
+$ ls -lahS
+
+# Listar arquivos modificados nas últimas 24 horas
+$ ls -lt --time-style=full-iso | head -10
+
+# Listar apenas arquivos executáveis
+$ ls -l | grep '^-..x'
+
+# Contar número de arquivos em um diretório
+$ ls -1 | wc -l
+
+# Listar arquivos com extensão .txt
+$ ls -l *.txt
+
+# Listar arquivos que NÃO são .txt
+$ ls -l | grep -v '\.txt$'
+</code></pre>
+
+<div class="box box-warning">
+  <div class="box-title">⚠️ Cuidado com ls em scripts</div>
+  <p>Nunca use <code>ls</code> para processar arquivos em scripts (especialmente nomes com espaços). Use <code>find</code> com <code>-print0</code> ou globbing seguro. <code>ls</code> é para visualização humana, não para processamento automatizado.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.3 cd — Change Directory</h3>
+<p>O comando <code>cd</code> muda o diretório atual. É um comando interno do shell (built-in), não um programa externo.</p>
+
+<pre><code># Ir para um diretório específico
+$ cd /home/usuario/projetos
+
+# Ir para o diretório home
+$ cd
+$ cd ~
+$ cd ~usuario
+
+# Ir para o diretório anterior
+$ cd -
+
+# Subir um nível
+$ cd ..
+
+# Subir dois níveis
+$ cd ../..
+
+# Ir para um diretório relativo
+$ cd projetos/linux
+
+# Ir para diretório absoluto
+$ cd /var/log
+
+# Usar tab completion
+$ cd /u/l/b&lt;TAB&gt;  →  /usr/local/bin
+
+# Usar variável de ambiente
+$ cd $HOME
+$ cd $PWD
+
+# CDPATH — caminhos de busca para cd
+$ export CDPATH=.:~/projetos:/var/www
+$ cd site   # procura em ., ~/projetos, /var/www
+</code></pre>
+
+<h4>2.3.1 Atalhos Úteis</h4>
+<table>
+<tr><th>Atalho</th><th>Significado</th></tr>
+<tr><td><code>cd</code> ou <code>cd ~</code></td><td>Diretório home do usuário atual</td></tr>
+<tr><td><code>cd -</code></td><td>Diretório anterior (último <code>cd</code>)</td></tr>
+<tr><td><code>cd ..</code></td><td>Diretório pai (um nível acima)</td></tr>
+<tr><td><code>cd ../..</code></td><td>Dois níveis acima</td></tr>
+<tr><td><code>cd /</code></td><td>Raiz do sistema</td></tr>
+<tr><td><code>cd ~usuario</code></td><td>Home de outro usuário</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>2.4 mkdir — Make Directory</h3>
+<p>Cria diretórios. Parece simples, mas tem opções poderosas.</p>
+
+<pre><code># Criar um diretório
+$ mkdir novo_diretorio
+
+# Criar múltiplos diretórios
+$ mkdir dir1 dir2 dir3
+
+# Criar diretórios aninhados (parents)
+$ mkdir -p projetos/2024/junho/relatorios
+# Cria toda a hierarquia se não existir
+
+# Criar com permissões específicas
+$ mkdir -m 755 diretorio_publico
+
+# Criar diretório e verificar
+$ mkdir -v novo_dir
+mkdir: created directory 'novo_dir'
+
+# Criar estrutura de projeto completa
+$ mkdir -p meu_projeto/{src,include,lib,tests,docs,bin}
+# Cria: meu_projeto/src, meu_projeto/include, etc.
+
+# Criar diretório com data atual no nome
+$ mkdir backup_$(date +%Y-%m-%d)
+# Resultado: backup_2024-06-14
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 Brace Expansion</div>
+  <p>O bash suporta <strong>brace expansion</strong> para criar múltiplos itens de forma concisa:</p>
+  <pre><code>$ mkdir -p projeto/{src,tests,docs}/{2023,2024}
+# Cria: projeto/src/2023, projeto/src/2024, projeto/tests/2023, ...</code></pre>
+</div>
+</div>
+
+<div class="section">
+<h3>2.5 rmdir — Remove Directory</h3>
+<p>Remove diretórios <strong>vazios</strong>. Para diretórios com conteúdo, use <code>rm -r</code> (com cuidado!).</p>
+
+<pre><code># Remover diretório vazio
+$ rmdir diretorio_vazio
+
+# Remover múltiplos diretórios vazios
+$ rmdir dir1 dir2 dir3
+
+# Remover diretório e seus pais se ficarem vazios
+$ rmdir -p projeto/2024/junho
+# Remove junho/, se 2024/ ficar vazio remove também, etc.
+
+# Remover diretórios vazios recursivamente
+$ find . -type d -empty -delete
+
+# Verificar antes de remover
+$ rmdir -v diretorio
+rmdir: removing directory, 'diretorio'
+</code></pre>
+
+<div class="box box-danger">
+  <div class="box-title">🚨 rmdir vs. rm -r</div>
+  <p><code>rmdir</code> só remove diretórios vazios — é seguro. <code>rm -r</code> remove diretórios e TODO o conteúdo. Use <code>rm -ri</code> (interativo) ou <code>rm -rI</code> (pergunta uma vez para muitos arquivos) para evitar acidentes.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.6 touch — Change File Timestamps</h3>
+<p>O <code>touch</code> é usado para criar arquivos vazios ou atualizar timestamps. É mais poderoso do que parece.</p>
+
+<pre><code># Criar arquivo vazio
+$ touch novo_arquivo.txt
+
+# Atualizar timestamp de acesso e modificação para agora
+$ touch arquivo_existente.txt
+
+# Atualizar apenas timestamp de acesso
+$ touch -a arquivo.txt
+
+# Atualizar apenas timestamp de modificação
+$ touch -m arquivo.txt
+
+# Não criar arquivo se não existir
+$ touch -c arquivo_inexistente.txt
+
+# Usar timestamp de outro arquivo como referência
+$ touch -r arquivo_referencia.txt arquivo_alvo.txt
+
+# Definir timestamp específico
+$ touch -t 202406141200.00 arquivo.txt
+# Formato: [[CC]YY]MMDDhhmm[.ss]
+# 2024-06-14 12:00:00
+
+# Definir data com string legível
+$ touch -d "2024-06-14 12:00:00" arquivo.txt
+$ touch -d "yesterday" arquivo.txt
+$ touch -d "2 days ago" arquivo.txt
+$ touch -d "next Monday" arquivo.txt
+
+# Criar múltiplos arquivos
+$ touch arquivo{1..10}.txt
+# Cria: arquivo1.txt, arquivo2.txt, ..., arquivo10.txt
+
+# Criar arquivo com espaço no nome (use aspas)
+$ touch "meu arquivo.txt"
+
+# Criar arquivo oculto
+$ touch .config
+</code></pre>
+
+<h4>2.6.1 Timestamps no Linux</h4>
+<table>
+<tr><th>Timestamp</th><th>Significado</th><th>Comando</th></tr>
+<tr><td><strong>atime</strong></td><td>Último acesso (leitura)</td><td><code>touch -a</code>, <code>ls -lu</code></td></tr>
+<tr><td><strong>mtime</strong></td><td>Última modificação do conteúdo</td><td><code>touch -m</code>, <code>ls -l</code></td></tr>
+<tr><td><strong>ctime</strong></td><td>Última mudança nos metadados (permissões, dono)</td><td><code>ls -lc</code></td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>2.7 cp — Copy Files and Directories</h3>
+<p>Copia arquivos e diretórios. Um dos comandos mais perigosos se usado sem atenção.</p>
+
+<pre><code># Copiar arquivo
+$ cp origem.txt destino.txt
+
+# Copiar para diretório
+$ cp arquivo.txt /backup/
+
+# Copiar múltiplos arquivos
+$ cp arquivo1.txt arquivo2.txt /destino/
+
+# Copiar com preservação de atributos
+$ cp -p arquivo.txt backup/
+# Preserva: modo, ownership, timestamps
+
+# Copiar recursivamente (diretórios)
+$ cp -r diretorio/ /backup/
+
+# Copiar recursivamente com preservação completa
+$ cp -a diretorio/ /backup/
+# Equivalente a -dR --preserve=all
+
+# Copiar com verificação de sobrescrita (interativo)
+$ cp -i arquivo.txt /destino/
+
+# Forçar sobrescrita sem perguntar
+$ cp -f arquivo.txt /destino/
+
+# Copiar apenas se o arquivo for mais novo
+$ cp -u arquivo.txt /destino/
+
+# Copiar com barra de progresso (pv)
+$ cp arquivo_grande.iso /destino/ & pv -pteba arquivo_grande.iso > /destino/arquivo_grande.iso
+
+# Copiar com backup automático
+$ cp --backup=numbered arquivo.txt /destino/
+# Cria: arquivo.txt.~1~, arquivo.txt.~2~, etc.
+
+# Copiar links simbólicos como links (não seguir)
+$ cp -d link_simbolico /destino/
+
+# Criar link hard em vez de copiar
+$ cp -l arquivo.txt /destino/
+
+# Copiar com sparse (arquivos esparsos)
+$ cp --sparse=always arquivo.img /destino/
+</code></pre>
+
+<div class="box box-danger">
+  <div class="box-title">🚨 Cuidado com cp e diretórios</div>
+  <p><code>cp -r</code> copia recursivamente. Se o destino já existe e é um diretório, o conteúdo é copiado <em>dentro</em> dele. Se não existe, cria o diretório. Verifique sempre com <code>ls</code> antes.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.8 mv — Move/Rename Files</h3>
+<p>Move ou renomeia arquivos e diretórios. No Linux, renomear e mover são a mesma operação (ambos alteram o path).</p>
+
+<pre><code># Renomear arquivo
+$ mv antigo.txt novo.txt
+
+# Mover arquivo para diretório
+$ mv arquivo.txt /destino/
+
+# Mover múltiplos arquivos
+$ mv *.txt /backup/
+
+# Mover e sobrescrever sem perguntar
+$ mv -f arquivo.txt /destino/
+
+# Mover com confirmação (interativo)
+$ mv -i arquivo.txt /destino/
+
+# Mover apenas se o destino for mais antigo
+$ mv -u arquivo.txt /destino/
+
+# Mover com backup
+$ mv --backup=numbered arquivo.txt /destino/
+
+# Mover diretório inteiro
+$ mv diretorio/ /novo/local/
+
+# Renomear com substituição de padrão (bash)
+$ for f in *.txt; do mv "$f" "${f%.txt}.bak"; done
+
+# Renomear múltiplos arquivos com rename (perl)
+$ rename 's/\.txt$/.bak/' *.txt
+
+# Mover arquivos modificados hoje
+$ find . -mtime -1 -type f -exec mv {} /backup/hoje/ \;
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 mv é atômico para arquivos no mesmo filesystem</div>
+  <p>Quando <code>mv</code> move um arquivo dentro do mesmo filesystem, ele apenas atualiza os metadados no inode — os dados do arquivo não são copiados. Isso é instantâneo e atômico, mesmo para arquivos gigantes.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.9 rm — Remove Files</h3>
+<p>Remove arquivos. <strong>PERMANENTEMENTE</strong>. Não há lixeira no terminal. Use com extrema cautela.</p>
+
+<pre><code># Remover arquivo
+$ rm arquivo.txt
+
+# Remover múltiplos arquivos
+$ rm arquivo1.txt arquivo2.txt
+
+# Remover com confirmação
+$ rm -i arquivo.txt
+
+# Remover sem confirmação (padrão para root!)
+$ rm -f arquivo.txt
+
+# Remover diretório e conteúdo recursivamente
+$ rm -r diretorio/
+
+# Remover diretório vazio
+$ rm -d diretorio_vazio/
+# Equivalente a rmdir
+
+# Remover recursivamente e forçado (MUITO CUIDADO!)
+$ rm -rf diretorio/
+
+# Remover arquivos com nomes estranhos
+$ rm -- -arquivo_com_hifen_no_inicio
+$ rm ./-arquivo_com_hifen
+
+# Remover exceto um arquivo
+$ rm !(arquivo_importante.txt)
+# Requer: shopt -s extglob
+
+# Remover arquivos antigos
+$ find /tmp -type f -mtime +7 -delete
+
+# Remover com log
+$ rm -v arquivo.txt
+removed 'arquivo.txt'
+
+# Simular remoção (não remove, apenas mostra o que faria)
+# Use echo ou rm -i combinado com find
+$ find . -name "*.tmp" -exec echo rm {} \;
+</code></pre>
+
+<div class="box box-danger">
+  <div class="box-title">🚨 O Comando Mais Perigoso do Linux</div>
+  <p><code>rm -rf /</code> apaga TODO o sistema. Algumas distribuições modernas têm proteção (<code>rm --preserve-root</code> é padrão), mas <code>rm -rf /*</code> ou <code>rm -rf / --no-preserve-root</code> ainda funcionam. Sempre verifique o caminho antes de executar <code>rm -rf</code>.</p>
+  <p><strong>Regra:</strong> Nunca use <code>rm -rf</code> com variáveis não verificadas ou com wildcards sem testar primeiro.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.10 cat — Concatenate and Print</h3>
+<p>O <code>cat</code> concatena e exibe arquivos. É frequentemente usado para visualizar arquivos pequenos, mas tem usos mais avançados.</p>
+
+<pre><code># Exibir conteúdo de arquivo
+$ cat arquivo.txt
+
+# Concatenar múltiplos arquivos
+$ cat arquivo1.txt arquivo2.txt > combinado.txt
+
+# Concatenar com numeração de linhas
+$ cat -n arquivo.txt
+
+# Numeração apenas para linhas não-vazias
+$ cat -b arquivo.txt
+
+# Mostrar caracteres especiais (tabs, fim de linha)
+$ cat -A arquivo.txt
+# ^I = tab, $ = fim de linha
+
+# Suprimir linhas repetidas em branco
+$ cat -s arquivo.txt
+
+# Criar arquivo com heredoc
+$ cat > arquivo.txt << 'EOF'
+Linha 1
+Linha 2
+Linha 3
+EOF
+
+# Criar arquivo com conteúdo inline
+$ cat > config.ini <<EOF
+[database]
+host=localhost
+port=3306
+EOF
+
+# Usar cat com pipe (anti-pattern, mas comum)
+$ cat arquivo.txt | grep "padrao"
+# Melhor: grep "padrao" arquivo.txt
+
+# Exibir múltiplos arquivos com separador
+$ cat arquivo1.txt - arquivo2.txt <<<'---SEPARADOR---'
+
+# Usar cat para limpar arquivo (truncar)
+$ cat /dev/null > arquivo.txt
+# Equivalente a: > arquivo.txt
+</code></pre>
+
+<div class="box box-warning">
+  <div class="box-title">⚠️ Useless Use of Cat (UUOC)</div>
+  <p>Usar <code>cat arquivo | comando</code> quando <code>comando arquivo</code> funciona é considerado um anti-pattern. O <code>cat</code> cria um processo desnecessário. Prefira <code>grep "padrao" arquivo.txt</code> em vez de <code>cat arquivo.txt | grep "padrao"</code>.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.11 tac — Concatenate and Print in Reverse</h3>
+<p>O <code>tac</code> é o inverso do <code>cat</code>: exibe o arquivo de trás para frente (por linhas).</p>
+
+<pre><code># Exibir arquivo invertido (linhas)
+$ tac arquivo.txt
+
+# Usar separador customizado
+$ tac -s "---" arquivo.txt
+
+# Processar logs em ordem inversa (mais recente primeiro)
+$ tac /var/log/syslog | head -20
+
+# Combinar com grep para buscar do final
+$ tac arquivo.log | grep "ERRO" | head -5
+</code></pre>
+</div>
+
+<div class="section">
+<h3>2.12 nl — Number Lines</h3>
+<p>O <code>nl</code> numera linhas de arquivo com mais controle que <code>cat -n</code>.</p>
+
+<pre><code># Numerar todas as linhas
+$ nl arquivo.txt
+
+# Numerar apenas linhas não-vazias (padrão)
+$ nl -b t arquivo.txt
+
+# Numerar todas as linhas
+$ nl -b a arquivo.txt
+
+# Numerar apenas linhas com texto
+$ nl -b n arquivo.txt
+
+# Definir formato de numeração
+$ nl -n rz arquivo.txt    # zeros à esquerda
+$ nl -n ln arquivo.txt    # alinhado à esquerda
+$ nl -n rn arquivo.txt    # alinhado à direita (padrão)
+
+# Definir largura do número
+$ nl -w 5 arquivo.txt
+
+# Definir string de separação
+$ nl -s ". " arquivo.txt
+# 1. Linha um
+# 2. Linha dois
+
+# Usar delimitador de seção lógica
+$ nl -d "@@" arquivo.txt
+</code></pre>
+</div>
+
+<div class="section">
+<h3>2.13 less — Paginator Avançado</h3>
+<p>O <code>less</code> é um paginador que permite navegar por arquivos grandes de forma interativa. É o sucessor do <code>more</code> e muito mais poderoso.</p>
+
+<pre><code># Visualizar arquivo
+$ less arquivo.txt
+
+# Visualizar com numeração de linhas
+$ less -N arquivo.txt
+
+# Visualizar com highlight de busca
+$ less -g arquivo.txt
+
+# Ignorar case na busca
+$ less -I arquivo.txt
+
+# Visualizar múltiplos arquivos
+$ less arquivo1.txt arquivo2.txt
+# :n → próximo arquivo
+# :p → arquivo anterior
+
+# Visualizar saída de comando
+$ dmesg | less
+$ ps aux | less
+
+# Buscar dentro do less
+# /padrao    → buscar para frente
+# ?padrao    → buscar para trás
+# n          → próxima ocorrência
+# N          → ocorrência anterior
+
+# Navegação no less
+# Space/PageDown → página abaixo
+# b/PageUp       → página acima
+# j/↓            → uma linha abaixo
+# k/↑            → uma linha acima
+# g              → início do arquivo
+# G              → fim do arquivo
+# 50g            → linha 50
+# %50            → 50% do arquivo
+# q              → sair
+
+# Seguir arquivo em tempo real (como tail -f)
+$ less +F arquivo.log
+# Ctrl+C para pausar, F para continuar
+
+# Editar arquivo diretamente do less
+# v → abre no editor padrão ($VISUAL ou $EDITOR)
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 less é mais que more</div>
+  <p><code>less</code> permite navegar para trás (ao contrário de <code>more</code>), buscar, marcar posições, e visualizar arquivos sem carregá-los completamente na memória. Para arquivos grandes, <code>less</code> é essencial.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.14 more — Paginador Simples</h3>
+<p>O <code>more</code> é um paginador básico. Na maioria dos casos, prefira <code>less</code>.</p>
+
+<pre><code># Visualizar arquivo
+$ more arquivo.txt
+
+# Definir número de linhas por tela
+$ more -10 arquivo.txt
+
+# Desabilitar scroll
+$ more -d arquivo.txt
+
+# Navegação no more
+# Space → próxima página
+# Enter → próxima linha
+# b     → página anterior (nem sempre funciona)
+# /padrao → buscar
+# q     → sair
+</code></pre>
+</div>
+
+<div class="section">
+<h3>2.15 head — Output First Part</h3>
+<p>Exibe as primeiras linhas de um arquivo. Útil para pré-visualizar arquivos grandes.</p>
+
+<pre><code># Primeiras 10 linhas (padrão)
+$ head arquivo.txt
+
+# Primeiras 20 linhas
+$ head -n 20 arquivo.txt
+$ head -20 arquivo.txt
+
+# Primeiros 100 bytes
+$ head -c 100 arquivo.txt
+
+# Primeiras linhas de múltiplos arquivos
+$ head arquivo1.txt arquivo2.txt
+
+# Combinar com pipe
+$ cat /var/log/syslog | head -50
+# Melhor: head -50 /var/log/syslog
+
+# Ver cabeçalho de arquivo CSV
+$ head -1 dados.csv
+
+# Ver primeiras linhas de todos os arquivos .log
+$ head -n 5 *.log
+</code></pre>
+</div>
+
+<div class="section">
+<h3>2.16 tail — Output Last Part</h3>
+<p>Exibe as últimas linhas de um arquivo. Essencial para monitorar logs em tempo real.</p>
+
+<pre><code># Últimas 10 linhas
+$ tail arquivo.txt
+
+# Últimas 20 linhas
+$ tail -n 20 arquivo.txt
+
+# Últimos 100 bytes
+$ tail -c 100 arquivo.txt
+
+# Seguir arquivo em tempo real (follow)
+$ tail -f /var/log/syslog
+
+# Seguir e reabrir se o arquivo for rotacionado
+$ tail -F /var/log/syslog
+# Útil para logs que são renomeados/compactados
+
+# Combinar head e tail para extrair linhas do meio
+$ head -n 100 arquivo.txt | tail -n 20
+# Linhas 81-100
+
+# Monitorar múltiplos arquivos
+$ tail -f /var/log/syslog /var/log/auth.log
+
+# Ver logs desde uma linha específica
+$ tail -n +50 arquivo.txt
+# Mostra a partir da linha 50
+
+# Usar com grep para filtrar logs em tempo real
+$ tail -f /var/log/syslog | grep "ERRO"
+</code></pre>
+
+<div class="box box-success">
+  <div class="box-title">✅ tail -f é indispensável para sysadmins</div>
+  <p>Quando um serviço está com problemas, <code>tail -f /var/log/servico.log</code> permite ver os erros em tempo real. Combine com <code>grep</code> para filtrar apenas o que interessa.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.17 file — Determine File Type</h3>
+<p>O <code>file</code> identifica o tipo de arquivo analisando seu conteúdo, não apenas a extensão.</p>
+
+<pre><code># Identificar tipo de arquivo
+$ file arquivo.txt
+arquivo.txt: ASCII text
+
+$ file programa
+programa: ELF 64-bit LSB executable, x86-64, version 1 (SYSV)
+
+$ file imagem.png
+imagem.png: PNG image data, 800 x 600, 8-bit/color RGBA
+
+# Identificar múltiplos arquivos
+$ file *
+
+# Identificar com mais detalhes
+$ file -i arquivo.txt
+arquivo.txt: text/plain; charset=us-ascii
+
+# Ver magic number em hexadecimal
+$ file -k arquivo_desconhecido
+
+# Listar todos os tipos de arquivo conhecidos
+$ file -l
+
+# Identificar arquivo dentro de arquivo compactado
+$ file -z arquivo.tar.gz
+
+# Verificar arquivo de core dump
+$ file core
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 Como file funciona?</div>
+  <p>O <code>file</code> usa um banco de dados de "magic numbers" (bytes iniciais característicos) localizado em <code>/usr/share/file/magic</code>. Por exemplo, arquivos ELF começam com <code>0x7F 'E' 'L' 'F'</code>, arquivos PNG com <code>0x89 'P' 'N' 'G'</code>.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.18 stat — Display File Status</h3>
+<p>O <code>stat</code> exibe informações detalhadas sobre arquivos — muito mais que <code>ls -l</code>.</p>
+
+<pre><code># Informações completas do arquivo
+$ stat arquivo.txt
+  File: arquivo.txt
+  Size: 1234       Blocks: 8          IO Block: 4096   regular file
+Device: 801h/2049d Inode: 131073     Links: 1
+Access: (0644/-rw-r--r--)  Uid: ( 1000/ usuario)   Gid: ( 1000/ grupo)
+Access: 2024-06-14 10:00:00.000000000 -0300
+Modify: 2024-06-14 09:30:00.000000000 -0300
+Change: 2024-06-14 09:30:00.000000000 -0300
+ Birth: 2024-06-14 08:00:00.000000000 -0300
+
+# Formato customizado
+$ stat -c "%n: %s bytes, permissões %a" arquivo.txt
+arquivo.txt: 1234 bytes, permissões 644
+
+# Formatos úteis
+$ stat -c "%y %n" *.txt    # data de modificação + nome
+$ stat -c "%s %n" *        # tamanho + nome
+$ stat -c "%U %G %a %n" *  # dono, grupo, permissões, nome
+
+# Ver sistema de arquivos do arquivo
+$ stat -f .
+  File: "."
+    ID: 1234567890   Namelen: 255     Type: ext2/ext3
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 1000000  Free: 500000   Available: 450000
+Inodes: Total: 256000   Free: 200000
+
+# Ver informações de link simbólico (não seguir)
+$ stat -c "%N" link_simbolico
+'link_simbolico' -> 'arquivo_original.txt'
+</code></pre>
+
+<h4>2.18.1 Formatos de saída do stat</h4>
+<table>
+<tr><th>Formato</th><th>Descrição</th></tr>
+<tr><td><code>%n</code></td><td>Nome do arquivo</td></tr>
+<tr><td><code>%s</code></td><td>Tamanho em bytes</td></tr>
+<tr><td><code>%b</code></td><td>Número de blocos alocados</td></tr>
+<tr><td><code>%o</code></td><td>Tamanho do bloco de I/O</td></tr>
+<tr><td><code>%i</code></td><td>Número do inode</td></tr>
+<tr><td><code>%a</code></td><td>Permissões em octal</td></tr>
+<tr><td><code>%A</code></td><td>Permissões em formato humano</td></tr>
+<tr><td><code>%U</code></td><td>Nome do dono</td></tr>
+<tr><td><code>%u</code></td><td>UID do dono</td></tr>
+<tr><td><code>%G</code></td><td>Nome do grupo</td></tr>
+<tr><td><code>%g</code></td><td>GID do grupo</td></tr>
+<tr><td><code>%x</code></td><td>Data de acesso</td></tr>
+<tr><td><code>%y</code></td><td>Data de modificação</td></tr>
+<tr><td><code>%z</code></td><td>Data de mudança (ctime)</td></tr>
+<tr><td><code>%w</code></td><td>Data de criação (birth)</td></tr>
+<tr><td><code>%N</code></td><td>Nome com link simbólico resolvido</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>2.19 tree — Display Directory Tree</h3>
+<p>O <code>tree</code> exibe a estrutura de diretórios em formato de árvore. Não vem instalado por padrão em todas as distribuições.</p>
+
+<pre><code># Instalar tree
+$ sudo apt install tree    # Debian/Ubuntu
+$ sudo dnf install tree    # Fedora
+$ sudo pacman -S tree      # Arch
+
+# Exibir árvore do diretório atual
+$ tree
+.
+├── diretorio1
+│   ├── arquivo1.txt
+│   └── arquivo2.txt
+├── diretorio2
+│   └── subdir
+│       └── arquivo3.txt
+└── arquivo_raiz.txt
+
+# Limitar profundidade
+$ tree -L 2
+
+# Mostrar apenas diretórios
+$ tree -d
+
+# Mostrar arquivos com padrão específico
+$ tree -P "*.c"
+
+# Ignorar padrão
+$ tree -I "node_modules|__pycache__"
+
+# Mostrar tamanhos
+$ tree -h
+
+# Mostrar permissões
+$ tree -p
+
+# Mostrar inode numbers
+$ tree -i
+
+# Salvar árvore em arquivo
+$ tree > estrutura.txt
+
+# Colorir saída
+$ tree -C
+
+# Mostrar arquivos ocultos
+$ tree -a
+
+# Ordenar por versão (natural)
+$ tree -v
+
+# Usar caracteres ASCII (não Unicode)
+$ tree -A
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 tree como documentação</div>
+  <p>Use <code>tree -L 2 -I 'node_modules|*.pyc' > ESTRUTURA.md</code> para documentar a estrutura de um projeto em READMEs.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.20 echo — Display a Line of Text</h3>
+<p>O <code>echo</code> exibe texto. Simples, mas essencial para scripts e testes.</p>
+
+<pre><code># Exibir texto simples
+$ echo "Hello, World!"
+
+# Exibir sem nova linha no final
+$ echo -n "Sem nova linha"
+
+# Exibir com interpretação de escapes
+$ echo -e "Linha 1
+Linha 2	Tabulado"
+
+# Escapes comuns
+# 
+  → nova linha
+# 	  → tabulação
+# \  → barra invertida
+#   → beep (alert)
+# 
+  → carriage return
+#   → backspace
+
+# Exibir valor de variável
+$ echo $HOME
+$ echo $PATH
+$ echo $?
+
+# Exibir resultado de comando
+$ echo "Hoje é $(date +%Y-%m-%d)"
+
+# Criar arquivo com echo
+$ echo "conteúdo" > arquivo.txt
+
+# Anexar a arquivo
+$ echo "nova linha" >> arquivo.txt
+
+# Exibir com aspas simples (não expande variáveis)
+$ echo '$HOME'
+$HOME
+
+# Exibir com aspas duplas (expande variáveis)
+$ echo "$HOME"
+/home/usuario
+
+# Exibir asterisco literal
+$ echo "*"
+*
+$ echo *
+# (lista todos os arquivos do diretório!)
+</code></pre>
+</div>
+
+<div class="section">
+<h3>2.21 printf — Format and Print Data</h3>
+<p>O <code>printf</code> é mais poderoso que <code>echo</code>, com formatação tipo C. É um built-in do bash e também um comando externo.</p>
+
+<pre><code># Formatação básica
+$ printf "Hello, %s!
+" "World"
+
+# Múltiplos argumentos
+$ printf "Nome: %s, Idade: %d
+" "João" 25
+
+# Formatação de números
+$ printf "Decimal: %d
+" 42
+$ printf "Hex: %x
+" 255
+$ printf "Octal: %o
+" 8
+$ printf "Float: %.2f
+" 3.14159
+
+# Alinhamento
+$ printf "|%-10s|%10s|
+" "Esquerda" "Direita"
+# |Esquerda  |    Direita|
+
+# Preencher com zeros
+$ printf "%010d
+" 42
+# 0000000042
+
+# Formatação de data
+$ printf "%(%Y-%m-%d %H:%M:%S)T
+" -1
+# 2024-06-14 12:00:00
+
+# Criar tabela formatada
+$ printf "%-15s %10s %10s
+" "ARQUIVO" "TAMANHO" "PERMISSÕES"
+$ printf "%-15s %10d %10s
+" "arquivo.txt" 1234 "-rw-r--r--"
+
+# Usar em loop
+$ for f in *.txt; do printf "Processando: %s
+" "$f"; done
+
+# Imprimir sem nova linha
+$ printf "Carregando"
+$ printf "."
+$ printf "."
+$ printf ".
+"
+</code></pre>
+
+<h4>2.21.1 Especificadores de Formato</h4>
+<table>
+<tr><th>Especificador</th><th>Descrição</th></tr>
+<tr><td><code>%s</code></td><td>String</td></tr>
+<tr><td><code>%d</code> ou <code>%i</code></td><td>Inteiro decimal</td></tr>
+<tr><td><code>%u</code></td><td>Inteiro unsigned</td></tr>
+<tr><td><code>%x</code></td><td>Hexadecimal (minúsculo)</td></tr>
+<tr><td><code>%X</code></td><td>Hexadecimal (maiúsculo)</td></tr>
+<tr><td><code>%o</code></td><td>Octal</td></tr>
+<tr><td><code>%f</code></td><td>Ponto flutuante</td></tr>
+<tr><td><code>%e</code></td><td>Notação científica</td></tr>
+<tr><td><code>%c</code></td><td>Caractere único</td></tr>
+<tr><td><code>%%</code></td><td>Literal %</td></tr>
+</table>
+</div>
+
+<!-- EXERCÍCIOS VOLUME 2 -->
+<div class="exercise">
+<h4>🏋️ Exercícios — Volume 2</h4>
+<ol>
+  <li>Use <code>ls -la</code> no seu home e identifique: quantos arquivos ocultos existem? Qual o maior arquivo? Qual o mais recente?</li>
+  <li>Crie a estrutura <code>projeto/{src,include,lib,tests,docs}</code> com um único comando. Use <code>tree</code> para verificar.</li>
+  <li>Crie 20 arquivos vazios com nomes <code>teste_01.txt</code> a <code>teste_20.txt</code> usando brace expansion.</li>
+  <li>Use <code>cat</code> com heredoc para criar um arquivo de configuração com 10 linhas.</li>
+  <li>Use <code>head</code> e <code>tail</code> para extrair as linhas 50-60 de <code>/etc/passwd</code>.</li>
+  <li>Execute <code>file /bin/ls</code> e interprete TODOS os campos da saída. O que é "ELF"? "LSB"? "dynamically linked"?</li>
+  <li>Use <code>stat</code> para mostrar: nome, tamanho, inode, dono e permissões de todos os arquivos de <code>/bin</code>.</li>
+  <li>Monitore <code>/var/log/syslog</code> com <code>tail -f</code> em uma janela e gere eventos em outra. Use <code>grep</code> para filtrar.</li>
+  <li>Crie um script que use <code>printf</code> para formatar uma tabela com 5 arquivos, mostrando nome, tamanho e permissões alinhados.</li>
+  <li>Use <code>less</code> para abrir <code>/var/log/syslog</code>, busque por "error", navegue entre ocorrências e saia.</li>
+</ol>
+</div>
+

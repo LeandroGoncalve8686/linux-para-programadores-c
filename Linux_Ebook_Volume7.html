@@ -1,0 +1,297 @@
+
+<!-- ============================================================ -->
+<!-- VOLUME 7 — GERENCIAMENTO DE PACOTES -->
+<!-- ============================================================ -->
+ <link rel="stylesheet" href="/style.css">
+<div class="page-break"></div>
+<div class="volume-header" id="vol7">
+  <h2>📚 Volume 7 — Gerenciamento de Pacotes</h2>
+  <div class="vol-desc">Instalar, atualizar e remover software no Debian/Ubuntu com apt e dpkg.</div>
+</div>
+
+<div class="section">
+<h3>7.1 apt — Advanced Package Tool</h3>
+<p>O <code>apt</code> é a interface de alto nível para gerenciamento de pacotes em sistemas Debian/Ubuntu. Ele lida com dependências, repositórios, e resolução de conflitos.</p>
+
+<h4>7.1.1 Atualizar Informações de Pacotes</h4>
+<pre><code># Atualizar lista de pacotes disponíveis
+$ sudo apt update
+
+# Atualizar com debug
+$ sudo apt update -o Debug::Acquire::http=true
+
+# Atualizar apenas um componente
+$ sudo apt update -o Dir::Etc::sourcelist="sources.list.d/meu_repo.list"
+</code></pre>
+
+<h4>7.1.2 Instalar Pacotes</h4>
+<pre><code># Instalar pacote
+$ sudo apt install nginx
+
+# Instalar múltiplos pacotes
+$ sudo apt install nginx mysql-server php
+
+# Instalar sem recomendações
+$ sudo apt install --no-install-recommends nginx
+
+# Instalar versão específica
+$ sudo apt install nginx=1.18.0-0ubuntu1
+
+# Simular instalação (não instala, apenas mostra o que faria)
+$ sudo apt install --simulate nginx
+$ sudo apt install -s nginx
+
+# Baixar apenas (não instalar)
+$ sudo apt install --download-only nginx
+# Pacotes vão para /var/cache/apt/archives/
+
+# Instalar de arquivo .deb
+$ sudo apt install ./pacote.deb
+
+# Instalar com confirmação automática
+$ sudo apt install -y nginx
+
+# Instalar com reinstalação completa
+$ sudo apt install --reinstall nginx
+</code></pre>
+
+<h4>7.1.3 Remover Pacotes</h4>
+<pre><code># Remover pacote (mantém configurações)
+$ sudo apt remove nginx
+
+# Remover completamente (incluindo configurações)
+$ sudo apt purge nginx
+$ sudo apt remove --purge nginx
+
+# Remover pacotes órfãos (dependências não mais necessárias)
+$ sudo apt autoremove
+
+# Remover pacotes órfãos com confirmação
+$ sudo apt autoremove -y
+
+# Remover pacotes baixados do cache
+$ sudo apt clean
+
+# Remover pacotes antigos do cache
+$ sudo apt autoclean
+</code></pre>
+
+<h4>7.1.4 Atualizar Sistema</h4>
+<pre><code># Atualizar pacotes instalados (sem remover nada)
+$ sudo apt upgrade
+
+# Atualizar com remoção de pacotes obsoletos
+$ sudo apt full-upgrade
+# (antigamente: apt dist-upgrade)
+
+# Atualização não-interativa
+$ sudo apt upgrade -y
+
+# Atualizar apenas pacotes de segurança
+$ sudo apt upgrade -y -o APT::Get::Upgrade-Allow-New=false
+
+# Simular atualização
+$ sudo apt upgrade --simulate
+</code></pre>
+
+<h4>7.1.5 Buscar e Informações</h4>
+<pre><code># Buscar pacote por nome/descrição
+$ apt search nginx
+
+# Buscar com regex
+$ apt search ^nginx
+
+# Informações detalhadas do pacote
+$ apt show nginx
+
+# Listar dependências
+$ apt depends nginx
+
+# Listar dependências reversas (quem depende deste)
+$ apt rdepends nginx
+
+# Listar arquivos de um pacote instalado
+$ dpkg -L nginx
+
+# Listar pacotes instalados
+$ apt list --installed
+
+# Verificar se pacote está instalado
+$ apt list --installed | grep nginx
+
+# Verificar versão instalada
+$ apt list --installed nginx
+
+# Política de versões (repositórios)
+$ apt policy nginx
+
+# Cache de pacotes
+$ apt cache show nginx
+</code></pre>
+
+<h4>7.1.6 Gerenciar Repositórios</h4>
+<pre><code># Listar repositórios configurados
+$ cat /etc/apt/sources.list
+$ ls /etc/apt/sources.list.d/
+
+# Adicionar repositório (Debian/Ubuntu)
+$ sudo add-apt-repository ppa:usuario/repo
+
+# Adicionar repositório manualmente
+$ echo "deb http://repo.example.com/ubuntu jammy main" | sudo tee /etc/apt/sources.list.d/meu_repo.list
+
+# Adicionar chave GPG
+$ wget -qO - https://repo.example.com/key.gpg | sudo apt-key add -
+# ou (moderno):
+$ sudo wget -qO /usr/share/keyrings/meu_repo.gpg https://repo.example.com/key.gpg
+
+# Remover repositório
+$ sudo add-apt-repository --remove ppa:usuario/repo
+$ sudo rm /etc/apt/sources.list.d/meu_repo.list
+
+# Editar sources.list com editor seguro
+$ sudo apt edit-sources
+</code></pre>
+</div>
+
+<div class="section">
+<h3>7.2 dpkg — Debian Package Manager</h3>
+<p>O <code>dpkg</code> é a ferramenta de baixo nível para manipular pacotes .deb. Não resolve dependências automaticamente — use <code>apt</code> para isso.</p>
+
+<h4>7.2.1 Instalar e Remover</h4>
+<pre><code># Instalar pacote .deb
+$ sudo dpkg -i pacote.deb
+
+# Instalar com resolução de dependências (use apt)
+$ sudo apt install ./pacote.deb
+
+# Remover pacote
+$ sudo dpkg -r pacote
+
+# Remover completamente
+$ sudo dpkg -P pacote
+
+# Reconfigurar pacote
+$ sudo dpkg-reconfigure pacote
+
+# Reconfigurar todos os pacotes
+$ sudo dpkg-reconfigure -a
+</code></pre>
+
+<h4>7.2.2 Consultar Informações</h4>
+<pre><code># Listar pacotes instalados
+$ dpkg -l
+$ dpkg -l | grep nginx
+
+# Informações de um pacote
+$ dpkg -s nginx
+
+# Listar arquivos de um pacote
+$ dpkg -L nginx
+
+# Descobrir qual pacote possui um arquivo
+$ dpkg -S /usr/bin/nginx
+$ dpkg -S /etc/nginx/nginx.conf
+
+# Status de um pacote
+$ dpkg -s nginx | grep Status
+
+# Listar arquivos de configuração
+$ dpkg -L nginx | grep /etc/
+
+# Verificar integridade de pacotes
+$ dpkg -V
+$ dpkg -V nginx
+</code></pre>
+
+<h4>7.2.3 Depuração e Reparo</h4>
+<pre><code># Verificar pacotes quebrados
+$ dpkg -C
+
+# Reconfigurar pacotes desconfigurados
+$ sudo dpkg --configure -a
+
+# Forçar reinstalação
+$ sudo dpkg -i --force-all pacote.deb
+
+# Ignorar conflitos
+$ sudo dpkg -i --force-overwrite pacote.deb
+
+# Remover forçado
+$ sudo dpkg -r --force-depends pacote
+
+# Limpar estado de pacote
+$ sudo dpkg --clear-avail
+
+# Atualizar banco de dados
+$ sudo dpkg --update-avail
+</code></pre>
+</div>
+
+<div class="section">
+<h3>7.3 apt-cache — Query the APT Cache</h3>
+<pre><code># Buscar pacotes
+$ apt-cache search nginx
+
+# Informações detalhadas
+$ apt-cache show nginx
+
+# Dependências
+$ apt-cache depends nginx
+
+# Dependências reversas
+$ apt-cache rdepends nginx
+
+# Estatísticas do cache
+$ apt-cache stats
+
+# Política de versão
+$ apt-cache policy nginx
+
+# Listar pacotes disponíveis
+$ apt-cache pkgnames
+$ apt-cache pkgnames nginx
+</code></pre>
+</div>
+
+<div class="section">
+<h3>7.4 apt-get vs. apt</h3>
+<table>
+<tr><th>Comando</th><th>apt-get</th><th>apt</th></tr>
+<tr><td>Atualizar lista</td><td><code>apt-get update</code></td><td><code>apt update</code></td></tr>
+<tr><td>Instalar</td><td><code>apt-get install</code></td><td><code>apt install</code></td></tr>
+<tr><td>Remover</td><td><code>apt-get remove</code></td><td><code>apt remove</code></td></tr>
+<tr><td>Purge</td><td><code>apt-get purge</code></td><td><code>apt purge</code></td></tr>
+<tr><td>Upgrade</td><td><code>apt-get upgrade</code></td><td><code>apt upgrade</code></td></tr>
+<tr><td>Full-upgrade</td><td><code>apt-get dist-upgrade</code></td><td><code>apt full-upgrade</code></td></tr>
+<tr><td>Autoremove</td><td><code>apt-get autoremove</code></td><td><code>apt autoremove</code></td></tr>
+<tr><td>Clean</td><td><code>apt-get clean</code></td><td><code>apt clean</code></td></tr>
+<tr><td>Buscar</td><td><code>apt-cache search</code></td><td><code>apt search</code></td></tr>
+<tr><td>Mostrar</td><td><code>apt-cache show</code></td><td><code>apt show</code></td></tr>
+<tr><td>Progresso</td><td>Sem barra</td><td>Com barra de progresso</td></tr>
+<tr><td>Output</td><td>Mais técnico</td><td>Mais amigável</td></tr>
+</table>
+
+<div class="box box-info">
+  <div class="box-title">💡 Recomendação</div>
+  <p>Use <code>apt</code> para uso interativo (mais amigável). Use <code>apt-get</code> em scripts (mais estável, output mais previsível). <code>apt</code> é um wrapper que chama <code>apt-get</code> e <code>apt-cache</code> por baixo.</p>
+</div>
+</div>
+
+<!-- EXERCÍCIOS VOLUME 7 -->
+<div class="exercise">
+<h4>🏋️ Exercícios — Volume 7</h4>
+<ol>
+  <li>Execute <code>apt update</code> e observe a saída. Quantos pacotes podem ser atualizados?</li>
+  <li>Use <code>apt search</code> para encontrar 3 pacotes relacionados a "editor de texto".</li>
+  <li>Use <code>apt show</code> para ver informações detalhadas de um pacote instalado. Identifique: versão, tamanho, dependências, descrição.</li>
+  <li>Use <code>dpkg -l</code> e conte quantos pacotes estão instalados no seu sistema.</li>
+  <li>Use <code>dpkg -S</code> para descobrir qual pacote fornece o comando <code>ls</code>.</li>
+  <li>Use <code>apt list --installed</code> e filtre apenas pacotes que começam com "lib".</li>
+  <li>Verifique <code>apt policy</code> de um pacote e interprete: qual versão está instalada? Qual está disponível? De qual repositório?</li>
+  <li>Execute <code>apt autoremove --simulate</code> e veja quais pacotes seriam removidos. Execute de verdade se fizer sentido.</li>
+  <li>Use <code>apt-cache depends</code> e <code>apt-cache rdepends</code> para um pacote e trace a árvore de dependências.</li>
+  <li>Crie um script que verifique se há atualizações pendentes e envie um alerta se houver.</li>
+</ol>
+</div>
+

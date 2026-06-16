@@ -1,0 +1,533 @@
+/* ==========================================================
+   LG BOOKS - THEME
+   Linux • C • Sistemas • Cibersegurança
+   ========================================================== */
+
+:root{
+    --bg:#0b0f14;
+    --bg-secondary:#111827;
+    --bg-card:#1a2332;
+
+    --primary:#58a6ff;
+    --secondary:#7c3aed;
+
+    --success:#22c55e;
+    --warning:#f59e0b;
+    --danger:#ef4444;
+    --info:#06b6d4;
+
+    --text:#f8fafc;
+    --text-soft:#cbd5e1;
+    --text-muted:#94a3b8;
+
+    --border:#2d3748;
+
+    --shadow:
+        0 8px 25px rgba(0,0,0,.30);
+
+    --radius:14px;
+}
+
+/* =========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+
+    background:
+    linear-gradient(180deg,#071018 0%,#0b0f14 100%);
+
+    color:var(--text);
+
+    font-family:
+    "Segoe UI",
+    system-ui,
+    sans-serif;
+
+    line-height:1.75;
+
+    font-size:17px;
+
+    padding:40px;
+
+    max-width:1100px;
+
+    margin:auto;
+}
+
+/* =========================== */
+
+h1,h2,h3,h4,h5{
+
+    font-weight:700;
+
+    margin-top:45px;
+    margin-bottom:18px;
+
+    line-height:1.2;
+
+    color:white;
+}
+
+h1{
+
+    font-size:3rem;
+
+    text-align:center;
+
+    color:var(--primary);
+
+    text-shadow:
+    0 0 20px rgba(88,166,255,.20);
+}
+
+h2{
+
+    font-size:2.2rem;
+
+    border-left:6px solid var(--primary);
+
+    padding-left:15px;
+}
+
+h3{
+
+    font-size:1.6rem;
+
+    color:#8ecbff;
+}
+
+h4{
+
+    font-size:1.25rem;
+}
+
+/* =========================== */
+
+p{
+
+    margin:18px 0;
+
+    color:var(--text-soft);
+}
+
+/* =========================== */
+
+a{
+
+    color:#79c0ff;
+}
+
+
+/* =========================== */
+
+.volume-header{
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #152238,
+        #0d1727
+    );
+
+    border:
+
+    1px solid var(--border);
+
+    border-left:
+
+    8px solid var(--primary);
+
+    border-radius:16px;
+
+    padding:35px;
+
+    margin:50px 0;
+
+    box-shadow:var(--shadow);
+}
+
+.volume-header h2{
+
+    border:none;
+
+    padding:0;
+
+    margin-top:0;
+}
+
+.vol-desc{
+
+    color:var(--text-muted);
+
+    margin-top:10px;
+}
+
+/* =========================== */
+
+.section{
+
+    background:var(--bg-secondary);
+
+    border:1px solid var(--border);
+
+    border-radius:14px;
+
+    padding:28px;
+
+    margin:35px 0;
+
+    box-shadow:var(--shadow);
+}
+
+/* =========================== */
+
+pre{
+
+    background:#05080d;
+
+    border-left:5px solid var(--success);
+
+    padding:20px;
+
+    border-radius:10px;
+
+    overflow-x:auto;
+
+    margin:20px 0;
+}
+
+code{
+
+    font-family:
+
+    Consolas,
+    monospace;
+}
+
+pre code{
+
+    color:#8df58d;
+}
+
+/* inline code */
+
+p code,
+li code{
+
+    background:#1f2937;
+
+    color:#7dd3fc;
+
+    padding:2px 7px;
+
+    border-radius:5px;
+}
+
+/* =========================== */
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin:25px 0;
+}
+
+th{
+
+    background:#1e3a5f;
+
+    color:white;
+
+    padding:14px;
+
+    border:1px solid var(--border);
+}
+
+td{
+
+    padding:12px;
+
+    border:1px solid var(--border);
+
+    color:var(--text-soft);
+}
+
+tr:nth-child(even){
+
+    background:#121b2c;
+}
+
+/* =========================== */
+
+.box{
+
+    border-radius:12px;
+
+    padding:22px;
+
+    margin:25px 0;
+
+    border-left:6px solid;
+}
+
+.box-title{
+
+    font-weight:bold;
+
+    margin-bottom:12px;
+
+    font-size:1.1rem;
+}
+
+/* ---------- INFO ---------- */
+
+.box-info{
+
+    background:#07253a;
+
+    border-color:var(--info);
+}
+
+/* ---------- SUCCESS ---------- */
+
+.box-success{
+
+    background:#082616;
+
+    border-color:var(--success);
+}
+
+/* ---------- WARNING ---------- */
+
+.box-warning{
+
+    background:#3d2706;
+
+    border-color:var(--warning);
+}
+
+/* ---------- DANGER ---------- */
+
+.box-danger{
+
+    background:#330b0b;
+
+    border-color:var(--danger);
+}
+
+/* =========================== */
+
+.exercise{
+
+    margin-top:50px;
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #161616,
+        #222
+    );
+
+    border:
+
+    2px solid #3a3a3a;
+
+    border-radius:16px;
+
+    padding:30px;
+}
+
+.exercise h4{
+
+    margin-top:0;
+
+    color:#ffd166;
+}
+
+.exercise ol{
+
+    margin-left:25px;
+}
+
+.exercise li{
+
+    margin:12px 0;
+}
+
+/* =========================== */
+
+ul,
+ol{
+
+    margin-left:30px;
+
+    margin-top:12px;
+
+    margin-bottom:12px;
+}
+
+/* =========================== */
+
+.page-break{
+
+    height:80px;
+}
+
+/* =========================== */
+
+hr{
+
+    border:none;
+
+    height:1px;
+
+    background:#2f3c4f;
+
+    margin:40px 0;
+}
+
+/* =========================== */
+
+blockquote{
+
+    border-left:5px solid var(--primary);
+
+    padding:15px 20px;
+
+    background:#152235;
+
+    color:#d6e7ff;
+
+    margin:20px 0;
+
+    border-radius:8px;
+}
+
+/* =========================== */
+
+::-webkit-scrollbar{
+
+    width:10px;
+}
+
+::-webkit-scrollbar-track{
+
+    background:#111;
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#345;
+
+    border-radius:20px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:#58a6ff;
+}
+
+/* =========================== */
+
+@media print{
+
+    body{
+
+        background:white;
+
+        color:black;
+    }
+
+    .section,
+    .volume-header,
+    .exercise,
+    .box{
+
+        box-shadow:none;
+    }
+
+    pre{
+
+        color:black;
+
+        background:#f5f5f5;
+    }
+}
+/* =======================================
+   BOTÃO VOLTAR AO ÍNDICE
+   ======================================= */
+
+.back-button-container{
+
+    margin:20px 0 35px 0;
+
+}
+
+.back-button{
+
+    display:inline-block;
+
+    padding:12px 22px;
+
+    background:linear-gradient(
+        135deg,
+        #1f4f8f,
+        #58a6ff
+    );
+
+    color:#ffffff;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+    font-size:16px;
+
+    border-radius:10px;
+
+    border:1px solid rgba(255,255,255,.1);
+
+    box-shadow:
+        0 4px 12px rgba(0,0,0,.25);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+.back-button:hover{
+
+    color:#ffffff;
+
+    text-decoration:none;
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(88,166,255,.35);
+
+    background:linear-gradient(
+        135deg,
+        #2563eb,
+        #60a5fa
+    );
+}
+
+.back-button:active{
+
+    transform:translateY(0);
+}

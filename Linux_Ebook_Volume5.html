@@ -1,0 +1,485 @@
+
+<!-- ============================================================ -->
+<!-- VOLUME 5 — GERENCIAMENTO DE PROCESSOS -->
+<!-- ============================================================ -->
+ <link rel="stylesheet" href="/style.css">
+<div class="page-break"></div>
+<div class="volume-header" id="vol5">
+  <h2>📚 Volume 5 — Gerenciamento de Processos</h2>
+  <div class="vol-desc">Entender, monitorar e controlar processos é essencial para dominar Linux.</div>
+</div>
+
+<div class="section">
+<h3>5.1 O que é um Processo?</h3>
+<p>Um <strong>processo</strong> é uma instância em execução de um programa. Cada processo tem:</p>
+<ul>
+  <li><strong>PID</strong> (Process ID): identificador único</li>
+  <li><strong>PPID</strong> (Parent PID): PID do processo pai</li>
+  <li><strong>UID/GID</strong>: usuário e grupo dono</li>
+  <li><strong>Espaço de memória</strong>: código, dados, heap, stack</li>
+  <li><strong>Descritores de arquivo</strong>: stdin (0), stdout (1), stderr (2), e outros</li>
+  <li><strong>Variáveis de ambiente</strong></li>
+  <li><strong>Diretório de trabalho</strong></li>
+  <li><strong>Estado</strong>: running, sleeping, stopped, zombie</li>
+</ul>
+
+<div class="ascii">
+┌─────────────────────────────────────────┐
+│           PROCESSO (PID 1234)           │
+│                                         │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐ │
+│  │  Código │  │  Dados  │  │  Heap   │ │
+│  │ (text)  │  │ (data)  │  │         │ │
+│  └─────────┘  └─────────┘  └─────────┘ │
+│  ┌─────────┐  ┌─────────────────────┐  │
+│  │  Stack  │  │  Descritores (fd)   │  │
+│  │         │  │  0=stdin, 1=stdout  │  │
+│  └─────────┘  │  2=stderr, 3=arquivo │  │
+│               └─────────────────────┘  │
+│  ┌─────────┐  ┌─────────────────────┐  │
+│  │  PID    │  │  Variáveis de Amb.  │  │
+│  │  PPID   │  │  PATH, HOME, USER   │  │
+│  │  UID/GID│  └─────────────────────┘  │
+│  └─────────┘                            │
+└─────────────────────────────────────────┘
+</div>
+</div>
+
+<div class="section">
+<h3>5.2 ps — Report Process Status</h3>
+<p>O <code>ps</code> exibe informações sobre processos ativos. É um snapshot do momento da execução.</p>
+
+<h4>5.2.1 Uso Básico</h4>
+<pre><code># Processos do terminal atual
+$ ps
+  PID TTY          TIME CMD
+ 1234 pts/0    00:00:00 bash
+ 5678 pts/0    00:00:00 ps
+
+# Todos os processos do usuário
+$ ps -u $(whoami)
+
+# Todos os processos (estilo BSD)
+$ ps aux
+
+# Todos os processos (estilo UNIX)
+$ ps -ef
+
+# Processos em formato customizado
+$ ps -eo pid,ppid,cmd,%mem,%cpu
+
+# Processos de um usuário específico
+$ ps -u root
+
+# Processos em uma árvore
+$ ps axjf
+</code></pre>
+
+<h4>5.2.2 Colunas do ps aux</h4>
+<table>
+<tr><th>Coluna</th><th>Significado</th></tr>
+<tr><td><code>USER</code></td><td>Usuário dono do processo</td></tr>
+<tr><td><code>PID</code></td><td>Process ID</td></tr>
+<tr><td><code>%CPU</code></td><td>Porcentagem de uso de CPU</td></tr>
+<tr><td><code>%MEM</code></td><td>Porcentagem de uso de memória</td></tr>
+<tr><td><code>VSZ</code></td><td>Virtual Memory Size (KB)</td></tr>
+<tr><td><code>RSS</code></td><td>Resident Set Size (memória física, KB)</td></tr>
+<tr><td><code>TTY</code></td><td>Terminal associado</td></tr>
+<tr><td><code>STAT</code></td><td>Estado do processo</td></tr>
+<tr><td><code>START</code></td><td>Hora de início</td></tr>
+<tr><td><code>TIME</code></td><td>Tempo total de CPU usado</td></tr>
+<tr><td><code>COMMAND</code></td><td>Comando executado</td></tr>
+</table>
+
+<h4>5.2.3 Estados de Processo (STAT)</h4>
+<table>
+<tr><th>Código</th><th>Significado</th></tr>
+<tr><td><code>R</code></td><td>Running (executando ou na fila)</td></tr>
+<tr><td><code>S</code></td><td>Sleeping (interrompível, esperando evento)</td></tr>
+<tr><td><code>D</code></td><td>Disk Sleep (não interrompível, geralmente I/O)</td></tr>
+<tr><td><code>T</code></td><td>Stopped (pausado por sinal)</td></tr>
+<tr><td><code>Z</code></td><td>Zombie (terminado, aguardando reaping pelo pai)</td></tr>
+<tr><td><code>I</code></td><td>Idle (kernel thread inativa)</td></tr>
+</table>
+
+<p>Modificadores:</p>
+<table>
+<tr><th>Código</th><th>Significado</th></tr>
+<tr><td><code>&lt;</code></td><td>Alta prioridade (nice negativo)</td></tr>
+<tr><td><code>N</code></td><td>Baixa prioridade (nice positivo)</td></tr>
+<tr><td><code>+</code></td><td>Processo em foreground</td></tr>
+<tr><td><code>l</code></td><td>Multi-threaded</td></tr>
+<tr><td><code>s</code></td><td>Session leader</td></tr>
+</table>
+
+<h4>5.2.4 ps Avançado</h4>
+<pre><code># Formato customizado com todas as colunas
+$ ps -eo pid,ppid,uid,gid,tty,stat,priority,nice,pcpu,pmem,comm,args
+
+# Processos ordenados por uso de CPU
+$ ps aux --sort=-%cpu | head -10
+
+# Processos ordenados por uso de memória
+$ ps aux --sort=-%mem | head -10
+
+# Processos com threads
+$ ps -eLf | head -10
+
+# Mostrar árvore de processos
+$ ps axjf
+
+# Mostrar apenas PIDs
+$ ps -eo pid=
+
+# Contar processos
+$ ps aux | wc -l
+
+# Encontrar processo por nome
+$ ps aux | grep firefox
+$ pgrep firefox
+
+# Informações detalhadas de um processo
+$ ps -p 1234 -o pid,ppid,cmd,etime,pcpu,pmem
+</code></pre>
+</div>
+
+<div class="section">
+<h3>5.3 top — Display Linux Processes</h3>
+<p>O <code>top</code> é um monitor de processos interativo em tempo real.</p>
+
+<pre><code># Iniciar top
+$ top
+
+# Iniciar com delay de 1 segundo
+$ top -d 1
+
+# Mostrar apenas processos de um usuário
+$ top -u usuario
+
+# Mostrar processos de um PID específico
+$ top -p 1234,5678
+
+# Executar N ciclos e sair
+$ top -n 5
+
+# Salvar saída em batch mode
+$ top -b -n 1 &gt; processos.txt
+</code></pre>
+
+<h4>5.3.1 Comandos Interativos no top</h4>
+<table>
+<tr><th>Tecla</th><th>Ação</th></tr>
+<tr><td><code>h</code> ou <code>?</code></td><td>Ajuda</td></tr>
+<tr><td><code>q</code></td><td>Sair</td></tr>
+<tr><td><code>Space</code></td><td>Atualizar imediatamente</td></tr>
+<tr><td><code>k</code></td><td>Matar processo (kill)</td></tr>
+<tr><td><code>r</code></td><td>Renice (mudar prioridade)</td></tr>
+<tr><td><code>u</code></td><td>Filtrar por usuário</td></tr>
+<tr><td><code>M</code></td><td>Ordenar por memória</td></tr>
+<tr><td><code>P</code></td><td>Ordenar por CPU</td></tr>
+<tr><td><code>T</code></td><td>Ordenar por tempo</td></tr>
+<tr><td><code>c</code></td><td>Mostrar caminho completo do comando</td></tr>
+<tr><td><code>1</code></td><td>Mostrar CPUs individuais</td></tr>
+<tr><td><code>d</code></td><td>Mudar delay de atualização</td></tr>
+<tr><td><code>W</code></td><td>Salvar configuração</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>5.4 htop — Interactive Process Viewer</h3>
+<p>O <code>htop</code> é uma alternativa mais amigável ao <code>top</code>, com interface colorida e navegação por teclas de seta.</p>
+
+<pre><code># Instalar htop
+$ sudo apt install htop
+
+# Iniciar htop
+$ htop
+
+# Filtrar por nome
+$ htop -p 1234
+
+# Mostrar árvore
+$ htop -t
+
+# Ordenar por coluna específica
+# Use F6 para selecionar a coluna de ordenação
+</code></pre>
+
+<h4>5.4.1 Atalhos do htop</h4>
+<table>
+<tr><th>Tecla</th><th>Ação</th></tr>
+<tr><td><code>F1</code> ou <code>h</code></td><td>Ajuda</td></tr>
+<tr><td><code>F2</code> ou <code>S</code></td><td>Setup (configuração)</td></tr>
+<tr><td><code>F3</code> ou <code>/</code></td><td>Buscar processo</td></tr>
+<tr><td><code>F4</code> ou <code>\</code></td><td>Filtrar</td></tr>
+<tr><td><code>F5</code> ou <code>t</code></td><td>Modo árvore</td></tr>
+<tr><td><code>F6</code> ou <code>&gt;</code></td><td>Ordenar por coluna</td></tr>
+<tr><td><code>F9</code> ou <code>k</code></td><td>Matar processo</td></tr>
+<tr><td><code>F10</code> ou <code>q</code></td><td>Sair</td></tr>
+<tr><td><code>Space</code></td><td>Selecionar/desmarcar processo</td></tr>
+<tr><td><code>u</code></td><td>Filtrar por usuário</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>5.5 pstree — Display Process Tree</h3>
+<p>O <code>pstree</code> mostra processos em formato de árvore, facilitando a visualização da hierarquia.</p>
+
+<pre><code># Árvore de todos os processos
+$ pstree
+
+# Árvore com PIDs
+$ pstree -p
+
+# Árvore de um usuário específico
+$ pstree usuario
+
+# Árvore de um PID específico
+$ pstree 1
+
+# Mostrar argumentos completos
+$ pstree -a
+
+# Mostrar threads
+$ pstree -t
+
+# Mostrar PGIDs
+$ pstree -g
+
+# Destacar ancestral do processo atual
+$ pstree -h
+
+# Combinar opções
+$ pstree -pahlu
+</code></pre>
+
+<div class="ascii">
+systemd(1)─┬─accounts-daemon(567)
+           ├─cron(589)
+           ├─dbus-daemon(576)
+           ├─sshd(612)───sshd(1234)───bash(1235)───pstree(5678)
+           ├─systemd-journal(345)
+           └─systemd-logind(456)
+</div>
+</div>
+
+<div class="section">
+<h3>5.6 Jobs, Foreground e Background</h3>
+<p>O shell pode gerenciar múltiplos processos em uma sessão. Processos podem rodar em <strong>foreground</strong> (interativo) ou <strong>background</strong> (não-interativo).</p>
+
+<h4>5.6.1 Controle de Jobs</h4>
+<pre><code># Executar em background
+$ sleep 60 &amp;
+[1] 1234
+
+# Listar jobs
+$ jobs
+[1]+  Running                 sleep 60 &amp;
+
+# Trazer para foreground
+$ fg %1
+
+# Mandar para background
+# Ctrl+Z para suspender, depois:
+$ bg %1
+
+# Suspender processo em foreground
+# Ctrl+Z
+
+# Matar um job
+$ kill %1
+
+# Trazer último job para foreground
+$ fg
+
+# Trazer job específico
+$ fg %2
+
+# Trazer job pelo nome
+$ fg %sleep
+</code></pre>
+
+<h4>5.6.2 Estados de Jobs</h4>
+<table>
+<tr><th>Estado</th><th>Significado</th></tr>
+<tr><td><code>Running</code></td><td>Executando em background</td></tr>
+<tr><td><code>Stopped</code></td><td>Suspenso (Ctrl+Z)</td></tr>
+<tr><td><code>Done</code></td><td>Terminado com sucesso</td></tr>
+<tr><td><code>Done(code)</code></td><td>Terminado com código de saída</td></tr>
+<tr><td><code>Terminated</code></td><td>Terminado por sinal</td></tr>
+</table>
+
+<h4>5.6.3 nohup — Run Command Immune to Hangups</h4>
+<pre><code># Executar comando que sobrevive ao logout
+$ nohup ./script.sh &amp;
+[1] 1234
+nohup: ignoring input and appending output to 'nohup.out'
+
+# Especificar arquivo de saída
+$ nohup ./script.sh &gt; meu_log.txt 2&gt;&amp;1 &amp;
+
+# Combinar com disown
+$ ./script.sh &amp;
+$ disown %1
+# O processo continua mesmo se o terminal fechar
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 nohup vs. disown vs. screen/tmux</div>
+  <ul>
+    <li><code>nohup</code>: Executa comando ignorando SIGHUP. Simples, mas sem interação.</li>
+    <li><code>disown</code>: Remove job da tabela de jobs do shell. O processo continua, mas sem controle fácil.</li>
+    <li><code>screen</code>/<code>tmux</code>: Emuladores de terminal persistentes. Permitem reconectar posteriormente. Recomendado para sessões longas.</li>
+  </ul>
+</div>
+</div>
+
+<div class="section">
+<h3>5.7 kill, killall, pkill — Enviar Sinais</h3>
+<p>Processos no Linux se comunicam via <strong>sinais</strong>. O comando <code>kill</code> envia sinais para processos.</p>
+
+<h4>5.7.1 Sinais Importantes</h4>
+<table>
+<tr><th>Sinal</th><th>Número</th><th>Ação</th><th>Uso</th></tr>
+<tr><td><code>SIGHUP</code></td><td>1</td><td>Hang up</td><td>Recarregar config (daemon)</td></tr>
+<tr><td><code>SIGINT</code></td><td>2</td><td>Interrupt</td><td>Ctrl+C</td></tr>
+<tr><td><code>SIGQUIT</code></td><td>3</td><td>Quit</td><td>Ctrl+\, gera core dump</td></tr>
+<tr><td><code>SIGKILL</code></td><td>9</td><td>Kill</td><td>Matar imediatamente (não capturável)</td></tr>
+<tr><td><code>SIGTERM</code></td><td>15</td><td>Terminate</td><td>Terminar graciosamente (padrão)</td></tr>
+<tr><td><code>SIGSTOP</code></td><td>19</td><td>Stop</td><td>Ctrl+Z, não capturável</td></tr>
+<tr><td><code>SIGCONT</code></td><td>18</td><td>Continue</td><td>Continuar processo parado</td></tr>
+<tr><td><code>SIGUSR1</code></td><td>10</td><td>User 1</td><td>Uso definido pelo programa</td></tr>
+<tr><td><code>SIGUSR2</code></td><td>12</td><td>User 2</td><td>Uso definido pelo programa</td></tr>
+</table>
+
+<h4>5.7.2 Uso do kill</h4>
+<pre><code># Enviar SIGTERM (padrão) para um PID
+$ kill 1234
+
+# Enviar SIGKILL (forçado)
+$ kill -9 1234
+$ kill -SIGKILL 1234
+
+# Enviar SIGHUP (recarregar config)
+$ kill -HUP 1234
+$ kill -1 1234
+
+# Enviar SIGINT (equivalente a Ctrl+C)
+$ kill -INT 1234
+
+# Enviar SIGSTOP (pausar)
+$ kill -STOP 1234
+
+# Enviar SIGCONT (continuar)
+$ kill -CONT 1234
+
+# Listar todos os sinais disponíveis
+$ kill -l
+
+# Verificar se processo existe
+$ kill -0 1234
+# Código 0 = processo existe; código != 0 = não existe
+</code></pre>
+
+<h4>5.7.3 killall — Kill by Name</h4>
+<pre><code># Matar todos os processos com nome
+$ killall firefox
+
+# Matar com sinal específico
+$ killall -9 firefox
+
+# Listar processos que seriam mortos (simulação)
+$ killall -i firefox
+
+# Matar por usuário
+$ sudo killall -u usuario firefox
+
+# Matar processos mais antigos que N segundos
+$ killall -o 1h firefox
+
+# Matar processos mais novos que N segundos
+$ killall -y 1m firefox
+
+# Considerar nome exato
+$ killall -e firefox
+</code></pre>
+
+<h4>5.7.4 pkill — Kill by Pattern</h4>
+<pre><code># Matar por padrão no nome
+$ pkill firefox
+
+# Matar por padrão no comando completo
+$ pkill -f "python script.py"
+
+# Matar por usuário
+$ pkill -u usuario
+
+# Matar por terminal
+$ pkill -t pts/0
+
+# Enviar sinal específico
+$ pkill -9 firefox
+
+# Listar PIDs que seriam afetados
+$ pgrep firefox
+
+# Combinar critérios
+$ pkill -u usuario -f "python"
+</code></pre>
+
+<div class="box box-warning">
+  <div class="box-title">⚠️ killall pode ser perigoso</div>
+  <p><code>killall</code> mata TODOS os processos com aquele nome. Em alguns sistemas Unix (Solaris, AIX), <code>killall</code> mata TODOS os processos do sistema! Sempre use <code>pgrep</code> primeiro para verificar quais processos seriam afetados.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>5.8 nice e renice — Ajustar Prioridade</h3>
+<p>A <strong>nice value</strong> (-20 a 19) determina a prioridade de um processo. Valores mais baixos = maior prioridade.</p>
+
+<pre><code># Iniciar processo com prioridade baixa (nice alto)
+$ nice -n 10 ./script.sh
+
+# Iniciar com prioridade alta (requer root)
+$ sudo nice -n -10 ./script.sh
+
+# Alterar prioridade de processo em execução
+$ renice -n 5 -p 1234
+
+# Alterar prioridade de todos os processos de um usuário
+$ sudo renice -n 5 -u usuario
+
+# Alterar prioridade por nome
+$ sudo renice -n -5 $(pgrep firefox)
+
+# Ver nice value
+$ ps -eo pid,comm,nice | grep firefox
+</code></pre>
+
+<table>
+<tr><th>Nice Value</th><th>Prioridade</th><th>Uso</th></tr>
+<tr><td>-20</td><td>Máxima</td><td>Processos críticos de tempo real</td></tr>
+<tr><td>-10</td><td>Alta</td><td>Compilações, builds</td></tr>
+<tr><td>0</td><td>Normal</td><td>Padrão</td></tr>
+<tr><td>10</td><td>Baixa</td><td>Backups, indexação</td></tr>
+<tr><td>19</td><td>Mínima</td><td>Tarefas de manutenção</td></tr>
+</table>
+</div>
+
+<!-- EXERCÍCIOS VOLUME 5 -->
+<div class="exercise">
+<h4>🏋️ Exercícios — Volume 5</h4>
+<ol>
+  <li>Execute <code>ps aux</code> e identifique: seu shell, o processo init (systemd), e 3 processos do sistema.</li>
+  <li>Use <code>ps -eo pid,ppid,stat,cmd</code> e encontre um processo em estado <code>Z</code> (zombie). Se não houver, pesquise como criar um.</li>
+  <li>Abra <code>top</code>, pressione <code>1</code> para ver CPUs individuais, <code>M</code> para ordenar por memória, e identifique o processo que mais consome recursos.</li>
+  <li>Instale e use <code>htop</code>. Explore a interface, filtre por usuário, e mude a ordenação.</li>
+  <li>Use <code>pstree -p</code> para ver a árvore completa do sistema. Encontre o seu shell e trace até o PID 1.</li>
+  <li>Execute <code>sleep 300</code>, suspenda com Ctrl+Z, verifique com <code>jobs</code>, e continue em background com <code>bg</code>.</li>
+  <li>Use <code>nohup</code> para executar um comando longo, feche o terminal, e verifique se o processo ainda está rodando em outro terminal.</li>
+  <li>Use <code>kill -l</code> para listar todos os sinais. Envie SIGTERM e depois SIGKILL para um processo de teste. Qual a diferença?</li>
+  <li>Use <code>nice</code> para iniciar um processo com prioridade 10 e <code>renice</code> para mudar para 5.</li>
+  <li>Crie um script que monitore o uso de CPU de um processo específico a cada 2 segundos usando <code>ps</code>.</li>
+</ol>
+</div>
+

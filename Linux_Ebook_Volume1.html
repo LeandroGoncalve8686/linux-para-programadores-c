@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux: Fundamentos e Terminal — Ebook Completo</title>
+<style>
+:root {
+  --bg: #1a1a2e;
+  --bg2: #16213e;
+  --accent: #e94560;
+  --accent2: #0f3460;
+  --text: #eaeaea;
+  --text2: #a0a0a0;
+  --code-bg: #0d1117;
+  --border: #30363d;
+  --success: #2ecc71;
+  --warning: #f39c12;
+  --info: #3498db;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+}
+.container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+/* Cover */
+.cover {
+  text-align: center;
+  padding: 80px 20px;
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  margin-bottom: 60px;
+}
+.cover h1 {
+  font-size: 3em;
+  color: var(--accent);
+  margin-bottom: 10px;
+  text-shadow: 0 0 20px rgba(233,69,96,0.3);
+}
+.cover .subtitle {
+  font-size: 1.3em;
+  color: var(--text2);
+  margin-bottom: 30px;
+}
+.cover .tagline {
+  background: var(--accent);
+  color: white;
+  display: inline-block;
+  padding: 8px 24px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.95em;
+}
+.cover .meta {
+  margin-top: 40px;
+  color: var(--text2);
+  font-size: 0.9em;
+}
+
+/* TOC */
+.toc {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 60px;
+}
+.toc h2 {
+  color: var(--accent);
+  margin-bottom: 20px;
+  font-size: 1.5em;
+}
+.toc ul { list-style: none; }
+.toc li { margin: 8px 0; }
+.toc a {
+  color: var(--text);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: block;
+  transition: all 0.2s;
+}
+.toc a:hover {
+  background: var(--accent2);
+  color: var(--accent);
+}
+.toc .vol-num {
+  color: var(--accent);
+  font-weight: 700;
+  margin-right: 8px;
+}
+
+/* Volume Header */
+.volume-header {
+  background: linear-gradient(90deg, var(--accent2), var(--bg2));
+  padding: 40px 30px;
+  border-left: 5px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+  margin: 60px 0 30px 0;
+}
+.volume-header h2 {
+  font-size: 2em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.volume-header .vol-desc {
+  color: var(--text2);
+  font-size: 1.1em;
+}
+
+/* Sections */
+.section {
+  margin-bottom: 40px;
+}
+.section h3 {
+  color: var(--info);
+  font-size: 1.4em;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+}
+.section h4 {
+  color: var(--warning);
+  font-size: 1.15em;
+  margin: 25px 0 12px 0;
+}
+.section p {
+  margin-bottom: 15px;
+  text-align: justify;
+}
+.section ul, .section ol {
+  margin: 15px 0 15px 30px;
+}
+.section li {
+  margin: 8px 0;
+}
+
+/* Code blocks */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  overflow-x: auto;
+  margin: 15px 0;
+  font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+code {
+  font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  background: rgba(233,69,96,0.15);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.92em;
+}
+pre code {
+  background: none;
+  color: #c9d1d9;
+  padding: 0;
+  font-size: 1em;
+}
+
+/* Syntax highlighting colors */
+.syntax-keyword { color: #ff7b72; }
+.syntax-string { color: #a5d6ff; }
+.syntax-comment { color: #8b949e; font-style: italic; }
+.syntax-number { color: #79c0ff; }
+.syntax-function { color: #d2a8ff; }
+.syntax-variable { color: #ffa657; }
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background: var(--bg2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+th {
+  background: var(--accent2);
+  color: var(--accent);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+}
+td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+tr:hover { background: rgba(233,69,96,0.05); }
+
+/* Info boxes */
+.box {
+  padding: 20px 24px;
+  border-radius: 10px;
+  margin: 20px 0;
+  border-left: 4px solid;
+}
+.box-info {
+  background: rgba(52,152,219,0.1);
+  border-color: var(--info);
+}
+.box-warning {
+  background: rgba(243,156,18,0.1);
+  border-color: var(--warning);
+}
+.box-danger {
+  background: rgba(233,69,96,0.1);
+  border-color: var(--accent);
+}
+.box-success {
+  background: rgba(46,204,113,0.1);
+  border-color: var(--success);
+}
+.box-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 1.05em;
+}
+.box-info .box-title { color: var(--info); }
+.box-warning .box-title { color: var(--warning); }
+.box-danger .box-title { color: var(--accent); }
+.box-success .box-title { color: var(--success); }
+
+/* ASCII diagrams */
+.ascii {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85em;
+  line-height: 1.4;
+  color: #a5d6ff;
+  overflow-x: auto;
+  margin: 15px 0;
+}
+
+/* Exercises */
+.exercise {
+  background: var(--bg2);
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  padding: 25px;
+  margin: 30px 0;
+}
+.exercise h4 {
+  color: var(--accent);
+  margin-bottom: 15px;
+  font-size: 1.2em;
+}
+.exercise ol { margin-left: 25px; }
+.exercise li { margin: 10px 0; }
+
+/* Page break for print */
+.page-break { page-break-before: always; }
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 40px;
+  color: var(--text2);
+  border-top: 1px solid var(--border);
+  margin-top: 60px;
+}
+
+/* Print styles */
+@media print {
+  body { background: white; color: black; }
+  .cover { border: 2px solid #333; }
+  pre { background: #f5f5f5; border: 1px solid #ddd; }
+  .volume-header { background: #f5f5f5; border-left: 5px solid #333; }
+}
+.diagram-container {
+  margin: 25px 0;
+  text-align: center;
+}
+
+.diagram-image {
+  width: 100%;
+  max-width: 1200px;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto;
+}
+
+.diagram-caption {
+  margin-top: 12px;
+  color: var(--text2);
+  font-size: 0.9em;
+  font-style: italic;
+}
+</style>
+<base target="_blank">
+</head>
+<body>
+<div class="container">
+
+<!-- ==================== CAPA ==================== -->
+<div class="cover">
+  <h1>🐧 Linux</h1>
+  <div class="subtitle">Fundamentos e Terminal</div>
+  <div class="tagline">Do Zero ao Domínio Completo</div>
+  <div class="meta">
+    <p>Um guia completo e pesado para quem quer dominar Linux, o terminal e os fundamentos de sistemas operacionais.</p>
+    <p style="margin-top:15px;">📘 10 Volumes • ~300 Páginas • Exemplos Práticos • Exercícios</p>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- VOLUME 1 — FUNDAMENTOS DO SISTEMA -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<div class="volume-header" id="vol1">
+  <h2>📚 Volume 1 — Fundamentos do Sistema</h2>
+  <div class="vol-desc">O que é Linux, como funciona por dentro, e por que você precisa entender isso antes de digitar qualquer comando.</div>
+</div>
+
+<div class="section">
+<h3>1.1 O que é um Sistema Operacional?</h3>
+<p>Um <strong>Sistema Operacional (SO)</strong> é o software fundamental que gerencia os recursos de hardware de um computador e fornece serviços para os programas de aplicação. Ele atua como uma camada de abstração entre o hardware físico e o software do usuário.</p>
+
+<div class="box box-info">
+  <div class="box-title">💡 Analogia</div>
+  <p>Pense no SO como o gerente de um restaurante: ele não cozinha (isso é o trabalho dos aplicativos), mas organiza a cozinha (hardware), distribui tarefas (CPU), gerencia o estoque (memória) e garante que os pedidos (processos) sejam atendidos na ordem correta.</p>
+</div>
+
+<p>Os principais componentes de um SO são:</p>
+<ul>
+  <li><strong>Kernel (Núcleo):</strong> O coração do sistema. Gerencia processos, memória, dispositivos e chamadas de sistema.</li>
+  <li><strong>Shell:</strong> Interface de linha de comando que interpreta comandos do usuário.</li>
+  <li><strong>Sistema de Arquivos:</strong> Organiza e armazena dados em dispositivos de armazenamento.</li>
+  <li><strong>Gerenciador de Processos:</strong> Controla a execução de programas.</li>
+  <li><strong>Gerenciador de Memória:</strong> Aloca e libera memória RAM para processos.</li>
+  <li><strong>Drivers:</strong> Permitem que o SO comunique-se com hardware específico.</li>
+</ul>
+
+<div class="ascii">
+<div class="diagram-container">
+  <img 
+    src="/ChatGPT Image 15 de jun. de 2026, 21_16_40.png" 
+    alt="Arquitetura do Sistema Operacional Linux"
+    class="diagram-image"
+  >
+  <p class="diagram-caption">
+    Arquitetura simplificada do sistema: Aplicações → Bibliotecas → Shell → Kernel → Hardware.
+  </p>
+</div>
+</div>
+
+<div class="section">
+<h3>1.2 O que é Linux?</h3>
+<p><strong>Linux</strong> é um kernel de sistema operacional de código aberto, criado por <strong>Linus Torvalds</strong> em 1991. O termo "Linux" é frequentemente usado para se referir a sistemas operacionais completos baseados no kernel Linux, que incluem também ferramentas e bibliotecas do projeto <strong>GNU</strong>.</p>
+
+<p>A história do Linux começou quando Linus, então estudante na Universidade de Helsinque, queria um sistema operacional similar ao UNIX para seu PC, mas não queria pagar pela licença do MINIX. Ele começou a escrever seu próprio kernel.</p>
+
+<div class="box box-info">
+  <div class="box-title">📜 A Mensagem Original (1991)</div>
+  <p>"Hello everybody out there using minix — I'm doing a (free) operating system (just a hobby, won't be big and professional like gnu) for 386(486) AT clones."</p>
+  <p style="margin-top:10px;font-size:0.9em;color:var(--text2);">— Linus Torvalds, comp.os.minix, 25 de agosto de 1991</p>
+</div>
+
+<p>Linux não é um sistema operacional completo por si só. É um <strong>kernel</strong>. O que chamamos de "Linux" no dia a dia (Ubuntu, Fedora, Debian) são na verdade <strong>distribuições GNU/Linux</strong> — combinações do kernel Linux com ferramentas do projeto GNU e outros softwares.</p>
+</div>
+
+<div class="section">
+<h3>1.3 O Kernel Linux</h3>
+<p>O <strong>kernel</strong> é o componente central do sistema operacional. Ele tem acesso total ao hardware e gerencia todos os recursos do sistema. No Linux, o kernel é monolítico com módulos carregáveis — ou seja, a maior parte do código do kernel roda no mesmo espaço de memória, mas drivers e funcionalidades podem ser carregados dinamicamente.</p>
+
+<h4>1.3.1 Arquitetura do Kernel</h4>
+<div class="ascii">
+<div class="diagram-container">
+  <img 
+    src="/ChatGPT Image 15 de jun. de 2026, 21_22_56.png" 
+    alt="Arquitetura do Sistema Operacional Linux"
+    class="diagram-image"
+  >
+  <p class="diagram-caption">
+    Arquitetura simplificada do sistema: Aplicações → Bibliotecas → Shell → Kernel → Hardware.
+  </p>
+</div>
+</div>
+
+<h4>1.3.2 Chamadas de Sistema (System Calls)</h4>
+<p>Chamadas de sistema são a interface entre o espaço do usuário e o kernel. Quando um programa precisa de um recurso privilegiado (acessar um arquivo, alocar memória, criar um processo), ele faz uma chamada de sistema. O kernel então executa a operação em modo privilegiado e retorna o resultado.</p>
+
+<p>Exemplos de chamadas de sistema importantes:</p>
+<table>
+<tr><th>Chamada</th><th>Descrição</th><th>Uso típico</th></tr>
+<tr><td><code>open()</code></td><td>Abre um arquivo</td><td><code>open("file.txt", O_RDONLY)</code></td></tr>
+<tr><td><code>read()</code></td><td>Lê dados de um arquivo</td><td><code>read(fd, buffer, 1024)</code></td></tr>
+<tr><td><code>write()</code></td><td>Escreve dados em um arquivo</td><td><code>write(fd, data, len)</code></td></tr>
+<tr><td><code>fork()</code></td><td>Cria um novo processo</td><td><code>pid = fork()</code></td></tr>
+<tr><td><code>execve()</code></td><td>Executa um programa</td><td><code>execve("/bin/ls", args, env)</code></td></tr>
+<tr><td><code>mmap()</code></td><td>Mapeia arquivo na memória</td><td><code>mmap(NULL, size, prot, flags, fd, 0)</code></td></tr>
+<tr><td><code>exit()</code></td><td>Termina um processo</td><td><code>exit(0)</code></td></tr>
+</table>
+
+<div class="box box-warning">
+  <div class="box-title">⚠️ Importante para programadores C</div>
+  <p>Em C, você não chama as system calls diretamente. Você usa as <strong>wrapper functions</strong> da glibc (como <code>open()</code>, <code>read()</code>, <code>fork()</code>), que configuram os argumentos e executam a instrução <code>syscall</code> (ou <code>int 0x80</code> em x86, <code>syscall</code> em x86_64).</p>
+</div>
+</div>
+
+<div class="section">
+<h3>1.4 O Projeto GNU</h3>
+<p>O <strong>Projeto GNU</strong> foi iniciado por <strong>Richard Stallman</strong> em 1983 com o objetivo de criar um sistema operacional completamente livre, compatível com UNIX. GNU significa "GNU's Not Unix" — um acrônimo recursivo.</p>
+
+<p>Até 1991, o projeto GNU tinha desenvolvido quase todos os componentes de um sistema operacional: compiladores (GCC), depuradores (GDB), bibliotecas (glibc), shell (bash), editores (Emacs), e utilitários. O que faltava era um kernel. Quando Linus Torvalds lançou o kernel Linux sob licença GPL, a combinação GNU + Linux formou um sistema operacional completo e funcional.</p>
+
+<div class="box box-info">
+  <div class="box-title">🎯 Por que "GNU/Linux" e não só "Linux"?</div>
+  <p>Richard Stallman e a Free Software Foundation argumentam que chamar o sistema apenas de "Linux" ignora a contribuição fundamental do projeto GNU. O kernel Linux sozinho não é um sistema operacional utilizável — são as ferramentas GNU que o tornam funcional.</p>
+</div>
+
+<h4>1.4.1 Componentes GNU Essenciais</h4>
+<table>
+<tr><th>Componente</th><th>Descrição</th></tr>
+<tr><td><strong>GCC</strong></td><td>GNU Compiler Collection — compilador C, C++, Fortran, etc.</td></tr>
+<tr><td><strong>GDB</strong></td><td>GNU Debugger — depurador para C/C++</td></tr>
+<tr><td><strong>glibc</strong></td><td>GNU C Library — biblioteca padrão C para Linux</td></tr>
+<tr><td><strong>Bash</strong></td><td>Bourne Again Shell — shell padrão da maioria das distribuições</td></tr>
+<tr><td><strong>Coreutils</strong></td><td>ls, cp, mv, rm, cat, etc. — utilitários básicos</td></tr>
+<tr><td><strong>Binutils</strong></td><td>as, ld, objdump, nm — ferramentas para manipulação de binários</td></tr>
+<tr><td><strong>Make</strong></td><td>Automação de compilação</td></tr>
+<tr><td><strong>Emacs</strong></td><td>Editor de texto extensível</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>1.5 Shell e Terminal</h3>
+<p>É fundamental entender a diferença entre <strong>terminal</strong>, <strong>console</strong>, <strong>shell</strong> e <strong>TTY</strong> — termos frequentemente confundidos.</p>
+
+<h4>1.5.1 Terminal</h4>
+<p>Um <strong>terminal</strong> (ou terminal emulator) é um programa que emula um dispositivo de terminal físico (como os antigos terminais VT100). Ele fornece uma janela onde você pode interagir com o shell. Exemplos: GNOME Terminal, Konsole, iTerm2, Windows Terminal, xterm.</p>
+
+<h4>1.5.2 Console</h4>
+<p>O <strong>console</strong> é o dispositivo físico de entrada/saída do sistema. Em servidores, é o monitor e teclado conectados diretamente à máquina. No Linux, os consoles virtuais são acessados com <code>Ctrl+Alt+F1</code> a <code>F6</code>. O ambiente gráfico geralmente roda no <code>F7</code> ou <code>F1</code> (dependendo da distribuição).</p>
+
+<h4>1.5.3 Shell</h4>
+<p>O <strong>shell</strong> é um programa interpretador de comandos. Ele lê o que você digita, interpreta e executa. O shell padrão no Linux é o <strong>Bash</strong> (Bourne Again Shell), mas existem alternativas como Zsh, Fish, Ksh, Dash.</p>
+
+<div class="ascii">
+<div class="diagram-container">
+  <img 
+    src="/ChatGPT Image 15 de jun. de 2026, 21_24_40.png" 
+    alt="Arquitetura do Sistema Operacional Linux"
+    class="diagram-image"
+  >
+  <p class="diagram-caption">
+    Arquitetura simplificada do sistema: Aplicações → Bibliotecas → Shell → Kernel → Hardware.
+  </p>
+</div>
+</div>
+
+<h4>1.5.4 TTY</h4>
+<p><strong>TTY</strong> (Teletypewriter) é um conceito herdado dos mainframes. No Linux, um TTY é uma interface de terminal virtual. Cada sessão de login tem um TTY associado. Você pode ver o seu TTY com o comando <code>tty</code>:</p>
+
+<pre><code>$ tty
+/dev/pts/0</code></pre>
+
+<p>Os TTYs físicos são <code>/dev/tty1</code> a <code>/dev/tty6</code>. Os TTYs pseudo (pts) são usados por terminais emulados em ambiente gráfico e conexões SSH.</p>
+
+<table>
+<tr><th>Termo</th><th>O que é</th><th>Exemplo</th></tr>
+<tr><td>Terminal</td><td>Emulador de terminal</td><td>GNOME Terminal, xterm</td></tr>
+<tr><td>Console</td><td>Dispositivo físico de E/S</td><td>Monitor + teclado do servidor</td></tr>
+<tr><td>Shell</td><td>Interpretador de comandos</td><td>Bash, Zsh</td></tr>
+<tr><td>TTY</td><td>Interface de terminal virtual</td><td>/dev/tty1, /dev/pts/0</td></tr>
+<tr><td>PTY</td><td>Pseudo-terminal (par master/slave)</td><td>/dev/pts/0 (slave), /dev/ptmx (master)</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>1.6 Bash — O Shell Padrão</h3>
+<p>O <strong>Bash</strong> (Bourne Again Shell) é o shell padrão na maioria das distribuições Linux. É uma reimplementação do Bourne Shell (sh) com recursos adicionais do Korn Shell (ksh) e C Shell (csh).</p>
+
+<h4>1.6.1 Recursos do Bash</h4>
+<ul>
+  <li><strong>History:</strong> Armazena comandos anteriores (arquivo <code>~/.bash_history</code>)</li>
+  <li><strong>Tab completion:</strong> Completa comandos, arquivos e variáveis com Tab</li>
+  <li><strong>Aliases:</strong> Atalhos para comandos longos</li>
+  <li><strong>Variables:</strong> Variáveis de ambiente e locais</li>
+  <li><strong>Scripts:</strong> Programação de automações</li>
+  <li><strong>Job control:</strong> Controle de processos em foreground/background</li>
+  <li><strong>Redirection:</strong> Redirecionamento de entrada/saída</li>
+  <li><strong>Pipes:</strong> Encadeamento de comandos</li>
+</ul>
+
+<h4>1.6.2 Arquivos de Configuração do Bash</h4>
+<table>
+<tr><th>Arquivo</th><th>Quando é executado</th><th>Propósito</th></tr>
+<tr><td><code>/etc/profile</code></td><td>Login shell (todos usuários)</td><td>Configurações globais</td></tr>
+<tr><td><code>~/.bash_profile</code></td><td>Login shell</td><td>Configurações pessoais</td></tr>
+<tr><td><code>~/.bashrc</code></td><td>Shell interativo não-login</td><td>Aliases, funções, prompt</td></tr>
+<tr><td><code>~/.bash_logout</code></td><td>Logout</td><td>Limpeza ao sair</td></tr>
+<tr><td><code>/etc/bash.bashrc</code></td><td>Shell interativo (todos)</td><td>Configurações globais</td></tr>
+</table>
+
+<div class="box box-info">
+  <div class="box-title">🔍 Login Shell vs. Non-Login Shell</div>
+  <p>Um <strong>login shell</strong> é iniciado quando você faz login no sistema (SSH, console físico). Ele executa <code>/etc/profile</code> e <code>~/.bash_profile</code>. Um <strong>non-login shell</strong> é iniciado dentro de uma sessão já logada (abrir um terminal no ambiente gráfico). Ele executa <code>~/.bashrc</code>.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>1.7 Distribuições Linux</h3>
+<p>Uma <strong>distribuição Linux</strong> (ou distro) é um sistema operacional completo construído a partir do kernel Linux, ferramentas GNU, e software adicional. Cada distribuição tem sua própria filosofia, sistema de pacotes, e público-alvo.</p>
+
+<h4>1.7.1 Principais Famílias</h4>
+<table>
+<tr><th>Família</th><th>Base</th><th>Gerenciador de Pacotes</th><th>Distros Populares</th></tr>
+<tr><td><strong>Debian</strong></td><td>Debian</td><td>APT (dpkg)</td><td>Ubuntu, Linux Mint, Pop!_OS, Kali Linux</td></tr>
+<tr><td><strong>Red Hat</strong></td><td>RHEL</td><td>RPM (DNF/YUM)</td><td>Fedora, CentOS, Rocky Linux, AlmaLinux</td></tr>
+<tr><td><strong>Arch</strong></td><td>Arch</td><td>Pacman</td><td>Arch Linux, Manjaro, EndeavourOS</td></tr>
+<tr><td><strong>SUSE</strong></td><td>SUSE</td><td>RPM (ZYpp)</td><td>openSUSE, SUSE Linux Enterprise</td></tr>
+<tr><td><strong>Gentoo</strong></td><td>Gentoo</td><td>Portage</td><td>Gentoo, Calculate Linux</td></tr>
+<tr><td><strong>Slackware</strong></td><td>Slackware</td><td>pkgtool</td><td>Slackware, Salix</td></tr>
+</table>
+
+<h4>1.7.2 Como Escolher uma Distribuição</h4>
+<ul>
+  <li><strong>Iniciantes:</strong> Ubuntu, Linux Mint, Pop!_OS — instalação fácil, grande comunidade</li>
+  <li><strong>Desenvolvimento:</strong> Fedora, Arch — software mais recente, ferramentas de desenvolvimento</li>
+  <li><strong>Servidores:</strong> Debian, Rocky Linux, Ubuntu Server — estabilidade, suporte LTS</li>
+  <li><strong>Segurança/Cibersegurança:</strong> Kali Linux, Parrot OS — ferramentas de pentest pré-instaladas</li>
+  <li><strong>Minimalismo/Controle:</strong> Arch, Gentoo — você constrói o sistema do zero</li>
+</ul>
+</div>
+
+<div class="section">
+<h3>1.8 Boot e Inicialização</h3>
+<p>O processo de <strong>boot</strong> (inicialização) é a sequência de eventos que leva o computador do estado desligado até um sistema operacional funcional.</p>
+
+<h4>1.8.1 Fases do Boot</h4>
+<div class="ascii">
+<div class="diagram-container">
+  <img 
+    src="/ChatGPT Image 15 de jun. de 2026, 21_40_28.png" 
+    alt="Arquitetura do Sistema Operacional Linux"
+    class="diagram-image"
+  >
+  <p class="diagram-caption">
+    Arquitetura simplificada do sistema: Aplicações → Bibliotecas → Shell → Kernel → Hardware.
+  </p>
+</div>
+</div>
+
+<h4>1.8.2 BIOS vs. UEFI</h4>
+<table>
+<tr><th>Característica</th><th>BIOS (Legado)</th><th>UEFI (Moderno)</th></tr>
+<tr><td>Idade</td><td>1981</td><td>2005</td></tr>
+<tr><td>Partição de boot</td><td>MBR</td><td>GPT</td></tr>
+<tr><td>Tamanho máximo do disco</td><td>2 TB</td><td>9.4 ZB (zettabytes)</td></tr>
+<tr><td>Partições</td><td>4 primárias</td><td>128 partições</td></tr>
+<tr><td>Secure Boot</td><td>Não</td><td>Sim</td></tr>
+<tr><td>Interface</td><td>Texto</td><td>Gráfica</td></tr>
+<tr><td>Bootloader</td><td>GRUB legado</td><td>GRUB2, systemd-boot</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>1.9 systemd — O Sistema de Inicialização</h3>
+<p>O <strong>systemd</strong> é o sistema de inicialização e gerenciamento de serviços padrão na maioria das distribuições Linux modernas (Ubuntu, Fedora, Debian, CentOS, Arch). Ele substituiu o antigo SysVinit.</p>
+
+<h4>1.9.1 Conceitos do systemd</h4>
+<ul>
+  <li><strong>Units:</strong> Recursos que o systemd gerencia. Cada unit tem um arquivo de configuração.</li>
+  <li><strong>Services:</strong> Processos que o systemd inicia e monitora.</li>
+  <li><strong>Targets:</strong> Estados do sistema (equivalentes aos runlevels).</li>
+  <li><strong>Timers:</strong> Agendamento de tarefas (alternativa ao cron).</li>
+  <li><strong>Mounts:</strong> Pontos de montagem gerenciados pelo systemd.</li>
+  <li><strong>Sockets:</strong> Ativação de serviços sob demanda.</li>
+</ul>
+
+<h4>1.9.2 Comandos systemd Essenciais</h4>
+<pre><code># Verificar status de um serviço
+$ systemctl status sshd
+
+# Iniciar um serviço
+$ sudo systemctl start nginx
+
+# Parar um serviço
+$ sudo systemctl stop nginx
+
+# Habilitar serviço para iniciar no boot
+$ sudo systemctl enable nginx
+
+# Desabilitar serviço no boot
+$ sudo systemctl disable nginx
+
+# Recarregar configuração de um serviço
+$ sudo systemctl reload nginx
+
+# Reiniciar um serviço
+$ sudo systemctl restart nginx
+
+# Listar todos os serviços ativos
+$ systemctl list-units --type=service --state=active
+
+# Ver logs de um serviço
+$ journalctl -u nginx
+
+# Ver logs em tempo real
+$ journalctl -f
+
+# Ver logs desde o último boot
+$ journalctl -b
+</code></pre>
+
+<h4>1.9.3 Targets do systemd (Runlevels)</h4>
+<table>
+<tr><th>Target</th><th>Descrição</th><th>Runlevel Equivalente</th></tr>
+<tr><td><code>poweroff.target</code></td><td>Desligamento</td><td>0</td></tr>
+<tr><td><code>rescue.target</code></td><td>Modo de recuperação</td><td>1</td></tr>
+<tr><td><code>multi-user.target</code></td><td>Multiusuário sem GUI</td><td>3</td></tr>
+<tr><td><code>graphical.target</code></td><td>Multiusuário com GUI</td><td>5</td></tr>
+<tr><td><code>reboot.target</code></td><td>Reinicialização</td><td>6</td></tr>
+</table>
+
+<pre><code># Mudar para modo de recuperação
+$ sudo systemctl isolate rescue.target
+
+# Ver target atual
+$ systemctl get-default
+
+# Mudar default para multiusuário (sem GUI)
+$ sudo systemctl set-default multi-user.target
+</code></pre>
+</div>
+
+<div class="section">
+<h3>1.10 Estrutura do Sistema de Arquivos (FHS)</h3>
+<p>O <strong>Filesystem Hierarchy Standard (FHS)</strong> define a estrutura de diretórios em sistemas Linux. Conhecer essa estrutura é essencial para navegar e entender o sistema.</p>
+
+<div class="ascii">
+<div class="diagram-container">
+  <img 
+    src="/ChatGPT Image 15 de jun. de 2026, 21_40_49.png" 
+    alt="Arquitetura do Sistema Operacional Linux"
+    class="diagram-image"
+  >
+  <p class="diagram-caption">
+    Arquitetura simplificada do sistema: Aplicações → Bibliotecas → Shell → Kernel → Hardware.
+  </p>
+</div>
+</div>
+
+<h4>1.10.1 Diretórios Importantes para Desenvolvedores C</h4>
+<table>
+<tr><th>Diretório</th><th>Conteúdo</th><th>Relevância para C</th></tr>
+<tr><td><code>/usr/include</code></td><td>Headers do sistema (<code>stdio.h</code>, <code>stdlib.h</code>)</td><td>Essencial para compilação</td></tr>
+<tr><td><code>/usr/lib</code></td><td>Bibliotecas compartilhadas (<code>.so</code>)</td><td>Linkedição dinâmica</td></tr>
+<tr><td><code>/usr/local</code></td><td>Software instalado manualmente</td><td>Instalação de libs próprias</td></tr>
+<tr><td><code>/proc</code></td><td>Informações de processos</td><td>Debug, análise de memória</td></tr>
+<tr><td><code>/dev</code></td><td>Dispositivos (disco, terminal, etc.)</td><td>Acesso a hardware</td></tr>
+<tr><td><code>/sys</code></td><td>Informações do kernel</td><td>Hardware, drivers, kernel</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>1.11 Usuários, Root, UID e GID</h3>
+<p>Linux é um sistema <strong>multiusuário</strong>. Cada usuário tem uma identidade única e permissões específicas.</p>
+
+<h4>1.11.1 O Usuário Root</h4>
+<p>O <strong>root</strong> (UID 0) é o superusuário do sistema. Ele tem acesso irrestrito a todos os arquivos e pode executar qualquer operação. O poder do root é também seu maior perigo — um comando errado pode destruir o sistema.</p>
+
+<div class="box box-danger">
+  <div class="box-title">🚨 Regra de Ouro</div>
+  <p><strong>NUNCA</strong> use o root para tarefas do dia a dia. Use uma conta de usuário regular e eleve privilégios apenas quando necessário com <code>sudo</code>. Isso protege o sistema de erros acidentais e limita o impacto de malware.</p>
+</div>
+
+<h4>1.11.2 UID e GID</h4>
+<table>
+<tr><th>Faixa de UID</th><th>Tipo de Usuário</th></tr>
+<tr><td>0</td><td>root (superusuário)</td></tr>
+<tr><td>1-999</td><td>Usuários de sistema (daemon, bin, www-data, etc.)</td></tr>
+<tr><td>1000+</td><td>Usuários regulares</td></tr>
+</table>
+
+<pre><code># Ver seu UID e GID
+$ id
+uid=1000(usuario) gid=1000(usuario) groups=1000(usuario),4(adm),24(cdrom)
+
+# Ver informações de outro usuário
+$ id root
+uid=0(root) gid=0(root) groups=0(root)
+
+# Ver todos os usuários do sistema
+$ cat /etc/passwd
+
+# Ver todos os grupos
+$ cat /etc/group
+</code></pre>
+
+<h4>1.11.3 Arquivo /etc/passwd</h4>
+<p>Cada linha do <code>/etc/passwd</code> representa um usuário, com campos separados por <code>:</code>:</p>
+<div class="ascii">
+<div class="diagram-container">
+  <img 
+    src="/ChatGPT Image 15 de jun. de 2026, 21_22_56.png" 
+    alt="Arquitetura do Sistema Operacional Linux"
+    class="diagram-image"
+  >
+  <p class="diagram-caption">
+    Arquitetura simplificada do sistema: Aplicações → Bibliotecas → Shell → Kernel → Hardware.
+  </p>
+</div>
+</div><div class="ascii">
+<div class="diagram-container">
+  <img 
+    src="/ChatGPT Image 15 de jun. de 2026, 21_40_59.png" 
+    alt="Arquitetura do Sistema Operacional Linux"
+    class="diagram-image"
+  >
+  <p class="diagram-caption">
+    Arquitetura simplificada do sistema: Aplicações → Bibliotecas → Shell → Kernel → Hardware.
+  </p>
+</div>
+</div>
+<h4>1.11.4 Arquivo /etc/shadow</h4>
+<p>As senhas criptografadas são armazenadas em <code>/etc/shadow</code>, que só é legível pelo root:</p>
+
+</div><div class="ascii">
+<div class="diagram-container">
+  <img 
+    src="/ChatGPT Image 15 de jun. de 2026, 21_50_14.png" 
+    alt="Arquitetura do Sistema Operacional Linux"
+    class="diagram-image"
+  >
+
+<p>Os campos são: usuário, hash da senha, última mudança, dias mínimos, dias máximos, dias de aviso, dias de inatividade, data de expiração, reservado.</p>
+</div>
+
+<div class="section">
+<h3>1.12 Permissões de Arquivos</h3>
+<p>Linux usa um modelo de permissões baseado em três classes de usuários: <strong>proprietário (owner)</strong>, <strong>grupo (group)</strong>, e <strong>outros (others)</strong>. Cada classe pode ter permissões de <strong>leitura (r)</strong>, <strong>escrita (w)</strong>, e <strong>execução (x)</strong>.</p>
+
+<h4>1.12.1 Notação Simbólica (rwx)</h4>
+<table>
+<tr><th>Permissão</th><th>Arquivo</th><th>Diretório</th></tr>
+<tr><td><strong>r</strong> (read)</td><td>Ler conteúdo</td><td>Listar arquivos</td></tr>
+<tr><td><strong>w</strong> (write)</td><td>Modificar conteúdo</td><td>Criar/deletar arquivos</td></tr>
+<tr><td><strong>x</strong> (execute)</td><td>Executar como programa</td><td>Acessar (cd) o diretório</td></tr>
+</table>
+
+<pre><code>$ ls -l arquivo.txt
+-rwxr-xr-- 1 usuario grupo 1234 Jun 14 10:00 arquivo.txt
+│└┬┘└┬┘└┬┘
+│ │  │  └─ permissões para outros (r--)
+│ │  └──── permissões para o grupo (r-x)
+│ └─────── permissões para o proprietário (rwx)
+└───────── tipo de arquivo (- = arquivo regular)</code></pre>
+
+<h4>1.12.2 Notação Numérica (Octal)</h4>
+<p>Cada permissão tem um valor numérico:</p>
+<table>
+<tr><th>Permissão</th><th>Valor</th></tr>
+<tr><td>r (read)</td><td>4</td></tr>
+<tr><td>w (write)</td><td>2</td></tr>
+<tr><td>x (execute)</td><td>1</td></tr>
+</table>
+
+<p>Os valores são somados para cada classe:</p>
+<pre><code>rwx = 4+2+1 = 7
+r-x = 4+0+1 = 5
+r-- = 4+0+0 = 4
+
+chmod 754 arquivo.txt  →  rwxr-xr--</code></pre>
+
+<h4>1.12.3 chmod — Alterar Permissões</h4>
+<pre><code># Notação simbólica
+$ chmod u+x script.sh      # Adiciona execução para o dono
+$ chmod g-w arquivo.txt    # Remove escrita do grupo
+$ chmod o=r arquivo.txt    # Define leitura apenas para outros
+$ chmod a+x programa       # Adiciona execução para todos
+
+# Notação octal
+$ chmod 755 script.sh      # rwxr-xr-x (scripts executáveis)
+$ chmod 644 arquivo.txt    # rw-r--r-- (arquivos comuns)
+$ chmod 700 chave.pem      # rwx------ (chaves privadas)
+$ chmod 777 diretorio/     # rwxrwxrwx (EVITE!)
+</code></pre>
+
+<div class="box box-danger">
+  <div class="box-title">🚨 NUNCA use chmod 777</div>
+  <p><code>chmod 777</code> dá permissão total a todos os usuários. Isso é uma falha de segurança grave. Use o princípio do <strong>mínimo privilégio</strong>: dê apenas as permissões estritamente necessárias.</p>
+</div>
+
+<h4>1.12.4 chown — Alterar Proprietário</h4>
+<pre><code># Mudar apenas o dono
+$ sudo chown root arquivo.txt
+
+# Mudar dono e grupo
+$ sudo chown usuario:grupo arquivo.txt
+
+# Mudar recursivamente em um diretório
+$ sudo chown -R usuario:grupo /var/www/
+
+# Mudar apenas o grupo
+$ sudo chown :grupo arquivo.txt
+</code></pre>
+
+<h4>1.12.5 umask — Máscara de Permissões Padrão</h4>
+<p>O <code>umask</code> define as permissões padrão para novos arquivos e diretórios. É subtraído das permissões máximas.</p>
+
+<pre><code>$ umask
+0002
+
+# Permissões máximas: arquivo 666, diretório 777
+# Arquivo novo: 666 - 002 = 664 (rw-rw-r--)
+# Diretório novo: 777 - 002 = 775 (rwxrwxr-x)
+
+# Alterar umask temporariamente
+$ umask 077
+# Agora: arquivo 600, diretório 700 (apenas o dono)</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">🔍 Permissões Especiais</div>
+  <p>Além de rwx, existem três permissões especiais:</p>
+  <ul>
+    <li><strong>SUID (4):</strong> Arquivo executa com privilégios do dono. Ex: <code>passwd</code> (rwsr-xr-x)</li>
+    <li><strong>SGID (2):</strong> Arquivo executa com privilégios do grupo; diretório herda grupo. Ex: <code>/usr/bin/wall</code></li>
+    <li><strong>Sticky Bit (1):</strong> Apenas o dono pode deletar arquivos no diretório. Ex: <code>/tmp</code> (rwxrwxrwt)</li>
+  </ul>
+  <pre><code>$ chmod 4755 programa    # SUID
+$ chmod 2755 diretorio   # SGID
+$ chmod 1777 /tmp        # Sticky Bit</code></pre>
+</div>
+</div>
+
+<div class="section">
+<h3>1.13 Permissões Avançadas — ACLs</h3>
+<p>As <strong>Access Control Lists (ACLs)</strong> permitem definir permissões mais granulares que o modelo tradicional rwx. Com ACLs, você pode dar permissões específicas para usuários e grupos individuais além do dono e grupo principal.</p>
+
+<pre><code># Ver ACLs de um arquivo
+$ getfacl arquivo.txt
+
+# Definir ACL: dar permissão de leitura para um usuário específico
+$ setfacl -m u:outro_usuario:r arquivo.txt
+
+# Definir ACL para um grupo
+$ setfacl -m m:grupo:rw arquivo.txt
+
+# Remover todas as ACLs
+$ setfacl -b arquivo.txt
+
+# Definir ACL padrão para novos arquivos em um diretório
+$ setfacl -d -m u:outro_usuario:rwx diretorio/
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 Quando usar ACLs?</div>
+  <p>Use ACLs quando precisar de controle de acesso mais fino do que o modelo tradicional permite. Por exemplo: um diretório de projeto onde vários usuários precisam de acesso, mas não fazem parte do mesmo grupo principal.</p>
+</div>
+</div>
+
+<!-- EXERCÍCIOS VOLUME 1 -->
+<div class="exercise">
+<h4>🏋️ Exercícios — Volume 1</h4>
+<ol>
+  <li>Execute <code>uname -a</code> e interprete cada campo da saída. Qual a versão do seu kernel?</li>
+  <li>Use <code>tty</code> e <code>whoami</code>. Qual seu TTY atual e UID? Use <code>id</code> para confirmar.</li>
+  <li>Explore <code>/proc</code>: execute <code>cat /proc/cpuinfo | grep "model name"</code> e <code>cat /proc/meminfo | head -5</code>.</li>
+  <li>Crie um arquivo <code>teste.txt</code>, defina permissões <code>640</code> e verifique com <code>ls -l</code>. O que significa cada permissão?</li>
+  <li>Crie um diretório <code>projeto</code>, mude o grupo para <code>users</code> com <code>chown</code>, e defina SGID com <code>chmod 2775</code>. Crie um arquivo dentro e verifique o grupo.</li>
+  <li>Use <code>systemctl list-units --type=service</code> e identifique 5 serviços essenciais do sistema.</li>
+  <li>Verifique o <code>umask</code> padrão. Altere para <code>077</code>, crie um arquivo e observe as permissões. Volte ao padrão original.</li>
+  <li>Instale <code>acl</code> e use <code>setfacl</code> para dar permissão de leitura em um arquivo para outro usuário do sistema.</li>
+</ol>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LINKS PARA OS OUTROS VOLUMES -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<div class="volume-header">
+  <h2>📎 Acesse os Outros Volumes</h2>
+  <div class="vol-desc">O ebook completo foi dividido em volumes separados para facilitar a navegação. Acesse cada um abaixo:</div>
+</div>
+
+<div class="section">
+<div class="toc" style="margin-top: 20px;">
+  <h2>📚 Volumes Disponiveis</h2>
+  <ul>
+    <li><a href="Linux_Ebook_Volume1.html" target="_blank"><span class="vol-num">Vol 1</span> Fundamentos do Sistema <span style="color: var(--success);">✓ Voce esta aqui</span></a></li>
+    <li><a href="Linux_Ebook_Volume2.html" target="_blank"><span class="vol-num">Vol 2</span> Terminal — Comandos Essenciais</a></li>
+    <li><a href="Linux_Ebook_Volume3.html" target="_blank"><span class="vol-num">Vol 3</span> Busca e Manipulacao de Texto</a></li>
+    <li><a href="Linux_Ebook_Volume4.html" target="_blank"><span class="vol-num">Vol 4</span> Pipes e Redirecionamentos</a></li>
+    <li><a href="Linux_Ebook_Volume5.html" target="_blank"><span class="vol-num">Vol 5</span> Gerenciamento de Processos</a></li>
+    <li><a href="Linux_Ebook_Volume6.html" target="_blank"><span class="vol-num">Vol 6</span> Redes no Linux</a></li>
+    <li><a href="Linux_Ebook_Volume7.html" target="_blank"><span class="vol-num">Vol 7</span> Gerenciamento de Pacotes</a></li>
+    <li><a href="Linux_Ebook_Volume8.html" target="_blank"><span class="vol-num">Vol 8</span> Bash Scripting</a></li>
+    <li><a href="Linux_Ebook_Volume9.html" target="_blank"><span class="vol-num">Vol 9</span> Ferramentas para Desenvolvimento</a></li>
+  </ul>
+</div>
+
+<div class="box box-success" style="margin-top: 30px;">
+  <div class="box-title">📄 Versao Completa</div>
+  <p>Prefere tudo em um unico arquivo?</p>
+  <ul style="margin-top: 10px;">
+    <li><a href="Linux_Ebook_Completo.html" target="_blank" style="color: var(--success);">🌐 HTML Completo (todos os volumes em um arquivo)</a></li>
+    <li><a href="Linux_Fundamentos_e_Terminal.pdf" target="_blank" style="color: var(--success);">📑 PDF Completo (pronto para impressao)</a></li>
+  </ul>
+</div>
+</div>
+

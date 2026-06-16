@@ -1,0 +1,6134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="css/estilo.css">
+<title>Linux: Fundamentos e Terminal — Ebook Completo</title>
+<style>
+:root {
+  --bg: #1a1a2e;
+  --bg2: #16213e;
+  --accent: #e94560;
+  --accent2: #0f3460;
+  --text: #eaeaea;
+  --text2: #a0a0a0;
+  --code-bg: #0d1117;
+  --border: #30363d;
+  --success: #2ecc71;
+  --warning: #f39c12;
+  --info: #3498db;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+}
+.container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+.cover {
+  text-align: center;
+  padding: 80px 20px;
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  margin-bottom: 60px;
+}
+.cover h1 {
+  font-size: 3em;
+  color: var(--accent);
+  margin-bottom: 10px;
+  text-shadow: 0 0 20px rgba(233,69,96,0.3);
+}
+.cover .subtitle { font-size: 1.3em; color: var(--text2); margin-bottom: 30px; }
+.cover .tagline {
+  background: var(--accent);
+  color: white;
+  display: inline-block;
+  padding: 8px 24px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.95em;
+}
+.cover .meta { margin-top: 40px; color: var(--text2); font-size: 0.9em; }
+.toc {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 60px;
+}
+.toc h2 { color: var(--accent); margin-bottom: 20px; font-size: 1.5em; }
+.toc ul { list-style: none; }
+.toc li { margin: 8px 0; }
+.toc a {
+  color: var(--text);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: block;
+  transition: all 0.2s;
+}
+.toc a:hover { background: var(--accent2); color: var(--accent); }
+.toc .vol-num { color: var(--accent); font-weight: 700; margin-right: 8px; }
+.volume-header {
+  background: linear-gradient(90deg, var(--accent2), var(--bg2));
+  padding: 40px 30px;
+  border-left: 5px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+  margin: 60px 0 30px 0;
+}
+.volume-header h2 { font-size: 2em; color: var(--accent); margin-bottom: 8px; }
+.volume-header .vol-desc { color: var(--text2); font-size: 1.1em; }
+.section { margin-bottom: 40px; }
+.section h3 {
+  color: var(--info);
+  font-size: 1.4em;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+}
+.section h4 { color: var(--warning); font-size: 1.15em; margin: 25px 0 12px 0; }
+.section p { margin-bottom: 15px; text-align: justify; }
+.section ul, .section ol { margin: 15px 0 15px 30px; }
+.section li { margin: 8px 0; }
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  overflow-x: auto;
+  margin: 15px 0;
+  font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+code {
+  font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  background: rgba(233,69,96,0.15);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.92em;
+}
+pre code { background: none; color: #c9d1d9; padding: 0; font-size: 1em; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background: var(--bg2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+th {
+  background: var(--accent2);
+  color: var(--accent);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+}
+td { padding: 10px 16px; border-bottom: 1px solid var(--border); }
+tr:hover { background: rgba(233,69,96,0.05); }
+.box {
+  padding: 20px 24px;
+  border-radius: 10px;
+  margin: 20px 0;
+  border-left: 4px solid;
+}
+.box-info { background: rgba(52,152,219,0.1); border-color: var(--info); }
+.box-warning { background: rgba(243,156,18,0.1); border-color: var(--warning); }
+.box-danger { background: rgba(233,69,96,0.1); border-color: var(--accent); }
+.box-success { background: rgba(46,204,113,0.1); border-color: var(--success); }
+.box-title { font-weight: 700; margin-bottom: 8px; font-size: 1.05em; }
+.box-info .box-title { color: var(--info); }
+.box-warning .box-title { color: var(--warning); }
+.box-danger .box-title { color: var(--accent); }
+.box-success .box-title { color: var(--success); }
+.ascii {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85em;
+  line-height: 1.4;
+  color: #a5d6ff;
+  overflow-x: auto;
+  margin: 15px 0;
+}
+.exercise {
+  background: var(--bg2);
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  padding: 25px;
+  margin: 30px 0;
+}
+.exercise h4 { color: var(--accent); margin-bottom: 15px; font-size: 1.2em; }
+.exercise ol { margin-left: 25px; }
+.exercise li { margin: 10px 0; }
+.page-break { page-break-before: always; }
+.footer {
+  text-align: center;
+  padding: 40px;
+  color: var(--text2);
+  border-top: 1px solid var(--border);
+  margin-top: 60px;
+}
+@media print {
+  body { background: white; color: black; }
+  .cover { border: 2px solid #333; }
+  pre { background: #f5f5f5; border: 1px solid #ddd; }
+  .volume-header { background: #f5f5f5; border-left: 5px solid #333; }
+}
+</style>
+<base target="_blank">
+</head>
+<body>
+<div class="container">
+
+<!-- ==================== CAPA ==================== -->
+<div class="cover">
+  <h1>🐧 Linux</h1>
+  <div class="subtitle">Fundamentos e Terminal</div>
+  <div class="tagline">Do Zero ao Dominio Completo</div>
+  <div class="meta">
+    <p>Um guia completo e pesado para quem quer dominar Linux, o terminal e os fundamentos de sistemas operacionais.</p>
+    <p style="margin-top:15px;">📘 10 Volumes • ~300 Paginas • Exemplos Praticos • Exercicios</p>
+  </div>
+</div>
+
+<!-- ==================== SUMARIO ==================== -->
+<div class="toc">
+  <h2>📑 Sumario</h2>
+  <ul>
+    <li><a href="#vol1"><span class="vol-num">Vol 1</span> Fundamentos do Sistema</a></li>
+    <li><a href="#vol2"><span class="vol-num">Vol 2</span> Terminal — Comandos Essenciais</a></li>
+    <li><a href="#vol3"><span class="vol-num">Vol 3</span> Busca e Manipulacao de Texto</a></li>
+    <li><a href="#vol4"><span class="vol-num">Vol 4</span> Pipes e Redirecionamentos</a></li>
+    <li><a href="#vol5"><span class="vol-num">Vol 5</span> Gerenciamento de Processos</a></li>
+    <li><a href="#vol6"><span class="vol-num">Vol 6</span> Redes no Linux</a></li>
+    <li><a href="#vol7"><span class="vol-num">Vol 7</span> Gerenciamento de Pacotes</a></li>
+    <li><a href="#vol8"><span class="vol-num">Vol 8</span> Bash Scripting</a></li>
+    <li><a href="#vol9"><span class="vol-num">Vol 9</span> Ferramentas para Desenvolvimento</a></li>
+    <li><a href="#vol10"><span class="vol-num">Vol 10</span> Linux para quem quer dominar C</a></li>
+  </ul>
+</div>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux: Fundamentos e Terminal — Ebook Completo</title>
+<style>
+:root {
+  --bg: #1a1a2e;
+  --bg2: #16213e;
+  --accent: #e94560;
+  --accent2: #0f3460;
+  --text: #eaeaea;
+  --text2: #a0a0a0;
+  --code-bg: #0d1117;
+  --border: #30363d;
+  --success: #2ecc71;
+  --warning: #f39c12;
+  --info: #3498db;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+}
+.container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+/* Cover */
+.cover {
+  text-align: center;
+  padding: 80px 20px;
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  margin-bottom: 60px;
+}
+.cover h1 {
+  font-size: 3em;
+  color: var(--accent);
+  margin-bottom: 10px;
+  text-shadow: 0 0 20px rgba(233,69,96,0.3);
+}
+.cover .subtitle {
+  font-size: 1.3em;
+  color: var(--text2);
+  margin-bottom: 30px;
+}
+.cover .tagline {
+  background: var(--accent);
+  color: white;
+  display: inline-block;
+  padding: 8px 24px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.95em;
+}
+.cover .meta {
+  margin-top: 40px;
+  color: var(--text2);
+  font-size: 0.9em;
+}
+
+/* TOC */
+.toc {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 60px;
+}
+.toc h2 {
+  color: var(--accent);
+  margin-bottom: 20px;
+  font-size: 1.5em;
+}
+.toc ul { list-style: none; }
+.toc li { margin: 8px 0; }
+.toc a {
+  color: var(--text);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: block;
+  transition: all 0.2s;
+}
+.toc a:hover {
+  background: var(--accent2);
+  color: var(--accent);
+}
+.toc .vol-num {
+  color: var(--accent);
+  font-weight: 700;
+  margin-right: 8px;
+}
+
+/* Volume Header */
+.volume-header {
+  background: linear-gradient(90deg, var(--accent2), var(--bg2));
+  padding: 40px 30px;
+  border-left: 5px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+  margin: 60px 0 30px 0;
+}
+.volume-header h2 {
+  font-size: 2em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.volume-header .vol-desc {
+  color: var(--text2);
+  font-size: 1.1em;
+}
+
+/* Sections */
+.section {
+  margin-bottom: 40px;
+}
+.section h3 {
+  color: var(--info);
+  font-size: 1.4em;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+}
+.section h4 {
+  color: var(--warning);
+  font-size: 1.15em;
+  margin: 25px 0 12px 0;
+}
+.section p {
+  margin-bottom: 15px;
+  text-align: justify;
+}
+.section ul, .section ol {
+  margin: 15px 0 15px 30px;
+}
+.section li {
+  margin: 8px 0;
+}
+
+/* Code blocks */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  overflow-x: auto;
+  margin: 15px 0;
+  font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+code {
+  font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  background: rgba(233,69,96,0.15);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.92em;
+}
+pre code {
+  background: none;
+  color: #c9d1d9;
+  padding: 0;
+  font-size: 1em;
+}
+
+/* Syntax highlighting colors */
+.syntax-keyword { color: #ff7b72; }
+.syntax-string { color: #a5d6ff; }
+.syntax-comment { color: #8b949e; font-style: italic; }
+.syntax-number { color: #79c0ff; }
+.syntax-function { color: #d2a8ff; }
+.syntax-variable { color: #ffa657; }
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background: var(--bg2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+th {
+  background: var(--accent2);
+  color: var(--accent);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+}
+td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+tr:hover { background: rgba(233,69,96,0.05); }
+
+/* Info boxes */
+.box {
+  padding: 20px 24px;
+  border-radius: 10px;
+  margin: 20px 0;
+  border-left: 4px solid;
+}
+.box-info {
+  background: rgba(52,152,219,0.1);
+  border-color: var(--info);
+}
+.box-warning {
+  background: rgba(243,156,18,0.1);
+  border-color: var(--warning);
+}
+.box-danger {
+  background: rgba(233,69,96,0.1);
+  border-color: var(--accent);
+}
+.box-success {
+  background: rgba(46,204,113,0.1);
+  border-color: var(--success);
+}
+.box-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 1.05em;
+}
+.box-info .box-title { color: var(--info); }
+.box-warning .box-title { color: var(--warning); }
+.box-danger .box-title { color: var(--accent); }
+.box-success .box-title { color: var(--success); }
+
+/* ASCII diagrams */
+.ascii {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85em;
+  line-height: 1.4;
+  color: #a5d6ff;
+  overflow-x: auto;
+  margin: 15px 0;
+}
+
+/* Exercises */
+.exercise {
+  background: var(--bg2);
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  padding: 25px;
+  margin: 30px 0;
+}
+.exercise h4 {
+  color: var(--accent);
+  margin-bottom: 15px;
+  font-size: 1.2em;
+}
+.exercise ol { margin-left: 25px; }
+.exercise li { margin: 10px 0; }
+
+/* Page break for print */
+.page-break { page-break-before: always; }
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 40px;
+  color: var(--text2);
+  border-top: 1px solid var(--border);
+  margin-top: 60px;
+}
+
+/* Print styles */
+@media print {
+  body { background: white; color: black; }
+  .cover { border: 2px solid #333; }
+  pre { background: #f5f5f5; border: 1px solid #ddd; }
+  .volume-header { background: #f5f5f5; border-left: 5px solid #333; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ==================== CAPA ==================== -->
+<div class="cover">
+  <h1>🐧 Linux</h1>
+  <div class="subtitle">Fundamentos e Terminal</div>
+  <div class="tagline">Do Zero ao Domínio Completo</div>
+  <div class="meta">
+    <p>Um guia completo e pesado para quem quer dominar Linux, o terminal e os fundamentos de sistemas operacionais.</p>
+    <p style="margin-top:15px;">📘 10 Volumes • ~300 Páginas • Exemplos Práticos • Exercícios</p>
+  </div>
+</div>
+
+<!-- ==================== SUMÁRIO ==================== -->
+<div class="toc">
+  <h2>📑 Sumário</h2>
+  <ul>
+    <li><a href="#vol1"><span class="vol-num">Vol 1</span> Fundamentos do Sistema</a></li>
+    <li><a href="#vol2"><span class="vol-num">Vol 2</span> Terminal — Comandos Essenciais</a></li>
+    <li><a href="#vol3"><span class="vol-num">Vol 3</span> Busca e Manipulação de Texto</a></li>
+    <li><a href="#vol4"><span class="vol-num">Vol 4</span> Pipes e Redirecionamentos</a></li>
+    <li><a href="#vol5"><span class="vol-num">Vol 5</span> Gerenciamento de Processos</a></li>
+    <li><a href="#vol6"><span class="vol-num">Vol 6</span> Redes no Linux</a></li>
+    <li><a href="#vol7"><span class="vol-num">Vol 7</span> Gerenciamento de Pacotes</a></li>
+    <li><a href="#vol8"><span class="vol-num">Vol 8</span> Bash Scripting</a></li>
+    <li><a href="#vol9"><span class="vol-num">Vol 9</span> Ferramentas para Desenvolvimento</a></li>
+    <li><a href="#vol10"><span class="vol-num">Vol 10</span> Linux para quem quer dominar C</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- VOLUME 1 — FUNDAMENTOS DO SISTEMA -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<div class="volume-header" id="vol1">
+  <h2>📚 Volume 1 — Fundamentos do Sistema</h2>
+  <div class="vol-desc">O que é Linux, como funciona por dentro, e por que você precisa entender isso antes de digitar qualquer comando.</div>
+</div>
+
+<div class="section">
+<h3>1.1 O que é um Sistema Operacional?</h3>
+<p>Um <strong>Sistema Operacional (SO)</strong> é o software fundamental que gerencia os recursos de hardware de um computador e fornece serviços para os programas de aplicação. Ele atua como uma camada de abstração entre o hardware físico e o software do usuário.</p>
+
+<div class="box box-info">
+  <div class="box-title">💡 Analogia</div>
+  <p>Pense no SO como o gerente de um restaurante: ele não cozinha (isso é o trabalho dos aplicativos), mas organiza a cozinha (hardware), distribui tarefas (CPU), gerencia o estoque (memória) e garante que os pedidos (processos) sejam atendidos na ordem correta.</p>
+</div>
+
+<p>Os principais componentes de um SO são:</p>
+<ul>
+  <li><strong>Kernel (Núcleo):</strong> O coração do sistema. Gerencia processos, memória, dispositivos e chamadas de sistema.</li>
+  <li><strong>Shell:</strong> Interface de linha de comando que interpreta comandos do usuário.</li>
+  <li><strong>Sistema de Arquivos:</strong> Organiza e armazena dados em dispositivos de armazenamento.</li>
+  <li><strong>Gerenciador de Processos:</strong> Controla a execução de programas.</li>
+  <li><strong>Gerenciador de Memória:</strong> Aloca e libera memória RAM para processos.</li>
+  <li><strong>Drivers:</strong> Permitem que o SO comunique-se com hardware específico.</li>
+</ul>
+
+<div class="ascii">
+┌─────────────────────────────────────────┐
+│           APLICAÇÕES DO USUÁRIO           │
+│  (navegador, editor, compilador, etc.)   │
+├─────────────────────────────────────────┤
+│              BIBLIOTECAS                 │
+│    (glibc, libstdc++, etc.)              │
+├─────────────────────────────────────────┤
+│                 SHELL                    │
+│    (bash, zsh, fish)                     │
+├─────────────────────────────────────────┤
+│    ┌─────────────────────────────┐       │
+│    │         KERNEL              │       │
+│    │  • Gerenciador de Processos │       │
+│    │  • Gerenciador de Memória   │       │
+│    │  • Sistema de Arquivos      │       │
+│    │  • Drivers de Dispositivos   │       │
+│    │  • Rede                     │       │
+│    └─────────────────────────────┘       │
+├─────────────────────────────────────────┤
+│              HARDWARE                    │
+│  (CPU, RAM, disco, placa de rede, etc.)  │
+└─────────────────────────────────────────┘
+</div>
+</div>
+
+<div class="section">
+<h3>1.2 O que é Linux?</h3>
+<p><strong>Linux</strong> é um kernel de sistema operacional de código aberto, criado por <strong>Linus Torvalds</strong> em 1991. O termo "Linux" é frequentemente usado para se referir a sistemas operacionais completos baseados no kernel Linux, que incluem também ferramentas e bibliotecas do projeto <strong>GNU</strong>.</p>
+
+<p>A história do Linux começou quando Linus, então estudante na Universidade de Helsinque, queria um sistema operacional similar ao UNIX para seu PC, mas não queria pagar pela licença do MINIX. Ele começou a escrever seu próprio kernel.</p>
+
+<div class="box box-info">
+  <div class="box-title">📜 A Mensagem Original (1991)</div>
+  <p>"Hello everybody out there using minix — I'm doing a (free) operating system (just a hobby, won't be big and professional like gnu) for 386(486) AT clones."</p>
+  <p style="margin-top:10px;font-size:0.9em;color:var(--text2);">— Linus Torvalds, comp.os.minix, 25 de agosto de 1991</p>
+</div>
+
+<p>Linux não é um sistema operacional completo por si só. É um <strong>kernel</strong>. O que chamamos de "Linux" no dia a dia (Ubuntu, Fedora, Debian) são na verdade <strong>distribuições GNU/Linux</strong> — combinações do kernel Linux com ferramentas do projeto GNU e outros softwares.</p>
+</div>
+
+<div class="section">
+<h3>1.3 O Kernel Linux</h3>
+<p>O <strong>kernel</strong> é o componente central do sistema operacional. Ele tem acesso total ao hardware e gerencia todos os recursos do sistema. No Linux, o kernel é monolítico com módulos carregáveis — ou seja, a maior parte do código do kernel roda no mesmo espaço de memória, mas drivers e funcionalidades podem ser carregados dinamicamente.</p>
+
+<h4>1.3.1 Arquitetura do Kernel</h4>
+<div class="ascii">
+┌────────────────────────────────────────────┐
+│           ESPAÇO DO USUÁRIO                 │
+│  (aplicações, bibliotecas, shell)            │
+├────────────────────────────────────────────┤
+│           CHAMADAS DE SISTEMA               │
+│  (interface entre usuário e kernel)        │
+├────────────────────────────────────────────┤
+│              ESPAÇO DO KERNEL               │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐        │
+│  │  VFS    │ │  MMU   │ │ Scheduler│        │
+│  │(sistema │ │(memória)│ │ (CPU)   │        │
+│  │de arquivos)│        │ │         │        │
+│  └─────────┘ └─────────┘ └─────────┘        │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐        │
+│  │ Network │ │ Device  │ │  IPC    │        │
+│  │ Stack   │ │ Drivers │ │         │        │
+│  └─────────┘ └─────────┘ └─────────┘        │
+├────────────────────────────────────────────┤
+│              HARDWARE                       │
+│  (CPU, RAM, disco, rede, periféricos)      │
+└────────────────────────────────────────────┘
+</div>
+
+<h4>1.3.2 Chamadas de Sistema (System Calls)</h4>
+<p>Chamadas de sistema são a interface entre o espaço do usuário e o kernel. Quando um programa precisa de um recurso privilegiado (acessar um arquivo, alocar memória, criar um processo), ele faz uma chamada de sistema. O kernel então executa a operação em modo privilegiado e retorna o resultado.</p>
+
+<p>Exemplos de chamadas de sistema importantes:</p>
+<table>
+<tr><th>Chamada</th><th>Descrição</th><th>Uso típico</th></tr>
+<tr><td><code>open()</code></td><td>Abre um arquivo</td><td><code>open("file.txt", O_RDONLY)</code></td></tr>
+<tr><td><code>read()</code></td><td>Lê dados de um arquivo</td><td><code>read(fd, buffer, 1024)</code></td></tr>
+<tr><td><code>write()</code></td><td>Escreve dados em um arquivo</td><td><code>write(fd, data, len)</code></td></tr>
+<tr><td><code>fork()</code></td><td>Cria um novo processo</td><td><code>pid = fork()</code></td></tr>
+<tr><td><code>execve()</code></td><td>Executa um programa</td><td><code>execve("/bin/ls", args, env)</code></td></tr>
+<tr><td><code>mmap()</code></td><td>Mapeia arquivo na memória</td><td><code>mmap(NULL, size, prot, flags, fd, 0)</code></td></tr>
+<tr><td><code>exit()</code></td><td>Termina um processo</td><td><code>exit(0)</code></td></tr>
+</table>
+
+<div class="box box-warning">
+  <div class="box-title">⚠️ Importante para programadores C</div>
+  <p>Em C, você não chama as system calls diretamente. Você usa as <strong>wrapper functions</strong> da glibc (como <code>open()</code>, <code>read()</code>, <code>fork()</code>), que configuram os argumentos e executam a instrução <code>syscall</code> (ou <code>int 0x80</code> em x86, <code>syscall</code> em x86_64).</p>
+</div>
+</div>
+
+<div class="section">
+<h3>1.4 O Projeto GNU</h3>
+<p>O <strong>Projeto GNU</strong> foi iniciado por <strong>Richard Stallman</strong> em 1983 com o objetivo de criar um sistema operacional completamente livre, compatível com UNIX. GNU significa "GNU's Not Unix" — um acrônimo recursivo.</p>
+
+<p>Até 1991, o projeto GNU tinha desenvolvido quase todos os componentes de um sistema operacional: compiladores (GCC), depuradores (GDB), bibliotecas (glibc), shell (bash), editores (Emacs), e utilitários. O que faltava era um kernel. Quando Linus Torvalds lançou o kernel Linux sob licença GPL, a combinação GNU + Linux formou um sistema operacional completo e funcional.</p>
+
+<div class="box box-info">
+  <div class="box-title">🎯 Por que "GNU/Linux" e não só "Linux"?</div>
+  <p>Richard Stallman e a Free Software Foundation argumentam que chamar o sistema apenas de "Linux" ignora a contribuição fundamental do projeto GNU. O kernel Linux sozinho não é um sistema operacional utilizável — são as ferramentas GNU que o tornam funcional.</p>
+</div>
+
+<h4>1.4.1 Componentes GNU Essenciais</h4>
+<table>
+<tr><th>Componente</th><th>Descrição</th></tr>
+<tr><td><strong>GCC</strong></td><td>GNU Compiler Collection — compilador C, C++, Fortran, etc.</td></tr>
+<tr><td><strong>GDB</strong></td><td>GNU Debugger — depurador para C/C++</td></tr>
+<tr><td><strong>glibc</strong></td><td>GNU C Library — biblioteca padrão C para Linux</td></tr>
+<tr><td><strong>Bash</strong></td><td>Bourne Again Shell — shell padrão da maioria das distribuições</td></tr>
+<tr><td><strong>Coreutils</strong></td><td>ls, cp, mv, rm, cat, etc. — utilitários básicos</td></tr>
+<tr><td><strong>Binutils</strong></td><td>as, ld, objdump, nm — ferramentas para manipulação de binários</td></tr>
+<tr><td><strong>Make</strong></td><td>Automação de compilação</td></tr>
+<tr><td><strong>Emacs</strong></td><td>Editor de texto extensível</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>1.5 Shell e Terminal</h3>
+<p>É fundamental entender a diferença entre <strong>terminal</strong>, <strong>console</strong>, <strong>shell</strong> e <strong>TTY</strong> — termos frequentemente confundidos.</p>
+
+<h4>1.5.1 Terminal</h4>
+<p>Um <strong>terminal</strong> (ou terminal emulator) é um programa que emula um dispositivo de terminal físico (como os antigos terminais VT100). Ele fornece uma janela onde você pode interagir com o shell. Exemplos: GNOME Terminal, Konsole, iTerm2, Windows Terminal, xterm.</p>
+
+<h4>1.5.2 Console</h4>
+<p>O <strong>console</strong> é o dispositivo físico de entrada/saída do sistema. Em servidores, é o monitor e teclado conectados diretamente à máquina. No Linux, os consoles virtuais são acessados com <code>Ctrl+Alt+F1</code> a <code>F6</code>. O ambiente gráfico geralmente roda no <code>F7</code> ou <code>F1</code> (dependendo da distribuição).</p>
+
+<h4>1.5.3 Shell</h4>
+<p>O <strong>shell</strong> é um programa interpretador de comandos. Ele lê o que você digita, interpreta e executa. O shell padrão no Linux é o <strong>Bash</strong> (Bourne Again Shell), mas existem alternativas como Zsh, Fish, Ksh, Dash.</p>
+
+<div class="ascii">
+┌─────────────────────────────────────────┐
+│         TERMINAL EMULATOR               │
+│    (GNOME Terminal, Konsole, etc.)     │
+│         ↓ interpreta teclado/tela       │
+├─────────────────────────────────────────┤
+│              SHELL                      │
+│    (bash, zsh, fish)                   │
+│         ↓ interpreta comandos           │
+├─────────────────────────────────────────┤
+│           KERNEL                        │
+│         ↓ executa operações             │
+├─────────────────────────────────────────┤
+│           HARDWARE                      │
+└─────────────────────────────────────────┘
+</div>
+
+<h4>1.5.4 TTY</h4>
+<p><strong>TTY</strong> (Teletypewriter) é um conceito herdado dos mainframes. No Linux, um TTY é uma interface de terminal virtual. Cada sessão de login tem um TTY associado. Você pode ver o seu TTY com o comando <code>tty</code>:</p>
+
+<pre><code>$ tty
+/dev/pts/0</code></pre>
+
+<p>Os TTYs físicos são <code>/dev/tty1</code> a <code>/dev/tty6</code>. Os TTYs pseudo (pts) são usados por terminais emulados em ambiente gráfico e conexões SSH.</p>
+
+<table>
+<tr><th>Termo</th><th>O que é</th><th>Exemplo</th></tr>
+<tr><td>Terminal</td><td>Emulador de terminal</td><td>GNOME Terminal, xterm</td></tr>
+<tr><td>Console</td><td>Dispositivo físico de E/S</td><td>Monitor + teclado do servidor</td></tr>
+<tr><td>Shell</td><td>Interpretador de comandos</td><td>Bash, Zsh</td></tr>
+<tr><td>TTY</td><td>Interface de terminal virtual</td><td>/dev/tty1, /dev/pts/0</td></tr>
+<tr><td>PTY</td><td>Pseudo-terminal (par master/slave)</td><td>/dev/pts/0 (slave), /dev/ptmx (master)</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>1.6 Bash — O Shell Padrão</h3>
+<p>O <strong>Bash</strong> (Bourne Again Shell) é o shell padrão na maioria das distribuições Linux. É uma reimplementação do Bourne Shell (sh) com recursos adicionais do Korn Shell (ksh) e C Shell (csh).</p>
+
+<h4>1.6.1 Recursos do Bash</h4>
+<ul>
+  <li><strong>History:</strong> Armazena comandos anteriores (arquivo <code>~/.bash_history</code>)</li>
+  <li><strong>Tab completion:</strong> Completa comandos, arquivos e variáveis com Tab</li>
+  <li><strong>Aliases:</strong> Atalhos para comandos longos</li>
+  <li><strong>Variables:</strong> Variáveis de ambiente e locais</li>
+  <li><strong>Scripts:</strong> Programação de automações</li>
+  <li><strong>Job control:</strong> Controle de processos em foreground/background</li>
+  <li><strong>Redirection:</strong> Redirecionamento de entrada/saída</li>
+  <li><strong>Pipes:</strong> Encadeamento de comandos</li>
+</ul>
+
+<h4>1.6.2 Arquivos de Configuração do Bash</h4>
+<table>
+<tr><th>Arquivo</th><th>Quando é executado</th><th>Propósito</th></tr>
+<tr><td><code>/etc/profile</code></td><td>Login shell (todos usuários)</td><td>Configurações globais</td></tr>
+<tr><td><code>~/.bash_profile</code></td><td>Login shell</td><td>Configurações pessoais</td></tr>
+<tr><td><code>~/.bashrc</code></td><td>Shell interativo não-login</td><td>Aliases, funções, prompt</td></tr>
+<tr><td><code>~/.bash_logout</code></td><td>Logout</td><td>Limpeza ao sair</td></tr>
+<tr><td><code>/etc/bash.bashrc</code></td><td>Shell interativo (todos)</td><td>Configurações globais</td></tr>
+</table>
+
+<div class="box box-info">
+  <div class="box-title">🔍 Login Shell vs. Non-Login Shell</div>
+  <p>Um <strong>login shell</strong> é iniciado quando você faz login no sistema (SSH, console físico). Ele executa <code>/etc/profile</code> e <code>~/.bash_profile</code>. Um <strong>non-login shell</strong> é iniciado dentro de uma sessão já logada (abrir um terminal no ambiente gráfico). Ele executa <code>~/.bashrc</code>.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>1.7 Distribuições Linux</h3>
+<p>Uma <strong>distribuição Linux</strong> (ou distro) é um sistema operacional completo construído a partir do kernel Linux, ferramentas GNU, e software adicional. Cada distribuição tem sua própria filosofia, sistema de pacotes, e público-alvo.</p>
+
+<h4>1.7.1 Principais Famílias</h4>
+<table>
+<tr><th>Família</th><th>Base</th><th>Gerenciador de Pacotes</th><th>Distros Populares</th></tr>
+<tr><td><strong>Debian</strong></td><td>Debian</td><td>APT (dpkg)</td><td>Ubuntu, Linux Mint, Pop!_OS, Kali Linux</td></tr>
+<tr><td><strong>Red Hat</strong></td><td>RHEL</td><td>RPM (DNF/YUM)</td><td>Fedora, CentOS, Rocky Linux, AlmaLinux</td></tr>
+<tr><td><strong>Arch</strong></td><td>Arch</td><td>Pacman</td><td>Arch Linux, Manjaro, EndeavourOS</td></tr>
+<tr><td><strong>SUSE</strong></td><td>SUSE</td><td>RPM (ZYpp)</td><td>openSUSE, SUSE Linux Enterprise</td></tr>
+<tr><td><strong>Gentoo</strong></td><td>Gentoo</td><td>Portage</td><td>Gentoo, Calculate Linux</td></tr>
+<tr><td><strong>Slackware</strong></td><td>Slackware</td><td>pkgtool</td><td>Slackware, Salix</td></tr>
+</table>
+
+<h4>1.7.2 Como Escolher uma Distribuição</h4>
+<ul>
+  <li><strong>Iniciantes:</strong> Ubuntu, Linux Mint, Pop!_OS — instalação fácil, grande comunidade</li>
+  <li><strong>Desenvolvimento:</strong> Fedora, Arch — software mais recente, ferramentas de desenvolvimento</li>
+  <li><strong>Servidores:</strong> Debian, Rocky Linux, Ubuntu Server — estabilidade, suporte LTS</li>
+  <li><strong>Segurança/Cibersegurança:</strong> Kali Linux, Parrot OS — ferramentas de pentest pré-instaladas</li>
+  <li><strong>Minimalismo/Controle:</strong> Arch, Gentoo — você constrói o sistema do zero</li>
+</ul>
+</div>
+
+<div class="section">
+<h3>1.8 Boot e Inicialização</h3>
+<p>O processo de <strong>boot</strong> (inicialização) é a sequência de eventos que leva o computador do estado desligado até um sistema operacional funcional.</p>
+
+<h4>1.8.1 Fases do Boot</h4>
+<div class="ascii">
+┌──────────────────────────────────────────────┐
+│  1. BIOS/UEFI                                │
+│     ↓ POST (Power-On Self Test)              │
+│     ↓ Detecta hardware                       │
+│     ↓ Localiza bootloader                   │
+├──────────────────────────────────────────────┤
+│  2. Bootloader (GRUB2, systemd-boot)         │
+│     ↓ Carrega kernel e initramfs            │
+│     ↓ Passa parâmetros de boot              │
+├──────────────────────────────────────────────┤
+│  3. Kernel                                   │
+│     ↓ Descompacta e inicializa               │
+│     ↓ Detecta hardware, monta rootfs        │
+│     ↓ Executa processo init (PID 1)         │
+├──────────────────────────────────────────────┤
+│  4. Init System (systemd, OpenRC, runit)    │
+│     ↓ Inicializa serviços                   │
+│     ↓ Configura rede, logging, etc.         │
+│     ↓ Apresenta login                       │
+└──────────────────────────────────────────────┘
+</div>
+
+<h4>1.8.2 BIOS vs. UEFI</h4>
+<table>
+<tr><th>Característica</th><th>BIOS (Legado)</th><th>UEFI (Moderno)</th></tr>
+<tr><td>Idade</td><td>1981</td><td>2005</td></tr>
+<tr><td>Partição de boot</td><td>MBR</td><td>GPT</td></tr>
+<tr><td>Tamanho máximo do disco</td><td>2 TB</td><td>9.4 ZB (zettabytes)</td></tr>
+<tr><td>Partições</td><td>4 primárias</td><td>128 partições</td></tr>
+<tr><td>Secure Boot</td><td>Não</td><td>Sim</td></tr>
+<tr><td>Interface</td><td>Texto</td><td>Gráfica</td></tr>
+<tr><td>Bootloader</td><td>GRUB legado</td><td>GRUB2, systemd-boot</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>1.9 systemd — O Sistema de Inicialização</h3>
+<p>O <strong>systemd</strong> é o sistema de inicialização e gerenciamento de serviços padrão na maioria das distribuições Linux modernas (Ubuntu, Fedora, Debian, CentOS, Arch). Ele substituiu o antigo SysVinit.</p>
+
+<h4>1.9.1 Conceitos do systemd</h4>
+<ul>
+  <li><strong>Units:</strong> Recursos que o systemd gerencia. Cada unit tem um arquivo de configuração.</li>
+  <li><strong>Services:</strong> Processos que o systemd inicia e monitora.</li>
+  <li><strong>Targets:</strong> Estados do sistema (equivalentes aos runlevels).</li>
+  <li><strong>Timers:</strong> Agendamento de tarefas (alternativa ao cron).</li>
+  <li><strong>Mounts:</strong> Pontos de montagem gerenciados pelo systemd.</li>
+  <li><strong>Sockets:</strong> Ativação de serviços sob demanda.</li>
+</ul>
+
+<h4>1.9.2 Comandos systemd Essenciais</h4>
+<pre><code># Verificar status de um serviço
+$ systemctl status sshd
+
+# Iniciar um serviço
+$ sudo systemctl start nginx
+
+# Parar um serviço
+$ sudo systemctl stop nginx
+
+# Habilitar serviço para iniciar no boot
+$ sudo systemctl enable nginx
+
+# Desabilitar serviço no boot
+$ sudo systemctl disable nginx
+
+# Recarregar configuração de um serviço
+$ sudo systemctl reload nginx
+
+# Reiniciar um serviço
+$ sudo systemctl restart nginx
+
+# Listar todos os serviços ativos
+$ systemctl list-units --type=service --state=active
+
+# Ver logs de um serviço
+$ journalctl -u nginx
+
+# Ver logs em tempo real
+$ journalctl -f
+
+# Ver logs desde o último boot
+$ journalctl -b
+</code></pre>
+
+<h4>1.9.3 Targets do systemd (Runlevels)</h4>
+<table>
+<tr><th>Target</th><th>Descrição</th><th>Runlevel Equivalente</th></tr>
+<tr><td><code>poweroff.target</code></td><td>Desligamento</td><td>0</td></tr>
+<tr><td><code>rescue.target</code></td><td>Modo de recuperação</td><td>1</td></tr>
+<tr><td><code>multi-user.target</code></td><td>Multiusuário sem GUI</td><td>3</td></tr>
+<tr><td><code>graphical.target</code></td><td>Multiusuário com GUI</td><td>5</td></tr>
+<tr><td><code>reboot.target</code></td><td>Reinicialização</td><td>6</td></tr>
+</table>
+
+<pre><code># Mudar para modo de recuperação
+$ sudo systemctl isolate rescue.target
+
+# Ver target atual
+$ systemctl get-default
+
+# Mudar default para multiusuário (sem GUI)
+$ sudo systemctl set-default multi-user.target
+</code></pre>
+</div>
+
+<div class="section">
+<h3>1.10 Estrutura do Sistema de Arquivos (FHS)</h3>
+<p>O <strong>Filesystem Hierarchy Standard (FHS)</strong> define a estrutura de diretórios em sistemas Linux. Conhecer essa estrutura é essencial para navegar e entender o sistema.</p>
+
+<div class="ascii">
+/
+├── bin/          → Comandos essenciais (binários do sistema)
+├── boot/         → Arquivos de boot (kernel, initramfs, GRUB)
+├── dev/          → Arquivos de dispositivos (hardware virtual)
+├── etc/          → Arquivos de configuração do sistema
+├── home/         → Diretórios pessoais dos usuários
+├── lib/          → Bibliotecas essenciais compartilhadas
+├── lib64/        → Bibliotecas de 64 bits
+├── media/        → Pontos de montagem para mídias removíveis
+├── mnt/          → Pontos de montagem temporários
+├── opt/          → Software adicional opcional
+├── proc/         → Sistema de arquivos virtual (processos)
+├── root/         → Diretório pessoal do root
+├── run/          → Dados voláteis de runtime (PID files, sockets)
+├── sbin/         → Comandos essenciais de administração
+├── srv/          → Dados de serviços (web, ftp, etc.)
+├── sys/          → Sistema de arquivos virtual (sysfs)
+├── tmp/          → Arquivos temporários
+├── usr/          → Hierarquia secundária (programas do usuário)
+│   ├── bin/      → Comandos não-essenciais
+│   ├── include/  → Headers de C/C++
+│   ├── lib/      → Bibliotecas não-essenciais
+│   ├── local/    → Software instalado localmente
+│   ├── sbin/     → Comandos de administração não-essenciais
+│   ├── share/    → Dados compartilhados (man pages, docs)
+│   └── src/      → Código-fonte do kernel
+├── var/          → Dados variáveis (logs, caches, spool)
+│   ├── log/      → Logs do sistema
+│   ├── mail/     → Caixas de correio
+│   ├── spool/    → Filas de impressão, email, cron
+│   └── tmp/      → Arquivos temporários persistentes
+└── lost+found/   → Recuperação de arquivos corrompidos (ext4)
+</div>
+
+<h4>1.10.1 Diretórios Importantes para Desenvolvedores C</h4>
+<table>
+<tr><th>Diretório</th><th>Conteúdo</th><th>Relevância para C</th></tr>
+<tr><td><code>/usr/include</code></td><td>Headers do sistema (<code>stdio.h</code>, <code>stdlib.h</code>)</td><td>Essencial para compilação</td></tr>
+<tr><td><code>/usr/lib</code></td><td>Bibliotecas compartilhadas (<code>.so</code>)</td><td>Linkedição dinâmica</td></tr>
+<tr><td><code>/usr/local</code></td><td>Software instalado manualmente</td><td>Instalação de libs próprias</td></tr>
+<tr><td><code>/proc</code></td><td>Informações de processos</td><td>Debug, análise de memória</td></tr>
+<tr><td><code>/dev</code></td><td>Dispositivos (disco, terminal, etc.)</td><td>Acesso a hardware</td></tr>
+<tr><td><code>/sys</code></td><td>Informações do kernel</td><td>Hardware, drivers, kernel</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>1.11 Usuários, Root, UID e GID</h3>
+<p>Linux é um sistema <strong>multiusuário</strong>. Cada usuário tem uma identidade única e permissões específicas.</p>
+
+<h4>1.11.1 O Usuário Root</h4>
+<p>O <strong>root</strong> (UID 0) é o superusuário do sistema. Ele tem acesso irrestrito a todos os arquivos e pode executar qualquer operação. O poder do root é também seu maior perigo — um comando errado pode destruir o sistema.</p>
+
+<div class="box box-danger">
+  <div class="box-title">🚨 Regra de Ouro</div>
+  <p><strong>NUNCA</strong> use o root para tarefas do dia a dia. Use uma conta de usuário regular e eleve privilégios apenas quando necessário com <code>sudo</code>. Isso protege o sistema de erros acidentais e limita o impacto de malware.</p>
+</div>
+
+<h4>1.11.2 UID e GID</h4>
+<table>
+<tr><th>Faixa de UID</th><th>Tipo de Usuário</th></tr>
+<tr><td>0</td><td>root (superusuário)</td></tr>
+<tr><td>1-999</td><td>Usuários de sistema (daemon, bin, www-data, etc.)</td></tr>
+<tr><td>1000+</td><td>Usuários regulares</td></tr>
+</table>
+
+<pre><code># Ver seu UID e GID
+$ id
+uid=1000(usuario) gid=1000(usuario) groups=1000(usuario),4(adm),24(cdrom)
+
+# Ver informações de outro usuário
+$ id root
+uid=0(root) gid=0(root) groups=0(root)
+
+# Ver todos os usuários do sistema
+$ cat /etc/passwd
+
+# Ver todos os grupos
+$ cat /etc/group
+</code></pre>
+
+<h4>1.11.3 Arquivo /etc/passwd</h4>
+<p>Cada linha do <code>/etc/passwd</code> representa um usuário, com campos separados por <code>:</code>:</p>
+
+<pre><code>usuario:x:1000:1000:Usuario Completo:/home/usuario:/bin/bash
+│      │ │    │    │                │               │
+│      │ │    │    │                │               └─ Shell padrão
+│      │ │    │    │                └─ Diretório home
+│      │ │    │    └─ Nome completo (GECOS)
+│      │ │    └─ GID primário
+│      │ └─ UID
+│      └─ Senha criptografada (x = no /etc/shadow)
+└─ Nome de login</code></pre>
+
+<h4>1.11.4 Arquivo /etc/shadow</h4>
+<p>As senhas criptografadas são armazenadas em <code>/etc/shadow</code>, que só é legível pelo root:</p>
+
+<pre><code>$ sudo cat /etc/shadow | head -3
+root:$6$rounds=5000$saltsalt$hashhash...:19000:0:99999:7:::
+usuario:$6$rounds=5000$saltsalt$hashhash...:19000:0:99999:7:::
+</code></pre>
+
+<p>Os campos são: usuário, hash da senha, última mudança, dias mínimos, dias máximos, dias de aviso, dias de inatividade, data de expiração, reservado.</p>
+</div>
+
+<div class="section">
+<h3>1.12 Permissões de Arquivos</h3>
+<p>Linux usa um modelo de permissões baseado em três classes de usuários: <strong>proprietário (owner)</strong>, <strong>grupo (group)</strong>, e <strong>outros (others)</strong>. Cada classe pode ter permissões de <strong>leitura (r)</strong>, <strong>escrita (w)</strong>, e <strong>execução (x)</strong>.</p>
+
+<h4>1.12.1 Notação Simbólica (rwx)</h4>
+<table>
+<tr><th>Permissão</th><th>Arquivo</th><th>Diretório</th></tr>
+<tr><td><strong>r</strong> (read)</td><td>Ler conteúdo</td><td>Listar arquivos</td></tr>
+<tr><td><strong>w</strong> (write)</td><td>Modificar conteúdo</td><td>Criar/deletar arquivos</td></tr>
+<tr><td><strong>x</strong> (execute)</td><td>Executar como programa</td><td>Acessar (cd) o diretório</td></tr>
+</table>
+
+<pre><code>$ ls -l arquivo.txt
+-rwxr-xr-- 1 usuario grupo 1234 Jun 14 10:00 arquivo.txt
+│└┬┘└┬┘└┬┘
+│ │  │  └─ permissões para outros (r--)
+│ │  └──── permissões para o grupo (r-x)
+│ └─────── permissões para o proprietário (rwx)
+└───────── tipo de arquivo (- = arquivo regular)</code></pre>
+
+<h4>1.12.2 Notação Numérica (Octal)</h4>
+<p>Cada permissão tem um valor numérico:</p>
+<table>
+<tr><th>Permissão</th><th>Valor</th></tr>
+<tr><td>r (read)</td><td>4</td></tr>
+<tr><td>w (write)</td><td>2</td></tr>
+<tr><td>x (execute)</td><td>1</td></tr>
+</table>
+
+<p>Os valores são somados para cada classe:</p>
+<pre><code>rwx = 4+2+1 = 7
+r-x = 4+0+1 = 5
+r-- = 4+0+0 = 4
+
+chmod 754 arquivo.txt  →  rwxr-xr--</code></pre>
+
+<h4>1.12.3 chmod — Alterar Permissões</h4>
+<pre><code># Notação simbólica
+$ chmod u+x script.sh      # Adiciona execução para o dono
+$ chmod g-w arquivo.txt    # Remove escrita do grupo
+$ chmod o=r arquivo.txt    # Define leitura apenas para outros
+$ chmod a+x programa       # Adiciona execução para todos
+
+# Notação octal
+$ chmod 755 script.sh      # rwxr-xr-x (scripts executáveis)
+$ chmod 644 arquivo.txt    # rw-r--r-- (arquivos comuns)
+$ chmod 700 chave.pem      # rwx------ (chaves privadas)
+$ chmod 777 diretorio/     # rwxrwxrwx (EVITE!)
+</code></pre>
+
+<div class="box box-danger">
+  <div class="box-title">🚨 NUNCA use chmod 777</div>
+  <p><code>chmod 777</code> dá permissão total a todos os usuários. Isso é uma falha de segurança grave. Use o princípio do <strong>mínimo privilégio</strong>: dê apenas as permissões estritamente necessárias.</p>
+</div>
+
+<h4>1.12.4 chown — Alterar Proprietário</h4>
+<pre><code># Mudar apenas o dono
+$ sudo chown root arquivo.txt
+
+# Mudar dono e grupo
+$ sudo chown usuario:grupo arquivo.txt
+
+# Mudar recursivamente em um diretório
+$ sudo chown -R usuario:grupo /var/www/
+
+# Mudar apenas o grupo
+$ sudo chown :grupo arquivo.txt
+</code></pre>
+
+<h4>1.12.5 umask — Máscara de Permissões Padrão</h4>
+<p>O <code>umask</code> define as permissões padrão para novos arquivos e diretórios. É subtraído das permissões máximas.</p>
+
+<pre><code>$ umask
+0002
+
+# Permissões máximas: arquivo 666, diretório 777
+# Arquivo novo: 666 - 002 = 664 (rw-rw-r--)
+# Diretório novo: 777 - 002 = 775 (rwxrwxr-x)
+
+# Alterar umask temporariamente
+$ umask 077
+# Agora: arquivo 600, diretório 700 (apenas o dono)</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">🔍 Permissões Especiais</div>
+  <p>Além de rwx, existem três permissões especiais:</p>
+  <ul>
+    <li><strong>SUID (4):</strong> Arquivo executa com privilégios do dono. Ex: <code>passwd</code> (rwsr-xr-x)</li>
+    <li><strong>SGID (2):</strong> Arquivo executa com privilégios do grupo; diretório herda grupo. Ex: <code>/usr/bin/wall</code></li>
+    <li><strong>Sticky Bit (1):</strong> Apenas o dono pode deletar arquivos no diretório. Ex: <code>/tmp</code> (rwxrwxrwt)</li>
+  </ul>
+  <pre><code>$ chmod 4755 programa    # SUID
+$ chmod 2755 diretorio   # SGID
+$ chmod 1777 /tmp        # Sticky Bit</code></pre>
+</div>
+</div>
+
+<div class="section">
+<h3>1.13 Permissões Avançadas — ACLs</h3>
+<p>As <strong>Access Control Lists (ACLs)</strong> permitem definir permissões mais granulares que o modelo tradicional rwx. Com ACLs, você pode dar permissões específicas para usuários e grupos individuais além do dono e grupo principal.</p>
+
+<pre><code># Ver ACLs de um arquivo
+$ getfacl arquivo.txt
+
+# Definir ACL: dar permissão de leitura para um usuário específico
+$ setfacl -m u:outro_usuario:r arquivo.txt
+
+# Definir ACL para um grupo
+$ setfacl -m m:grupo:rw arquivo.txt
+
+# Remover todas as ACLs
+$ setfacl -b arquivo.txt
+
+# Definir ACL padrão para novos arquivos em um diretório
+$ setfacl -d -m u:outro_usuario:rwx diretorio/
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 Quando usar ACLs?</div>
+  <p>Use ACLs quando precisar de controle de acesso mais fino do que o modelo tradicional permite. Por exemplo: um diretório de projeto onde vários usuários precisam de acesso, mas não fazem parte do mesmo grupo principal.</p>
+</div>
+</div>
+
+<!-- EXERCÍCIOS VOLUME 1 -->
+<div class="exercise">
+<h4>🏋️ Exercícios — Volume 1</h4>
+<ol>
+  <li>Execute <code>uname -a</code> e interprete cada campo da saída. Qual a versão do seu kernel?</li>
+  <li>Use <code>tty</code> e <code>whoami</code>. Qual seu TTY atual e UID? Use <code>id</code> para confirmar.</li>
+  <li>Explore <code>/proc</code>: execute <code>cat /proc/cpuinfo | grep "model name"</code> e <code>cat /proc/meminfo | head -5</code>.</li>
+  <li>Crie um arquivo <code>teste.txt</code>, defina permissões <code>640</code> e verifique com <code>ls -l</code>. O que significa cada permissão?</li>
+  <li>Crie um diretório <code>projeto</code>, mude o grupo para <code>users</code> com <code>chown</code>, e defina SGID com <code>chmod 2775</code>. Crie um arquivo dentro e verifique o grupo.</li>
+  <li>Use <code>systemctl list-units --type=service</code> e identifique 5 serviços essenciais do sistema.</li>
+  <li>Verifique o <code>umask</code> padrão. Altere para <code>077</code>, crie um arquivo e observe as permissões. Volte ao padrão original.</li>
+  <li>Instale <code>acl</code> e use <code>setfacl</code> para dar permissão de leitura em um arquivo para outro usuário do sistema.</li>
+</ol>
+</div>
+
+
+
+<!-- ============================================================ -->
+<!-- VOLUME 2 — TERMINAL: COMANDOS ESSENCIAIS -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<div class="volume-header" id="vol2">
+  <h2>📚 Volume 2 — Terminal: Comandos Essenciais</h2>
+  <div class="vol-desc">Os comandos que você usará todos os dias. Cada comando com dezenas de exemplos, flags e casos de uso reais.</div>
+</div>
+
+<div class="section">
+<h3>2.1 pwd — Print Working Directory</h3>
+<p>O comando <code>pwd</code> exibe o caminho absoluto do diretório atual. Simples, mas fundamental para saber onde você está no sistema de arquivos.</p>
+
+<pre><code>$ pwd
+/home/usuario/projetos/linux
+
+# pwd lógico (respeita links simbólicos)
+$ pwd -L
+/home/usuario/link_para_projetos
+
+# pwd físico (resolve links simbólicos)
+$ pwd -P
+/home/usuario/projetos/linux
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 Dica</div>
+  <p>Seu prompt (PS1) geralmente já mostra o diretório atual, mas <code>pwd</code> é útil em scripts onde você precisa capturar o caminho em uma variável: <code>DIR_ATUAL=$(pwd)</code></p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.2 ls — List Directory Contents</h3>
+<p>O comando <code>ls</code> é um dos mais usados no terminal. Lista arquivos e diretórios com diversas opções de formatação.</p>
+
+<h4>2.2.1 Opções Essenciais</h4>
+<pre><code># Listagem básica
+$ ls
+arquivo1.txt  diretorio/  script.sh
+
+# Listagem detalhada (long format)
+$ ls -l
+drwxr-xr-x 2 usuario grupo 4096 Jun 14 10:00 diretorio
+-rw-r--r-- 1 usuario grupo 1234 Jun 14 09:30 arquivo.txt
+-rwxr-xr-x 1 usuario grupo  512 Jun 14 08:00 script.sh
+
+# Listagem com tamanhos human-readable
+$ ls -lh
+-rw-r--r-- 1 usuario grupo 1.2K Jun 14 09:30 arquivo.txt
+-rw-r--r-- 1 usuario grupo 2.4M Jun 14 09:45 video.mp4
+
+# Mostrar arquivos ocultos (começam com .)
+$ ls -la
+.  ..  .bashrc  .profile  arquivo.txt  diretorio/
+
+# Ordenar por data de modificação (mais recente primeiro)
+$ ls -lt
+
+# Ordenar por data de acesso
+$ ls -ltu
+
+# Ordenar por tamanho (maior primeiro)
+$ ls -lhS
+
+# Ordenar reverso
+$ ls -ltr   # mais antigo primeiro
+
+# Mostrar tipo de arquivo (indicador no final)
+$ ls -F
+arquivo.txt  diretorio/  link_simbolico@  executavel*
+
+# Listar recursivamente
+$ ls -R
+
+# Listar com inode number
+$ ls -i
+123456 arquivo.txt
+
+# Listar apenas diretórios
+$ ls -d */
+
+# Listar com cores (auto-detecta terminal)
+$ ls --color=auto
+
+# Mostrar UID/GID numéricos
+$ ls -ln
+
+# Mostrar tempo completo
+$ ls -l --time-style=full-iso
+</code></pre>
+
+<h4>2.2.2 Combinações Poderosas</h4>
+<pre><code># Listar todos os arquivos, ordenados por tamanho, com tamanhos legíveis
+$ ls -lahS
+
+# Listar arquivos modificados nas últimas 24 horas
+$ ls -lt --time-style=full-iso | head -10
+
+# Listar apenas arquivos executáveis
+$ ls -l | grep '^-..x'
+
+# Contar número de arquivos em um diretório
+$ ls -1 | wc -l
+
+# Listar arquivos com extensão .txt
+$ ls -l *.txt
+
+# Listar arquivos que NÃO são .txt
+$ ls -l | grep -v '\.txt$'
+</code></pre>
+
+<div class="box box-warning">
+  <div class="box-title">⚠️ Cuidado com ls em scripts</div>
+  <p>Nunca use <code>ls</code> para processar arquivos em scripts (especialmente nomes com espaços). Use <code>find</code> com <code>-print0</code> ou globbing seguro. <code>ls</code> é para visualização humana, não para processamento automatizado.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.3 cd — Change Directory</h3>
+<p>O comando <code>cd</code> muda o diretório atual. É um comando interno do shell (built-in), não um programa externo.</p>
+
+<pre><code># Ir para um diretório específico
+$ cd /home/usuario/projetos
+
+# Ir para o diretório home
+$ cd
+$ cd ~
+$ cd ~usuario
+
+# Ir para o diretório anterior
+$ cd -
+
+# Subir um nível
+$ cd ..
+
+# Subir dois níveis
+$ cd ../..
+
+# Ir para um diretório relativo
+$ cd projetos/linux
+
+# Ir para diretório absoluto
+$ cd /var/log
+
+# Usar tab completion
+$ cd /u/l/b&lt;TAB&gt;  →  /usr/local/bin
+
+# Usar variável de ambiente
+$ cd $HOME
+$ cd $PWD
+
+# CDPATH — caminhos de busca para cd
+$ export CDPATH=.:~/projetos:/var/www
+$ cd site   # procura em ., ~/projetos, /var/www
+</code></pre>
+
+<h4>2.3.1 Atalhos Úteis</h4>
+<table>
+<tr><th>Atalho</th><th>Significado</th></tr>
+<tr><td><code>cd</code> ou <code>cd ~</code></td><td>Diretório home do usuário atual</td></tr>
+<tr><td><code>cd -</code></td><td>Diretório anterior (último <code>cd</code>)</td></tr>
+<tr><td><code>cd ..</code></td><td>Diretório pai (um nível acima)</td></tr>
+<tr><td><code>cd ../..</code></td><td>Dois níveis acima</td></tr>
+<tr><td><code>cd /</code></td><td>Raiz do sistema</td></tr>
+<tr><td><code>cd ~usuario</code></td><td>Home de outro usuário</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>2.4 mkdir — Make Directory</h3>
+<p>Cria diretórios. Parece simples, mas tem opções poderosas.</p>
+
+<pre><code># Criar um diretório
+$ mkdir novo_diretorio
+
+# Criar múltiplos diretórios
+$ mkdir dir1 dir2 dir3
+
+# Criar diretórios aninhados (parents)
+$ mkdir -p projetos/2024/junho/relatorios
+# Cria toda a hierarquia se não existir
+
+# Criar com permissões específicas
+$ mkdir -m 755 diretorio_publico
+
+# Criar diretório e verificar
+$ mkdir -v novo_dir
+mkdir: created directory 'novo_dir'
+
+# Criar estrutura de projeto completa
+$ mkdir -p meu_projeto/{src,include,lib,tests,docs,bin}
+# Cria: meu_projeto/src, meu_projeto/include, etc.
+
+# Criar diretório com data atual no nome
+$ mkdir backup_$(date +%Y-%m-%d)
+# Resultado: backup_2024-06-14
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 Brace Expansion</div>
+  <p>O bash suporta <strong>brace expansion</strong> para criar múltiplos itens de forma concisa:</p>
+  <pre><code>$ mkdir -p projeto/{src,tests,docs}/{2023,2024}
+# Cria: projeto/src/2023, projeto/src/2024, projeto/tests/2023, ...</code></pre>
+</div>
+</div>
+
+<div class="section">
+<h3>2.5 rmdir — Remove Directory</h3>
+<p>Remove diretórios <strong>vazios</strong>. Para diretórios com conteúdo, use <code>rm -r</code> (com cuidado!).</p>
+
+<pre><code># Remover diretório vazio
+$ rmdir diretorio_vazio
+
+# Remover múltiplos diretórios vazios
+$ rmdir dir1 dir2 dir3
+
+# Remover diretório e seus pais se ficarem vazios
+$ rmdir -p projeto/2024/junho
+# Remove junho/, se 2024/ ficar vazio remove também, etc.
+
+# Remover diretórios vazios recursivamente
+$ find . -type d -empty -delete
+
+# Verificar antes de remover
+$ rmdir -v diretorio
+rmdir: removing directory, 'diretorio'
+</code></pre>
+
+<div class="box box-danger">
+  <div class="box-title">🚨 rmdir vs. rm -r</div>
+  <p><code>rmdir</code> só remove diretórios vazios — é seguro. <code>rm -r</code> remove diretórios e TODO o conteúdo. Use <code>rm -ri</code> (interativo) ou <code>rm -rI</code> (pergunta uma vez para muitos arquivos) para evitar acidentes.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.6 touch — Change File Timestamps</h3>
+<p>O <code>touch</code> é usado para criar arquivos vazios ou atualizar timestamps. É mais poderoso do que parece.</p>
+
+<pre><code># Criar arquivo vazio
+$ touch novo_arquivo.txt
+
+# Atualizar timestamp de acesso e modificação para agora
+$ touch arquivo_existente.txt
+
+# Atualizar apenas timestamp de acesso
+$ touch -a arquivo.txt
+
+# Atualizar apenas timestamp de modificação
+$ touch -m arquivo.txt
+
+# Não criar arquivo se não existir
+$ touch -c arquivo_inexistente.txt
+
+# Usar timestamp de outro arquivo como referência
+$ touch -r arquivo_referencia.txt arquivo_alvo.txt
+
+# Definir timestamp específico
+$ touch -t 202406141200.00 arquivo.txt
+# Formato: [[CC]YY]MMDDhhmm[.ss]
+# 2024-06-14 12:00:00
+
+# Definir data com string legível
+$ touch -d "2024-06-14 12:00:00" arquivo.txt
+$ touch -d "yesterday" arquivo.txt
+$ touch -d "2 days ago" arquivo.txt
+$ touch -d "next Monday" arquivo.txt
+
+# Criar múltiplos arquivos
+$ touch arquivo{1..10}.txt
+# Cria: arquivo1.txt, arquivo2.txt, ..., arquivo10.txt
+
+# Criar arquivo com espaço no nome (use aspas)
+$ touch "meu arquivo.txt"
+
+# Criar arquivo oculto
+$ touch .config
+</code></pre>
+
+<h4>2.6.1 Timestamps no Linux</h4>
+<table>
+<tr><th>Timestamp</th><th>Significado</th><th>Comando</th></tr>
+<tr><td><strong>atime</strong></td><td>Último acesso (leitura)</td><td><code>touch -a</code>, <code>ls -lu</code></td></tr>
+<tr><td><strong>mtime</strong></td><td>Última modificação do conteúdo</td><td><code>touch -m</code>, <code>ls -l</code></td></tr>
+<tr><td><strong>ctime</strong></td><td>Última mudança nos metadados (permissões, dono)</td><td><code>ls -lc</code></td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>2.7 cp — Copy Files and Directories</h3>
+<p>Copia arquivos e diretórios. Um dos comandos mais perigosos se usado sem atenção.</p>
+
+<pre><code># Copiar arquivo
+$ cp origem.txt destino.txt
+
+# Copiar para diretório
+$ cp arquivo.txt /backup/
+
+# Copiar múltiplos arquivos
+$ cp arquivo1.txt arquivo2.txt /destino/
+
+# Copiar com preservação de atributos
+$ cp -p arquivo.txt backup/
+# Preserva: modo, ownership, timestamps
+
+# Copiar recursivamente (diretórios)
+$ cp -r diretorio/ /backup/
+
+# Copiar recursivamente com preservação completa
+$ cp -a diretorio/ /backup/
+# Equivalente a -dR --preserve=all
+
+# Copiar com verificação de sobrescrita (interativo)
+$ cp -i arquivo.txt /destino/
+
+# Forçar sobrescrita sem perguntar
+$ cp -f arquivo.txt /destino/
+
+# Copiar apenas se o arquivo for mais novo
+$ cp -u arquivo.txt /destino/
+
+# Copiar com barra de progresso (pv)
+$ cp arquivo_grande.iso /destino/ & pv -pteba arquivo_grande.iso > /destino/arquivo_grande.iso
+
+# Copiar com backup automático
+$ cp --backup=numbered arquivo.txt /destino/
+# Cria: arquivo.txt.~1~, arquivo.txt.~2~, etc.
+
+# Copiar links simbólicos como links (não seguir)
+$ cp -d link_simbolico /destino/
+
+# Criar link hard em vez de copiar
+$ cp -l arquivo.txt /destino/
+
+# Copiar com sparse (arquivos esparsos)
+$ cp --sparse=always arquivo.img /destino/
+</code></pre>
+
+<div class="box box-danger">
+  <div class="box-title">🚨 Cuidado com cp e diretórios</div>
+  <p><code>cp -r</code> copia recursivamente. Se o destino já existe e é um diretório, o conteúdo é copiado <em>dentro</em> dele. Se não existe, cria o diretório. Verifique sempre com <code>ls</code> antes.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.8 mv — Move/Rename Files</h3>
+<p>Move ou renomeia arquivos e diretórios. No Linux, renomear e mover são a mesma operação (ambos alteram o path).</p>
+
+<pre><code># Renomear arquivo
+$ mv antigo.txt novo.txt
+
+# Mover arquivo para diretório
+$ mv arquivo.txt /destino/
+
+# Mover múltiplos arquivos
+$ mv *.txt /backup/
+
+# Mover e sobrescrever sem perguntar
+$ mv -f arquivo.txt /destino/
+
+# Mover com confirmação (interativo)
+$ mv -i arquivo.txt /destino/
+
+# Mover apenas se o destino for mais antigo
+$ mv -u arquivo.txt /destino/
+
+# Mover com backup
+$ mv --backup=numbered arquivo.txt /destino/
+
+# Mover diretório inteiro
+$ mv diretorio/ /novo/local/
+
+# Renomear com substituição de padrão (bash)
+$ for f in *.txt; do mv "$f" "${f%.txt}.bak"; done
+
+# Renomear múltiplos arquivos com rename (perl)
+$ rename 's/\.txt$/.bak/' *.txt
+
+# Mover arquivos modificados hoje
+$ find . -mtime -1 -type f -exec mv {} /backup/hoje/ \;
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 mv é atômico para arquivos no mesmo filesystem</div>
+  <p>Quando <code>mv</code> move um arquivo dentro do mesmo filesystem, ele apenas atualiza os metadados no inode — os dados do arquivo não são copiados. Isso é instantâneo e atômico, mesmo para arquivos gigantes.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.9 rm — Remove Files</h3>
+<p>Remove arquivos. <strong>PERMANENTEMENTE</strong>. Não há lixeira no terminal. Use com extrema cautela.</p>
+
+<pre><code># Remover arquivo
+$ rm arquivo.txt
+
+# Remover múltiplos arquivos
+$ rm arquivo1.txt arquivo2.txt
+
+# Remover com confirmação
+$ rm -i arquivo.txt
+
+# Remover sem confirmação (padrão para root!)
+$ rm -f arquivo.txt
+
+# Remover diretório e conteúdo recursivamente
+$ rm -r diretorio/
+
+# Remover diretório vazio
+$ rm -d diretorio_vazio/
+# Equivalente a rmdir
+
+# Remover recursivamente e forçado (MUITO CUIDADO!)
+$ rm -rf diretorio/
+
+# Remover arquivos com nomes estranhos
+$ rm -- -arquivo_com_hifen_no_inicio
+$ rm ./-arquivo_com_hifen
+
+# Remover exceto um arquivo
+$ rm !(arquivo_importante.txt)
+# Requer: shopt -s extglob
+
+# Remover arquivos antigos
+$ find /tmp -type f -mtime +7 -delete
+
+# Remover com log
+$ rm -v arquivo.txt
+removed 'arquivo.txt'
+
+# Simular remoção (não remove, apenas mostra o que faria)
+# Use echo ou rm -i combinado com find
+$ find . -name "*.tmp" -exec echo rm {} \;
+</code></pre>
+
+<div class="box box-danger">
+  <div class="box-title">🚨 O Comando Mais Perigoso do Linux</div>
+  <p><code>rm -rf /</code> apaga TODO o sistema. Algumas distribuições modernas têm proteção (<code>rm --preserve-root</code> é padrão), mas <code>rm -rf /*</code> ou <code>rm -rf / --no-preserve-root</code> ainda funcionam. Sempre verifique o caminho antes de executar <code>rm -rf</code>.</p>
+  <p><strong>Regra:</strong> Nunca use <code>rm -rf</code> com variáveis não verificadas ou com wildcards sem testar primeiro.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.10 cat — Concatenate and Print</h3>
+<p>O <code>cat</code> concatena e exibe arquivos. É frequentemente usado para visualizar arquivos pequenos, mas tem usos mais avançados.</p>
+
+<pre><code># Exibir conteúdo de arquivo
+$ cat arquivo.txt
+
+# Concatenar múltiplos arquivos
+$ cat arquivo1.txt arquivo2.txt > combinado.txt
+
+# Concatenar com numeração de linhas
+$ cat -n arquivo.txt
+
+# Numeração apenas para linhas não-vazias
+$ cat -b arquivo.txt
+
+# Mostrar caracteres especiais (tabs, fim de linha)
+$ cat -A arquivo.txt
+# ^I = tab, $ = fim de linha
+
+# Suprimir linhas repetidas em branco
+$ cat -s arquivo.txt
+
+# Criar arquivo com heredoc
+$ cat > arquivo.txt << 'EOF'
+Linha 1
+Linha 2
+Linha 3
+EOF
+
+# Criar arquivo com conteúdo inline
+$ cat > config.ini <<EOF
+[database]
+host=localhost
+port=3306
+EOF
+
+# Usar cat com pipe (anti-pattern, mas comum)
+$ cat arquivo.txt | grep "padrao"
+# Melhor: grep "padrao" arquivo.txt
+
+# Exibir múltiplos arquivos com separador
+$ cat arquivo1.txt - arquivo2.txt <<<'---SEPARADOR---'
+
+# Usar cat para limpar arquivo (truncar)
+$ cat /dev/null > arquivo.txt
+# Equivalente a: > arquivo.txt
+</code></pre>
+
+<div class="box box-warning">
+  <div class="box-title">⚠️ Useless Use of Cat (UUOC)</div>
+  <p>Usar <code>cat arquivo | comando</code> quando <code>comando arquivo</code> funciona é considerado um anti-pattern. O <code>cat</code> cria um processo desnecessário. Prefira <code>grep "padrao" arquivo.txt</code> em vez de <code>cat arquivo.txt | grep "padrao"</code>.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.11 tac — Concatenate and Print in Reverse</h3>
+<p>O <code>tac</code> é o inverso do <code>cat</code>: exibe o arquivo de trás para frente (por linhas).</p>
+
+<pre><code># Exibir arquivo invertido (linhas)
+$ tac arquivo.txt
+
+# Usar separador customizado
+$ tac -s "---" arquivo.txt
+
+# Processar logs em ordem inversa (mais recente primeiro)
+$ tac /var/log/syslog | head -20
+
+# Combinar com grep para buscar do final
+$ tac arquivo.log | grep "ERRO" | head -5
+</code></pre>
+</div>
+
+<div class="section">
+<h3>2.12 nl — Number Lines</h3>
+<p>O <code>nl</code> numera linhas de arquivo com mais controle que <code>cat -n</code>.</p>
+
+<pre><code># Numerar todas as linhas
+$ nl arquivo.txt
+
+# Numerar apenas linhas não-vazias (padrão)
+$ nl -b t arquivo.txt
+
+# Numerar todas as linhas
+$ nl -b a arquivo.txt
+
+# Numerar apenas linhas com texto
+$ nl -b n arquivo.txt
+
+# Definir formato de numeração
+$ nl -n rz arquivo.txt    # zeros à esquerda
+$ nl -n ln arquivo.txt    # alinhado à esquerda
+$ nl -n rn arquivo.txt    # alinhado à direita (padrão)
+
+# Definir largura do número
+$ nl -w 5 arquivo.txt
+
+# Definir string de separação
+$ nl -s ". " arquivo.txt
+# 1. Linha um
+# 2. Linha dois
+
+# Usar delimitador de seção lógica
+$ nl -d "@@" arquivo.txt
+</code></pre>
+</div>
+
+<div class="section">
+<h3>2.13 less — Paginator Avançado</h3>
+<p>O <code>less</code> é um paginador que permite navegar por arquivos grandes de forma interativa. É o sucessor do <code>more</code> e muito mais poderoso.</p>
+
+<pre><code># Visualizar arquivo
+$ less arquivo.txt
+
+# Visualizar com numeração de linhas
+$ less -N arquivo.txt
+
+# Visualizar com highlight de busca
+$ less -g arquivo.txt
+
+# Ignorar case na busca
+$ less -I arquivo.txt
+
+# Visualizar múltiplos arquivos
+$ less arquivo1.txt arquivo2.txt
+# :n → próximo arquivo
+# :p → arquivo anterior
+
+# Visualizar saída de comando
+$ dmesg | less
+$ ps aux | less
+
+# Buscar dentro do less
+# /padrao    → buscar para frente
+# ?padrao    → buscar para trás
+# n          → próxima ocorrência
+# N          → ocorrência anterior
+
+# Navegação no less
+# Space/PageDown → página abaixo
+# b/PageUp       → página acima
+# j/↓            → uma linha abaixo
+# k/↑            → uma linha acima
+# g              → início do arquivo
+# G              → fim do arquivo
+# 50g            → linha 50
+# %50            → 50% do arquivo
+# q              → sair
+
+# Seguir arquivo em tempo real (como tail -f)
+$ less +F arquivo.log
+# Ctrl+C para pausar, F para continuar
+
+# Editar arquivo diretamente do less
+# v → abre no editor padrão ($VISUAL ou $EDITOR)
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 less é mais que more</div>
+  <p><code>less</code> permite navegar para trás (ao contrário de <code>more</code>), buscar, marcar posições, e visualizar arquivos sem carregá-los completamente na memória. Para arquivos grandes, <code>less</code> é essencial.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.14 more — Paginador Simples</h3>
+<p>O <code>more</code> é um paginador básico. Na maioria dos casos, prefira <code>less</code>.</p>
+
+<pre><code># Visualizar arquivo
+$ more arquivo.txt
+
+# Definir número de linhas por tela
+$ more -10 arquivo.txt
+
+# Desabilitar scroll
+$ more -d arquivo.txt
+
+# Navegação no more
+# Space → próxima página
+# Enter → próxima linha
+# b     → página anterior (nem sempre funciona)
+# /padrao → buscar
+# q     → sair
+</code></pre>
+</div>
+
+<div class="section">
+<h3>2.15 head — Output First Part</h3>
+<p>Exibe as primeiras linhas de um arquivo. Útil para pré-visualizar arquivos grandes.</p>
+
+<pre><code># Primeiras 10 linhas (padrão)
+$ head arquivo.txt
+
+# Primeiras 20 linhas
+$ head -n 20 arquivo.txt
+$ head -20 arquivo.txt
+
+# Primeiros 100 bytes
+$ head -c 100 arquivo.txt
+
+# Primeiras linhas de múltiplos arquivos
+$ head arquivo1.txt arquivo2.txt
+
+# Combinar com pipe
+$ cat /var/log/syslog | head -50
+# Melhor: head -50 /var/log/syslog
+
+# Ver cabeçalho de arquivo CSV
+$ head -1 dados.csv
+
+# Ver primeiras linhas de todos os arquivos .log
+$ head -n 5 *.log
+</code></pre>
+</div>
+
+<div class="section">
+<h3>2.16 tail — Output Last Part</h3>
+<p>Exibe as últimas linhas de um arquivo. Essencial para monitorar logs em tempo real.</p>
+
+<pre><code># Últimas 10 linhas
+$ tail arquivo.txt
+
+# Últimas 20 linhas
+$ tail -n 20 arquivo.txt
+
+# Últimos 100 bytes
+$ tail -c 100 arquivo.txt
+
+# Seguir arquivo em tempo real (follow)
+$ tail -f /var/log/syslog
+
+# Seguir e reabrir se o arquivo for rotacionado
+$ tail -F /var/log/syslog
+# Útil para logs que são renomeados/compactados
+
+# Combinar head e tail para extrair linhas do meio
+$ head -n 100 arquivo.txt | tail -n 20
+# Linhas 81-100
+
+# Monitorar múltiplos arquivos
+$ tail -f /var/log/syslog /var/log/auth.log
+
+# Ver logs desde uma linha específica
+$ tail -n +50 arquivo.txt
+# Mostra a partir da linha 50
+
+# Usar com grep para filtrar logs em tempo real
+$ tail -f /var/log/syslog | grep "ERRO"
+</code></pre>
+
+<div class="box box-success">
+  <div class="box-title">✅ tail -f é indispensável para sysadmins</div>
+  <p>Quando um serviço está com problemas, <code>tail -f /var/log/servico.log</code> permite ver os erros em tempo real. Combine com <code>grep</code> para filtrar apenas o que interessa.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.17 file — Determine File Type</h3>
+<p>O <code>file</code> identifica o tipo de arquivo analisando seu conteúdo, não apenas a extensão.</p>
+
+<pre><code># Identificar tipo de arquivo
+$ file arquivo.txt
+arquivo.txt: ASCII text
+
+$ file programa
+programa: ELF 64-bit LSB executable, x86-64, version 1 (SYSV)
+
+$ file imagem.png
+imagem.png: PNG image data, 800 x 600, 8-bit/color RGBA
+
+# Identificar múltiplos arquivos
+$ file *
+
+# Identificar com mais detalhes
+$ file -i arquivo.txt
+arquivo.txt: text/plain; charset=us-ascii
+
+# Ver magic number em hexadecimal
+$ file -k arquivo_desconhecido
+
+# Listar todos os tipos de arquivo conhecidos
+$ file -l
+
+# Identificar arquivo dentro de arquivo compactado
+$ file -z arquivo.tar.gz
+
+# Verificar arquivo de core dump
+$ file core
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 Como file funciona?</div>
+  <p>O <code>file</code> usa um banco de dados de "magic numbers" (bytes iniciais característicos) localizado em <code>/usr/share/file/magic</code>. Por exemplo, arquivos ELF começam com <code>0x7F 'E' 'L' 'F'</code>, arquivos PNG com <code>0x89 'P' 'N' 'G'</code>.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.18 stat — Display File Status</h3>
+<p>O <code>stat</code> exibe informações detalhadas sobre arquivos — muito mais que <code>ls -l</code>.</p>
+
+<pre><code># Informações completas do arquivo
+$ stat arquivo.txt
+  File: arquivo.txt
+  Size: 1234       Blocks: 8          IO Block: 4096   regular file
+Device: 801h/2049d Inode: 131073     Links: 1
+Access: (0644/-rw-r--r--)  Uid: ( 1000/ usuario)   Gid: ( 1000/ grupo)
+Access: 2024-06-14 10:00:00.000000000 -0300
+Modify: 2024-06-14 09:30:00.000000000 -0300
+Change: 2024-06-14 09:30:00.000000000 -0300
+ Birth: 2024-06-14 08:00:00.000000000 -0300
+
+# Formato customizado
+$ stat -c "%n: %s bytes, permissões %a" arquivo.txt
+arquivo.txt: 1234 bytes, permissões 644
+
+# Formatos úteis
+$ stat -c "%y %n" *.txt    # data de modificação + nome
+$ stat -c "%s %n" *        # tamanho + nome
+$ stat -c "%U %G %a %n" *  # dono, grupo, permissões, nome
+
+# Ver sistema de arquivos do arquivo
+$ stat -f .
+  File: "."
+    ID: 1234567890   Namelen: 255     Type: ext2/ext3
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 1000000  Free: 500000   Available: 450000
+Inodes: Total: 256000   Free: 200000
+
+# Ver informações de link simbólico (não seguir)
+$ stat -c "%N" link_simbolico
+'link_simbolico' -> 'arquivo_original.txt'
+</code></pre>
+
+<h4>2.18.1 Formatos de saída do stat</h4>
+<table>
+<tr><th>Formato</th><th>Descrição</th></tr>
+<tr><td><code>%n</code></td><td>Nome do arquivo</td></tr>
+<tr><td><code>%s</code></td><td>Tamanho em bytes</td></tr>
+<tr><td><code>%b</code></td><td>Número de blocos alocados</td></tr>
+<tr><td><code>%o</code></td><td>Tamanho do bloco de I/O</td></tr>
+<tr><td><code>%i</code></td><td>Número do inode</td></tr>
+<tr><td><code>%a</code></td><td>Permissões em octal</td></tr>
+<tr><td><code>%A</code></td><td>Permissões em formato humano</td></tr>
+<tr><td><code>%U</code></td><td>Nome do dono</td></tr>
+<tr><td><code>%u</code></td><td>UID do dono</td></tr>
+<tr><td><code>%G</code></td><td>Nome do grupo</td></tr>
+<tr><td><code>%g</code></td><td>GID do grupo</td></tr>
+<tr><td><code>%x</code></td><td>Data de acesso</td></tr>
+<tr><td><code>%y</code></td><td>Data de modificação</td></tr>
+<tr><td><code>%z</code></td><td>Data de mudança (ctime)</td></tr>
+<tr><td><code>%w</code></td><td>Data de criação (birth)</td></tr>
+<tr><td><code>%N</code></td><td>Nome com link simbólico resolvido</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>2.19 tree — Display Directory Tree</h3>
+<p>O <code>tree</code> exibe a estrutura de diretórios em formato de árvore. Não vem instalado por padrão em todas as distribuições.</p>
+
+<pre><code># Instalar tree
+$ sudo apt install tree    # Debian/Ubuntu
+$ sudo dnf install tree    # Fedora
+$ sudo pacman -S tree      # Arch
+
+# Exibir árvore do diretório atual
+$ tree
+.
+├── diretorio1
+│   ├── arquivo1.txt
+│   └── arquivo2.txt
+├── diretorio2
+│   └── subdir
+│       └── arquivo3.txt
+└── arquivo_raiz.txt
+
+# Limitar profundidade
+$ tree -L 2
+
+# Mostrar apenas diretórios
+$ tree -d
+
+# Mostrar arquivos com padrão específico
+$ tree -P "*.c"
+
+# Ignorar padrão
+$ tree -I "node_modules|__pycache__"
+
+# Mostrar tamanhos
+$ tree -h
+
+# Mostrar permissões
+$ tree -p
+
+# Mostrar inode numbers
+$ tree -i
+
+# Salvar árvore em arquivo
+$ tree > estrutura.txt
+
+# Colorir saída
+$ tree -C
+
+# Mostrar arquivos ocultos
+$ tree -a
+
+# Ordenar por versão (natural)
+$ tree -v
+
+# Usar caracteres ASCII (não Unicode)
+$ tree -A
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 tree como documentação</div>
+  <p>Use <code>tree -L 2 -I 'node_modules|*.pyc' > ESTRUTURA.md</code> para documentar a estrutura de um projeto em READMEs.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>2.20 echo — Display a Line of Text</h3>
+<p>O <code>echo</code> exibe texto. Simples, mas essencial para scripts e testes.</p>
+
+<pre><code># Exibir texto simples
+$ echo "Hello, World!"
+
+# Exibir sem nova linha no final
+$ echo -n "Sem nova linha"
+
+# Exibir com interpretação de escapes
+$ echo -e "Linha 1
+Linha 2	Tabulado"
+
+# Escapes comuns
+# 
+  → nova linha
+# 	  → tabulação
+# \  → barra invertida
+#   → beep (alert)
+# 
+  → carriage return
+#   → backspace
+
+# Exibir valor de variável
+$ echo $HOME
+$ echo $PATH
+$ echo $?
+
+# Exibir resultado de comando
+$ echo "Hoje é $(date +%Y-%m-%d)"
+
+# Criar arquivo com echo
+$ echo "conteúdo" > arquivo.txt
+
+# Anexar a arquivo
+$ echo "nova linha" >> arquivo.txt
+
+# Exibir com aspas simples (não expande variáveis)
+$ echo '$HOME'
+$HOME
+
+# Exibir com aspas duplas (expande variáveis)
+$ echo "$HOME"
+/home/usuario
+
+# Exibir asterisco literal
+$ echo "*"
+*
+$ echo *
+# (lista todos os arquivos do diretório!)
+</code></pre>
+</div>
+
+<div class="section">
+<h3>2.21 printf — Format and Print Data</h3>
+<p>O <code>printf</code> é mais poderoso que <code>echo</code>, com formatação tipo C. É um built-in do bash e também um comando externo.</p>
+
+<pre><code># Formatação básica
+$ printf "Hello, %s!
+" "World"
+
+# Múltiplos argumentos
+$ printf "Nome: %s, Idade: %d
+" "João" 25
+
+# Formatação de números
+$ printf "Decimal: %d
+" 42
+$ printf "Hex: %x
+" 255
+$ printf "Octal: %o
+" 8
+$ printf "Float: %.2f
+" 3.14159
+
+# Alinhamento
+$ printf "|%-10s|%10s|
+" "Esquerda" "Direita"
+# |Esquerda  |    Direita|
+
+# Preencher com zeros
+$ printf "%010d
+" 42
+# 0000000042
+
+# Formatação de data
+$ printf "%(%Y-%m-%d %H:%M:%S)T
+" -1
+# 2024-06-14 12:00:00
+
+# Criar tabela formatada
+$ printf "%-15s %10s %10s
+" "ARQUIVO" "TAMANHO" "PERMISSÕES"
+$ printf "%-15s %10d %10s
+" "arquivo.txt" 1234 "-rw-r--r--"
+
+# Usar em loop
+$ for f in *.txt; do printf "Processando: %s
+" "$f"; done
+
+# Imprimir sem nova linha
+$ printf "Carregando"
+$ printf "."
+$ printf "."
+$ printf ".
+"
+</code></pre>
+
+<h4>2.21.1 Especificadores de Formato</h4>
+<table>
+<tr><th>Especificador</th><th>Descrição</th></tr>
+<tr><td><code>%s</code></td><td>String</td></tr>
+<tr><td><code>%d</code> ou <code>%i</code></td><td>Inteiro decimal</td></tr>
+<tr><td><code>%u</code></td><td>Inteiro unsigned</td></tr>
+<tr><td><code>%x</code></td><td>Hexadecimal (minúsculo)</td></tr>
+<tr><td><code>%X</code></td><td>Hexadecimal (maiúsculo)</td></tr>
+<tr><td><code>%o</code></td><td>Octal</td></tr>
+<tr><td><code>%f</code></td><td>Ponto flutuante</td></tr>
+<tr><td><code>%e</code></td><td>Notação científica</td></tr>
+<tr><td><code>%c</code></td><td>Caractere único</td></tr>
+<tr><td><code>%%</code></td><td>Literal %</td></tr>
+</table>
+</div>
+
+<!-- EXERCÍCIOS VOLUME 2 -->
+<div class="exercise">
+<h4>🏋️ Exercícios — Volume 2</h4>
+<ol>
+  <li>Use <code>ls -la</code> no seu home e identifique: quantos arquivos ocultos existem? Qual o maior arquivo? Qual o mais recente?</li>
+  <li>Crie a estrutura <code>projeto/{src,include,lib,tests,docs}</code> com um único comando. Use <code>tree</code> para verificar.</li>
+  <li>Crie 20 arquivos vazios com nomes <code>teste_01.txt</code> a <code>teste_20.txt</code> usando brace expansion.</li>
+  <li>Use <code>cat</code> com heredoc para criar um arquivo de configuração com 10 linhas.</li>
+  <li>Use <code>head</code> e <code>tail</code> para extrair as linhas 50-60 de <code>/etc/passwd</code>.</li>
+  <li>Execute <code>file /bin/ls</code> e interprete TODOS os campos da saída. O que é "ELF"? "LSB"? "dynamically linked"?</li>
+  <li>Use <code>stat</code> para mostrar: nome, tamanho, inode, dono e permissões de todos os arquivos de <code>/bin</code>.</li>
+  <li>Monitore <code>/var/log/syslog</code> com <code>tail -f</code> em uma janela e gere eventos em outra. Use <code>grep</code> para filtrar.</li>
+  <li>Crie um script que use <code>printf</code> para formatar uma tabela com 5 arquivos, mostrando nome, tamanho e permissões alinhados.</li>
+  <li>Use <code>less</code> para abrir <code>/var/log/syslog</code>, busque por "error", navegue entre ocorrências e saia.</li>
+</ol>
+</div>
+
+
+
+<!-- ============================================================ -->
+<!-- VOLUME 3 — BUSCA E MANIPULAÇÃO DE TEXTO -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<div class="volume-header" id="vol3">
+  <h2>📚 Volume 3 — Busca e Manipulação de Texto</h2>
+  <div class="vol-desc">grep, find, sed, awk e as ferramentas que transformam dados em informação.</div>
+</div>
+
+<div class="section">
+<h3>3.1 grep — Global Regular Expression Print</h3>
+<p>O <code>grep</code> busca padrões em texto usando expressões regulares. É uma das ferramentas mais poderosas do terminal.</p>
+
+<h4>3.1.1 Uso Básico</h4>
+<pre><code># Buscar palavra em arquivo
+$ grep "erro" log.txt
+
+# Buscar em múltiplos arquivos
+$ grep "erro" *.log
+
+# Buscar recursivamente em diretórios
+$ grep -r "erro" /var/log/
+
+# Buscar ignorando case
+$ grep -i "erro" log.txt
+# Encontra: erro, ERRO, Erro, eRrO
+
+# Inverter match (linhas que NÃO contêm o padrão)
+$ grep -v "sucesso" log.txt
+
+# Mostrar número da linha
+$ grep -n "erro" log.txt
+
+# Mostrar apenas contagem
+$ grep -c "erro" log.txt
+
+# Mostrar nome do arquivo (com múltiplos arquivos)
+$ grep -l "erro" *.log
+
+# Mostrar linhas que NÃO contêm o padrão
+$ grep -L "erro" *.log
+
+# Mostrar contexto (linhas ao redor)
+$ grep -C 2 "erro" log.txt   # 2 linhas antes e depois
+$ grep -B 2 "erro" log.txt   # 2 linhas antes
+$ grep -A 2 "erro" log.txt   # 2 linhas depois
+</code></pre>
+
+<h4>3.1.2 Expressões Regulares com grep</h4>
+<pre><code># Buscar no início da linha (^)
+$ grep "^erro" log.txt
+
+# Buscar no final da linha ($)
+$ grep "erro$" log.txt
+
+# Qualquer caractere (.)
+$ grep "e.r.o" log.txt
+# Encontra: erro, e1r2o, e r o
+
+# Conjunto de caracteres ([])
+$ grep "[Ee]rro" log.txt
+# Encontra: erro, Erro
+
+# Range de caracteres
+$ grep "[a-z]erro" log.txt
+# Encontra: aerro, berro, ..., zerro
+
+# Negar conjunto
+$ grep "[^0-9]erro" log.txt
+# Encontra erro precedido por algo que nao eh numero
+
+# Quantificadores
+$ grep "erro*" log.txt    # 0 ou mais 'r'
+$ grep "erro+" log.txt    # 1 ou mais 'r' (grep -E)
+$ grep "erro?" log.txt    # 0 ou 1 'r' (grep -E)
+$ grep "erro{2,3}" log.txt # 2 a 3 'r' (grep -E)
+
+# Alternativa (OR)
+$ grep -E "erro|falha" log.txt
+
+# Grupos
+$ grep -E "(erro|falha) critica" log.txt
+
+# Palavra completa (\b)
+$ grep -w "erro" log.txt
+# Nao encontra "errores", apenas "erro" isolado
+
+# grep estendido (ERE)
+$ grep -E "padrao+" arquivo.txt
+# ou
+$ egrep "padrao+" arquivo.txt
+</code></pre>
+
+<h4>3.1.3 grep Avancado</h4>
+<pre><code># Buscar apenas palavras completas
+$ grep -w "root" /etc/passwd
+
+# Limitar numero de matches
+$ grep -m 5 "erro" log.txt
+
+# Buscar em arquivo binario (tratar como texto)
+$ grep -a "texto" arquivo.bin
+
+# Mostrar posicao do match
+$ grep -o "erro" log.txt
+# Apenas o texto matchado, nao a linha inteira
+
+# Buscar com arquivo de padroes
+$ grep -f padroes.txt log.txt
+# padroes.txt contem um padrao por linha
+
+# Excluir arquivos/diretorios na busca recursiva
+$ grep -r "erro" /var/log/ --exclude="*.gz"
+$ grep -r "erro" /var/log/ --exclude-dir="archive"
+
+# Colorir output
+$ grep --color=auto "erro" log.txt
+
+# Contar ocorrencias por arquivo
+$ grep -c "erro" *.log
+
+# Mostrar apenas arquivos SEM match
+$ grep -L "erro" *.log
+
+# Usar com process substitution
+$ grep "erro" &lt;(dmesg)
+
+# grep com Perl regex (PCRE)
+$ grep -P "\d{3}-\d{2}-\d{4}" arquivo.txt
+# Busca SSN: 123-45-6789
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 grep vs. egrep vs. fgrep</div>
+  <ul>
+    <li><code>grep</code>: Basico (BRE - Basic Regular Expressions)</li>
+    <li><code>egrep</code> ou <code>grep -E</code>: Estendido (ERE - Extended Regular Expressions)</li>
+    <li><code>fgrep</code> ou <code>grep -F</code>: Fixed strings (sem regex, busca literal)</li>
+    <li><code>grep -P</code>: Perl Compatible Regular Expressions (PCRE)</li>
+  </ul>
+</div>
+</div>
+
+<div class="section">
+<h3>3.2 find — Search for Files</h3>
+<p>O <code>find</code> busca arquivos e diretorios no sistema de arquivos. E extremamente poderoso e flexivel.</p>
+
+<h4>3.2.1 Busca Basica</h4>
+<pre><code># Buscar por nome
+$ find /home -name "*.txt"
+
+# Buscar ignorando case
+$ find /home -iname "*.TXT"
+
+# Buscar por tipo
+$ find /home -type f          # arquivos regulares
+$ find /home -type d          # diretorios
+$ find /home -type l          # links simbolicos
+$ find /home -type b          # dispositivos de bloco
+$ find /home -type c          # dispositivos de caractere
+$ find /home -type p          # named pipes
+$ find /home -type s          # sockets
+
+# Buscar por tamanho
+$ find /home -size +100M      # maior que 100MB
+$ find /home -size -1k        # menor que 1KB
+$ find /home -size 10M        # exatamente 10MB
+$ find /home -size +1G -size -5G  # entre 1GB e 5GB
+
+# Buscar por tempo de modificacao
+$ find /home -mtime -1        # modificado nas ultimas 24h
+$ find /home -mtime +7        # modificado ha mais de 7 dias
+$ find /home -mtime 1         # modificado entre 24h e 48h atras
+
+# Buscar por tempo de acesso
+$ find /home -atime +30       # nao acessado ha 30+ dias
+
+# Buscar por tempo de mudanca (ctime)
+$ find /home -ctime -1
+
+# Buscar por minutos (mais preciso)
+$ find /home -mmin -60        # modificado na ultima hora
+</code></pre>
+
+<h4>3.2.2 Operadores Logicos</h4>
+<pre><code># AND (padrao)
+$ find /home -name "*.txt" -size +1M
+
+# OR
+$ find /home \( -name "*.txt" -o -name "*.log" \)
+
+# NOT
+$ find /home ! -name "*.txt"
+
+# Combinados
+$ find /home -type f \( -name "*.tmp" -o -name "*.bak" \) -size +10M
+
+# Precedencia (use parenteses)
+$ find /home \( -type f -a -name "*.log" \) -o -type d
+</code></pre>
+
+<h4>3.2.3 Acoes com find</h4>
+<pre><code># Executar comando para cada arquivo encontrado
+$ find /home -name "*.log" -exec ls -lh {} \;
+
+# Executar com multiplos arquivos de uma vez (mais eficiente)
+$ find /home -name "*.log" -exec ls -lh {} +
+
+# Deletar arquivos encontrados
+$ find /tmp -name "*.tmp" -type f -delete
+
+# Ou com exec
+$ find /tmp -name "*.tmp" -type f -exec rm {} \;
+
+# Copiar arquivos encontrados
+$ find /home -name "*.conf" -exec cp {} /backup/ \;
+
+# Mover arquivos
+$ find /home -name "*.old" -exec mv {} /arquivo/ \;
+
+# Executar script
+$ find /home -name "*.sh" -exec bash {} \;
+
+# Chmod em arquivos encontrados
+$ find /home -type f -exec chmod 644 {} \;
+$ find /home -type d -exec chmod 755 {} \;
+
+# Usar -ok para confirmacao interativa
+$ find /home -name "*.txt" -ok rm {} \;
+</code></pre>
+
+<h4>3.2.4 find Avancado</h4>
+<pre><code># Buscar por permissoes
+$ find /home -perm 644
+$ find /home -perm /u=s       # SUID
+$ find /home -perm -g=w       # grupo tem escrita
+
+# Buscar por dono
+$ find /home -user root
+$ find /home -group sudo
+
+# Buscar por inode
+$ find / -inum 123456
+
+# Buscar links para um arquivo especifico
+$ find / -samefile /path/to/file
+
+# Buscar arquivos vazios
+$ find /home -type f -empty
+
+# Buscar diretorios vazios
+$ find /home -type d -empty
+
+# Limitar profundidade
+$ find /home -maxdepth 2 -name "*.txt"
+$ find /home -mindepth 2 -name "*.txt"
+
+# Nao seguir links simbolicos (padrao)
+$ find /home -name "*.txt"
+
+# Seguir links simbolicos
+$ find /home -follow -name "*.txt"
+
+# Buscar em multiplos diretorios
+$ find /home /var /tmp -name "*.log"
+
+# Excluir diretorios da busca
+$ find /home -path "*/node_modules" -prune -o -name "*.js" -print
+
+# Usar -printf para formatar saida
+$ find /home -type f -printf "%p %s %TY-%Tm-%Td\n"
+# path, size, data
+
+# Buscar com regex (caminho completo)
+$ find /home -regex ".*\.txt$"
+
+# Buscar com regex ignorando case
+$ find /home -iregex ".*\.TXT$"
+</code></pre>
+
+<div class="box box-success">
+  <div class="box-title">✅ find + xargs eh mais eficiente que find -exec</div>
+  <p>Para processar muitos arquivos, <code>find ... | xargs comando</code> eh mais eficiente que <code>find ... -exec comando {} \;</code> porque xargs passa multiplos arquivos de uma vez. Use <code>find ... -print0 | xargs -0 comando</code> para nomes com espacos.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>3.3 locate — Find Files by Name</h3>
+<p>O <code>locate</code> busca em um banco de dados pre-construido, sendo muito mais rapido que <code>find</code> para buscas por nome. O banco de dados eh atualizado pelo <code>updatedb</code>.</p>
+
+<pre><code># Instalar mlocate
+$ sudo apt install mlocate
+
+# Buscar arquivo por nome
+$ locate arquivo.txt
+
+# Buscar ignorando case
+$ locate -i arquivo.txt
+
+# Mostrar apenas N resultados
+$ locate -n 10 arquivo.txt
+
+# Mostrar arquivos existentes (verifica se existem)
+$ locate -e arquivo.txt
+
+# Atualizar banco de dados manualmente
+$ sudo updatedb
+
+# Buscar com regex
+$ locate -r "\.conf$"
+
+# Buscar arquivos de um usuario especifico
+$ locate -u usuario arquivo.txt
+
+# Estatisticas do banco de dados
+$ locate -S
+# Mostra: arquivos, diretorios, tamanho do DB, etc.
+
+# Buscar apenas arquivos (nao diretorios)
+$ locate -r "\.txt$"
+
+# Excluir padroes do updatedb
+# Edite /etc/updatedb.conf para excluir /tmp, /proc, etc.
+</code></pre>
+
+<div class="box box-warning">
+  <div class="box-title">⚠️ locate nao encontra arquivos recem-criados</div>
+  <p>O banco de dados do <code>locate</code> eh atualizado periodicamente (geralmente uma vez por dia via cron). Arquivos criados apos a ultima atualizacao nao aparecerao. Use <code>find</code> para buscas em tempo real.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>3.4 which — Locate a Command</h3>
+<p>O <code>which</code> mostra o caminho completo do executavel que seria executado se voce digitasse o comando.</p>
+
+<pre><code># Localizar comando
+$ which ls
+/bin/ls
+
+$ which python3
+/usr/bin/python3
+
+# Mostrar todos os caminhos (se houver aliases)
+$ which -a python
+/usr/bin/python
+/usr/local/bin/python
+
+# Verificar se comando existe
+$ which nginx
+# (sem saida = nao encontrado)
+
+# Usar em scripts
+$ if which nginx &gt;/dev/null; then echo "nginx instalado"; fi
+</code></pre>
+</div>
+
+<div class="section">
+<h3>3.5 whereis — Locate Binary, Source, and Manual Page</h3>
+<p>O <code>whereis</code> busca binarios, codigo-fonte e man pages de um comando.</p>
+
+<pre><code># Localizar tudo sobre um comando
+$ whereis ls
+ls: /bin/ls /usr/share/man/man1/ls.1.gz
+
+# Buscar apenas binarios
+$ whereis -b ls
+
+# Buscar apenas man pages
+$ whereis -m ls
+
+# Buscar apenas codigo-fonte
+$ whereis -s ls
+
+# Buscar em caminhos nao padrao
+$ whereis -B /usr/local/bin -f ls
+
+# Limitar resultados
+$ whereis -l ls
+# Mostra os caminhos de busca efetivos
+</code></pre>
+</div>
+
+<div class="section">
+<h3>3.6 sort — Sort Lines of Text</h3>
+<p>O <code>sort</code> ordena linhas de texto. Suporta ordenacao numerica, por data, por campo, e mais.</p>
+
+<pre><code># Ordenar alfabeticamente
+$ sort arquivo.txt
+
+# Ordenar inversamente
+$ sort -r arquivo.txt
+
+# Ordenar numericamente
+$ sort -n numeros.txt
+
+# Ordenar por tamanho (human-readable)
+$ sort -h tamanhos.txt
+
+# Ordenar ignorando case
+$ sort -f arquivo.txt
+
+# Ordenar removendo duplicatas
+$ sort -u arquivo.txt
+
+# Ordenar por campo especifico
+$ sort -k 3 arquivo.txt     # 3o campo (padrao: tab/space)
+$ sort -k 2,2n arquivo.txt  # 2o campo, numerico
+$ sort -t: -k 3n /etc/passwd # delimitador ':', 3o campo numerico
+
+# Ordenar por multiplos campos
+$ sort -t: -k 3n -k 1,1 /etc/passwd
+
+# Ordenar aleatoriamente (shuffle)
+$ sort -R arquivo.txt
+
+# Ordenar e verificar se ja esta ordenado
+$ sort -c arquivo.txt
+
+# Ordenar com locale especifico
+$ LC_ALL=C sort arquivo.txt
+
+# Ordenar arquivo grande (merge sort externo)
+$ sort -S 50% arquivo_grande.txt
+# Usa 50% da RAM
+
+# Ordenar saida de comando
+$ ps aux | sort -k 3 -n -r  # por CPU%, numerico, reverso
+$ du -h /home | sort -h -r  # por tamanho, maior primeiro
+</code></pre>
+
+<h4>3.6.1 Exemplos Praticos</h4>
+<pre><code># Top 10 processos por uso de memoria
+$ ps aux | sort -k 4 -n -r | head -10
+
+# Ordenar /etc/passwd por UID
+$ sort -t: -k 3n /etc/passwd
+
+# Ordenar arquivos por tamanho
+$ ls -l | sort -k 5 -n
+
+# Ordenar IPs numericamente
+$ sort -t. -k1,1n -k2,2n -k3,3n -k4,4n ips.txt
+</code></pre>
+</div>
+
+<div class="section">
+<h3>3.7 uniq — Remove Duplicate Lines</h3>
+<p>O <code>uniq</code> remove ou conta linhas duplicadas adjacentes. <strong>Importante:</strong> so remove duplicatas adjacentes — use <code>sort | uniq</code> para remover todas.</p>
+
+<pre><code># Remover duplicatas adjacentes
+$ uniq arquivo.txt
+
+# Contar ocorrencias
+$ uniq -c arquivo.txt
+
+# Mostrar apenas duplicatas
+$ uniq -d arquivo.txt
+
+# Mostrar apenas unicas (nao duplicadas)
+$ uniq -u arquivo.txt
+
+# Ignorar primeiros N caracteres
+$ uniq -s 5 arquivo.txt
+
+# Comparar apenas primeiros N caracteres
+$ uniq -w 10 arquivo.txt
+
+# Ignorar case
+$ uniq -i arquivo.txt
+
+# Combinar com sort (remover TODAS as duplicatas)
+$ sort arquivo.txt | uniq
+# ou mais eficiente:
+$ sort -u arquivo.txt
+
+# Contar ocorrencias de cada linha (histograma)
+$ sort arquivo.txt | uniq -c | sort -n -r
+
+# Mostrar duplicatas com contexto
+$ uniq -D arquivo.txt
+</code></pre>
+</div>
+
+<div class="section">
+<h3>3.8 wc — Word Count</h3>
+<p>O <code>wc</code> conta linhas, palavras e bytes em arquivos ou entrada padrao.</p>
+
+<pre><code># Contar linhas, palavras e bytes
+$ wc arquivo.txt
+  10   50  300 arquivo.txt
+# 10 linhas, 50 palavras, 300 bytes
+
+# Apenas linhas
+$ wc -l arquivo.txt
+
+# Apenas palavras
+$ wc -w arquivo.txt
+
+# Apenas bytes
+$ wc -c arquivo.txt
+
+# Apenas caracteres (multibyte)
+$ wc -m arquivo.txt
+
+# Maior largura de linha
+$ wc -L arquivo.txt
+
+# Contar linhas de multiplos arquivos
+$ wc -l *.txt
+
+# Contar linhas de saida de comando
+$ ps aux | wc -l
+$ find /home -type f | wc -l
+
+# Contar arquivos em diretorio
+$ ls -1 | wc -l
+
+# Contar palavras em string
+$ echo "Hello World" | wc -w
+</code></pre>
+</div>
+
+<div class="section">
+<h3>3.9 cut — Remove Sections from Lines</h3>
+<p>O <code>cut</code> extrai colunas/bytes de cada linha. Util para processar arquivos delimitados.</p>
+
+<pre><code># Extrair por campo (delimitador padrao: tab)
+$ cut -f 1 arquivo.txt      # 1o campo
+$ cut -f 1,3 arquivo.txt    # 1o e 3o campos
+$ cut -f 1-3 arquivo.txt    # campos 1 a 3
+
+# Extrair com delimitador customizado
+$ cut -d: -f 1 /etc/passwd    # usuarios
+$ cut -d: -f 1,3 /etc/passwd  # usuario e UID
+$ cut -d: -f 6 /etc/passwd    # home directory
+
+# Extrair por bytes
+$ cut -b 1-10 arquivo.txt
+
+# Extrair por caracteres
+$ cut -c 1-10 arquivo.txt
+
+# Extrair complemento (tudo EXCETO)
+$ cut --complement -d: -f 2 /etc/passwd
+# Todos os campos EXCETO o 2o
+
+# Combinar com outros comandos
+$ ps aux | cut -c 1-10      # primeiros 10 chars
+$ df -h | cut -d' ' -f 1    # filesystems
+</code></pre>
+
+<h4>3.9.1 Exemplos Praticos</h4>
+<pre><code># Listar apenas nomes de usuarios
+$ cut -d: -f1 /etc/passwd
+
+# Listar IPs de conexoes ativas
+$ ss -tuln | cut -d: -f2 | cut -d' ' -f2
+
+# Extrair 2o campo de CSV
+$ cut -d, -f2 dados.csv
+
+# Extrair PID de processos
+$ ps aux | cut -c 10-15
+</code></pre>
+</div>
+
+<div class="section">
+<h3>3.10 paste — Merge Lines of Files</h3>
+<p>O <code>paste</code> combina linhas de multiplos arquivos lado a lado (horizontalmente).</p>
+
+<pre><code># Combinar dois arquivos lado a lado
+$ paste arquivo1.txt arquivo2.txt
+
+# Combinar com delimitador customizado
+$ paste -d, nomes.txt emails.txt &gt; contatos.csv
+
+# Combinar em formato de tabela
+$ paste -d'\t' col1.txt col2.txt col3.txt
+
+# Combinar multiplos arquivos
+$ paste arquivo1.txt arquivo2.txt arquivo3.txt
+
+# Combinar linhas de um unico arquivo (serial)
+$ paste -s -d',' numeros.txt
+# 1,2,3,4,5 (tudo em uma linha)
+
+# Usar com process substitution
+$ paste &lt;(cut -d: -f1 /etc/passwd) &lt;(cut -d: -f6 /etc/passwd)
+</code></pre>
+</div>
+
+<div class="section">
+<h3>3.11 tr — Translate or Delete Characters</h3>
+<p>O <code>tr</code> traduz, comprime ou deleta caracteres. Opera apenas em stdin (nao aceita arquivo como argumento).</p>
+
+<pre><code># Converter minusculas para maiusculas
+$ echo "hello" | tr 'a-z' 'A-Z'
+HELLO
+
+# Converter maiusculas para minusculas
+$ echo "HELLO" | tr 'A-Z' 'a-z'
+hello
+
+# Deletar caracteres
+$ echo "hello 123 world" | tr -d '0-9'
+hello  world
+
+# Deletar espacos
+$ echo "hello world" | tr -d ' '
+helloworld
+
+# Comprimir caracteres repetidos
+$ echo "hello    world" | tr -s ' '
+hello world
+
+# Substituir espacos por tabs
+$ echo "col1 col2 col3" | tr ' ' '\t'
+
+# Substituir newlines por espacos
+$ cat arquivo.txt | tr '\n' ' '
+
+# Remover caracteres nao imprimiveis
+$ tr -cd '[:print:]\n' &lt; arquivo.txt
+
+# Usar classes de caracteres
+$ echo "hello123" | tr '[:lower:]' '[:upper:]'
+$ echo "hello 123" | tr -d '[:digit:]'
+$ echo "hello!!!" | tr -d '[:punct:]'
+
+# Rot13 (cifra simples)
+$ echo "hello" | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+uryyb
+
+# Criar senha aleatoria
+$ tr -dc 'A-Za-z0-9' &lt; /dev/urandom | head -c 16
+
+# Contar caracteres unicos
+$ echo "hello" | tr 'a-z' '\n' | sort | uniq -c
+</code></pre>
+
+<h4>3.11.1 Classes de Caracteres do tr</h4>
+<table>
+<tr><th>Classe</th><th>Descricao</th></tr>
+<tr><td><code>[:alnum:]</code></td><td>Alfanumericos</td></tr>
+<tr><td><code>[:alpha:]</code></td><td>Letras</td></tr>
+<tr><td><code>[:digit:]</code></td><td>Digitos</td></tr>
+<tr><td><code>[:lower:]</code></td><td>Minusculas</td></tr>
+<tr><td><code>[:upper:]</code></td><td>Maiusculas</td></tr>
+<tr><td><code>[:space:]</code></td><td>Espacos</td></tr>
+<tr><td><code>[:punct:]</code></td><td>Pontuacao</td></tr>
+<tr><td><code>[:print:]</code></td><td>Imprimiveis</td></tr>
+<tr><td><code>[:cntrl:]</code></td><td>Controle</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>3.12 sed — Stream Editor</h3>
+<p>O <code>sed</code> eh um editor de streams nao-interativo. Pode substituir, deletar, inserir, e transformar texto linha por linha.</p>
+
+<h4>3.12.1 Substituicao (s///)</h4>
+<pre><code># Substituir primeira ocorrencia por linha
+$ sed 's/erro/ERRO/' log.txt
+
+# Substituir TODAS as ocorrencias (global)
+$ sed 's/erro/ERRO/g' log.txt
+
+# Substituir apenas No ocorrencia
+$ sed 's/erro/ERRO/2' log.txt   # 2a ocorrencia
+$ sed 's/erro/ERRO/2g' log.txt  # da 2a em diante
+
+# Substituir com regex
+$ sed 's/erro[0-9]*/ERRO/g' log.txt
+
+# Usar delimitador diferente (uteis para paths)
+$ sed 's|/home/usuario|/home/novo|g' arquivo.txt
+$ sed 's#/usr/local#/opt#g' arquivo.txt
+
+# Substituir e salvar no mesmo arquivo (in-place)
+$ sed -i 's/erro/ERRO/g' log.txt
+
+# Backup antes de editar
+$ sed -i.bak 's/erro/ERRO/g' log.txt
+# Cria log.txt.bak
+
+# Substituir com referencia ao match
+$ sed 's/\(erro\)/[\1]/g' log.txt
+# [erro]
+
+# Substituir com grupos numerados
+$ echo "2024-06-14" | sed 's/\([0-9]*\)-\([0-9]*\)-\([0-9]*\)/\3\/\2\/\1/'
+14/06/2024
+</code></pre>
+
+<h4>3.12.2 Deletar Linhas</h4>
+<pre><code># Deletar linha 5
+$ sed '5d' arquivo.txt
+
+# Deletar linhas 5 a 10
+$ sed '5,10d' arquivo.txt
+
+# Deletar linhas que contem padrao
+$ sed '/erro/d' log.txt
+
+# Deletar linhas que NAO contem padrao
+$ sed '/erro/!d' log.txt
+
+# Deletar linhas em branco
+$ sed '/^$/d' arquivo.txt
+
+# Deletar linhas comentadas
+$ sed '/^#/d' arquivo.txt
+
+# Deletar primeira e ultima linha
+$ sed '1d;$d' arquivo.txt
+
+# Deletar a ultima linha
+$ sed '$d' arquivo.txt
+</code></pre>
+
+<h4>3.12.3 Inserir e Adicionar</h4>
+<pre><code># Inserir antes da linha 1
+$ sed '1i\# Header' arquivo.txt
+
+# Adicionar depois da linha 1
+$ sed '1a\Nova linha' arquivo.txt
+
+# Inserir antes de linhas com padrao
+$ sed '/erro/i\--- ERRO ENCONTRADO ---' log.txt
+
+# Adicionar ao final do arquivo
+$ sed '$a\Fim do arquivo' arquivo.txt
+
+# Substituir linha inteira
+$ sed '5c\Nova linha 5' arquivo.txt
+</code></pre>
+
+<h4>3.12.4 sed Avancado</h4>
+<pre><code># Imprimir apenas linhas com padrao
+$ sed -n '/erro/p' log.txt
+# Equivalente a: grep "erro" log.txt
+
+# Imprimir linhas 5 a 10
+$ sed -n '5,10p' arquivo.txt
+
+# Imprimir ultima linha
+$ sed -n '$p' arquivo.txt
+
+# Ler arquivo e inserir conteudo
+$ sed '3r outro_arquivo.txt' arquivo.txt
+
+# Executar multiplos comandos
+$ sed -e 's/erro/ERRO/g' -e 's/falha/FALHA/g' log.txt
+
+# Script sed em arquivo
+$ sed -f script.sed arquivo.txt
+
+# Usar expressoes estendidas
+$ sed -E 's/([0-9]+)/[\1]/g' arquivo.txt
+
+# Substituir newline por espaco (modo multilinha)
+$ sed ':a;N;$!ba;s/\n/ /g' arquivo.txt
+
+# Remover espacos no inicio das linhas
+$ sed 's/^[ \t]*//' arquivo.txt
+
+# Remover espacos no final das linhas
+$ sed 's/[ \t]*$//' arquivo.txt
+
+# Remover espacos no inicio e fim
+$ sed 's/^[ \t]*//;s/[ \t]*$//' arquivo.txt
+
+# Duplicar cada linha
+$ sed 'p' arquivo.txt
+
+# Inverter linhas (tac com sed)
+$ sed '1!G;h;$!d' arquivo.txt
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 sed -i eh PERIGOSO</div>
+  <p><code>sed -i</code> modifica o arquivo original. Sempre teste sem <code>-i</code> primeiro, ou use <code>sed -i.bak</code> para criar backup. Para processamento critico, redirecione para novo arquivo: <code>sed 's/.../.../' arquivo.txt &gt; arquivo_novo.txt</code></p>
+</div>
+</div>
+
+<div class="section">
+<h3>3.13 awk — Pattern Scanning and Processing</h3>
+<p>O <code>awk</code> eh uma linguagem de programacao completa para processamento de texto. Pode fazer calculos, condicionais, loops, e manipular dados estruturados.</p>
+
+<h4>3.13.1 Uso Basico</h4>
+<pre><code># Imprimir campo especifico (delimitador padrao: espaco/tab)
+$ awk '{print $1}' arquivo.txt
+
+# Imprimir multiplos campos
+$ awk '{print $1, $3}' arquivo.txt
+
+# Usar delimitador customizado
+$ awk -F: '{print $1}' /etc/passwd
+
+# Imprimir com formato
+$ awk '{print "Usuario:", $1, "- UID:", $3}' /etc/passwd
+
+# Imprimir numero de campos
+$ awk '{print NF}' arquivo.txt
+
+# Imprimir linha inteira
+$ awk '{print $0}' arquivo.txt
+
+# Imprimir ultimo campo
+$ awk '{print $NF}' arquivo.txt
+
+# Imprimir com separador de saida
+$ awk -F: -v OFS=' | ' '{print $1, $6}' /etc/passwd
+</code></pre>
+
+<h4>3.13.2 Padroes e Condicoes</h4>
+<pre><code># Filtrar linhas com padrao
+$ awk '/erro/' log.txt
+
+# Filtrar por valor de campo
+$ awk '$3 &gt; 100' arquivo.txt
+
+# Filtrar com regex no campo
+$ awk '$2 ~ /^[0-9]/' arquivo.txt
+
+# Multiplas condicoes
+$ awk '$3 &gt; 100 &amp;&amp; $5 == "ativo"' arquivo.txt
+
+# Usar BEGIN e END
+$ awk 'BEGIN {print "Inicio"} {print $0} END {print "Fim"}' arquivo.txt
+
+# Contar linhas
+$ awk 'END {print NR}' arquivo.txt
+
+# Somar valores de campo
+$ awk '{soma += $3} END {print "Total:", soma}' arquivo.txt
+
+# Media
+$ awk '{soma += $3; count++} END {print "Media:", soma/count}' arquivo.txt
+
+# Maximo e minimo
+$ awk 'NR==1 {max=$3; min=$3} $3&gt;max {max=$3} $3&lt;min {min=$3} END {print "Max:", max, "Min:", min}' arquivo.txt
+</code></pre>
+
+<h4>3.13.3 awk Avancado</h4>
+<pre><code># Usar variaveis
+$ awk -v limite=100 '$3 &gt; limite' arquivo.txt
+
+# Usar arrays
+$ awk '{count[$1]++} END {for (u in count) print u, count[u]}' log.txt
+
+# Ordenar saida (pipe para sort)
+$ awk '{count[$1]++} END {for (u in count) print count[u], u}' log.txt | sort -n -r
+
+# Formatar saida com printf
+$ awk '{printf "%-15s %10d\n", $1, $3}' arquivo.txt
+
+# Processar CSV
+$ awk -F, '{print $2}' dados.csv
+
+# Substituir dentro do awk
+$ awk '{gsub(/erro/, "ERRO"); print}' log.txt
+
+# Substr (extrair parte do campo)
+$ awk '{print substr($1, 1, 3)}' arquivo.txt
+
+# Length (tamanho da linha/campo)
+$ awk '{print length($0)}' arquivo.txt
+
+# Split (dividir campo)
+$ awk '{split($1, a, "."); print a[1]}' arquivo.txt
+
+# Match (encontrar posicao do regex)
+$ awk '{if (match($0, /[0-9]+/)) print substr($0, RSTART, RLENGTH)}' arquivo.txt
+
+# Ler multiplos arquivos
+$ awk '{print FILENAME, $0}' arquivo1.txt arquivo2.txt
+
+# Processar registros multilinha
+$ awk 'BEGIN {RS=""; FS="\n"} {print $1}' arquivo.txt
+</code></pre>
+
+<h4>3.13.4 Exemplos Praticos de awk</h4>
+<pre><code># Top 5 processos por memoria
+$ ps aux | awk '{print $4, $11}' | sort -n -r | head -5
+
+# Soma de uso de disco por usuario
+$ du -sh /home/* | awk '{sum += $1} END {print sum}'
+
+# Extrair IPs de log
+$ awk '{print $1}' /var/log/apache2/access.log | sort | uniq -c | sort -n -r
+
+# Contar status HTTP
+$ awk '{print $9}' /var/log/apache2/access.log | sort | uniq -c
+
+# Relatorio de tamanho de diretorios
+$ du -sh /home/* | awk '{printf "%-20s %10s\n", $2, $1}'
+
+# Filtrar /etc/passwd: usuarios com UID &gt;= 1000
+$ awk -F: '$3 &gt;= 1000 {print $1, $6}' /etc/passwd
+
+# Calcular tempo total de processos
+$ ps -eo time | awk -F: '{sum += $1*3600 + $2*60 + $3} END {print sum "s"}'
+</code></pre>
+
+<div class="box box-success">
+  <div class="box-title">✅ Quando usar grep, sed ou awk?</div>
+  <table>
+  <tr><th>Ferramenta</th><th>Quando usar</th></tr>
+  <tr><td><code>grep</code></td><td>Buscar padroes, filtrar linhas</td></tr>
+  <tr><td><code>sed</code></td><td>Substituir texto, deletar/inserir linhas</td></tr>
+  <tr><td><code>awk</code></td><td>Processar campos, calculos, relatorios</td></tr>
+  </table>
+  <p>Muitas vezes voce os usara juntos: <code>grep</code> para filtrar, <code>sed</code> para limpar, <code>awk</code> para processar.</p>
+</div>
+</div>
+
+<!-- EXERCICIOS VOLUME 3 -->
+<div class="exercise">
+<h4>🏋️ Exercicios — Volume 3</h4>
+<ol>
+  <li>Use <code>grep</code> para encontrar todas as linhas que comecam com "#" em <code>/etc/services</code>. Conte quantas sao.</li>
+  <li>Use <code>grep -E</code> para buscar linhas que contenham "tcp" OU "udp" em <code>/etc/services</code>.</li>
+  <li>Use <code>find</code> para listar todos os arquivos <code>.conf</code> em <code>/etc</code> maiores que 1KB. Ordene por tamanho.</li>
+  <li>Use <code>find</code> para encontrar arquivos modificados nas ultimas 24h no seu home. Execute <code>ls -lh</code> para cada um.</li>
+  <li>Use <code>sort</code> e <code>uniq -c</code> para criar um histograma das shells usadas em <code>/etc/passwd</code> (campo 7).</li>
+  <li>Use <code>cut</code> para extrair apenas os nomes de usuario e diretorios home de <code>/etc/passwd</code>, formatados como "usuario → home".</li>
+  <li>Use <code>tr</code> para converter o conteudo de um arquivo para maiusculas e contar quantos caracteres sao digitos.</li>
+  <li>Use <code>sed</code> para remover TODOS os comentarios (linhas comecando com #) de um arquivo de configuracao.</li>
+  <li>Use <code>sed</code> para substituir todas as ocorrencias de "localhost" por "127.0.0.1" em um arquivo, salvando backup.</li>
+  <li>Use <code>awk</code> para criar um relatorio de <code>ps aux</code> mostrando: usuario, %CPU, %MEM, comando — ordenado por %CPU.</li>
+  <li>Use <code>awk</code> para processar <code>/etc/passwd</code> e mostrar apenas usuarios com UID &gt;= 1000, formatados em tabela.</li>
+  <li>Crie uma pipeline que: lista arquivos <code>.log</code> em <code>/var/log</code>, filtra os que contem "error", extrai a data, e conta ocorrencias por dia.</li>
+</ol>
+</div>
+
+
+
+<!-- ============================================================ -->
+<!-- VOLUME 4 — PIPES E REDIRECIONAMENTOS -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<div class="volume-header" id="vol4">
+  <h2>📚 Volume 4 — Pipes e Redirecionamentos</h2>
+  <div class="vol-desc">A alma do Unix: composicao de programas simples para criar solucoes poderosas.</div>
+</div>
+
+<div class="section">
+<h3>4.1 Os Tres Fluxos de Dados</h3>
+<p>Todo processo no Linux tem tres fluxos de dados padrao:</p>
+
+<div class="ascii">
+  ┌─────────────────────────────────────┐
+  │           PROCESSO                  │
+  │                                     │
+  │  stdin (0)  ─────→  programa       │
+  │       ↑                             │
+  │  teclado / pipe / arquivo           │
+  │                                     │
+  │  stdout (1) ─────→  tela / pipe    │
+  │       ↓                             │
+  │  terminal / arquivo                 │
+  │                                     │
+  │  stderr (2) ─────→  tela / arquivo │
+  │       ↓                             │
+  │  terminal / arquivo                 │
+  └─────────────────────────────────────┘
+</div>
+
+<table>
+<tr><th>Fluxo</th><th>Descritor</th><th>Descricao</th><th>Uso Padrao</th></tr>
+<tr><td><strong>stdin</strong></td><td>0</td><td>Entrada padrao</td><td>Teclado</td></tr>
+<tr><td><strong>stdout</strong></td><td>1</td><td>Saida padrao</td><td>Terminal</td></tr>
+<tr><td><strong>stderr</strong></td><td>2</td><td>Saida de erro</td><td>Terminal</td></tr>
+</table>
+
+<p>Esses fluxos sao implementados como <strong>arquivos</strong> no Linux. O kernel abre tres descritores de arquivo (file descriptors) para cada processo: 0 para stdin, 1 para stdout, e 2 para stderr.</p>
+</div>
+
+<div class="section">
+<h3>4.2 Redirecionamento de Saida (stdout) — &gt; e &gt;&gt;</h3>
+
+<h4>4.2.1 Sobrescrever Arquivo (&gt;)</h4>
+<pre><code># Salvar saida em arquivo (SOBRESCREVE se existir)
+$ echo "Hello" &gt; arquivo.txt
+
+# Salvar saida de comando
+$ ls -la &gt; lista.txt
+
+# Salvar saida de programa
+$ ./programa &gt; saida.log
+
+# Redirecionar para /dev/null (descartar)
+$ ./programa &gt; /dev/null
+</code></pre>
+
+<div class="box box-danger">
+  <div class="box-title">🚨 &gt; SOBRESCREVE sem aviso!</div>
+  <p>Se <code>arquivo.txt</code> ja existir, <code>&gt;</code> o apaga e cria um novo. Nao ha lixeira. Use <code>&gt;&gt;</code> para anexar, ou <code>set -o noclobber</code> no bash para prevenir sobrescrita acidental.</p>
+</div>
+
+<h4>4.2.2 Anexar a Arquivo (&gt;&gt;)</h4>
+<pre><code># Anexar saida ao final do arquivo
+$ echo "Nova linha" &gt;&gt; arquivo.txt
+
+# Acumular logs
+$ ./programa &gt;&gt; log.txt
+
+# Adicionar ao .bashrc
+$ echo 'alias ll="ls -la"' &gt;&gt; ~/.bashrc
+</code></pre>
+
+<h4>4.2.3 noclobber — Prevenir Sobrescrita</h4>
+<pre><code># Habilitar protecao
+$ set -o noclobber
+
+# Agora isso falha se arquivo existir
+$ echo "teste" &gt; arquivo_existente.txt
+bash: arquivo_existente.txt: cannot overwrite existing file
+
+# Forcar sobrescrita mesmo com noclobber
+$ echo "teste" &gt;| arquivo_existente.txt
+
+# Desabilitar protecao
+$ set +o noclobber
+</code></pre>
+</div>
+
+<div class="section">
+<h3>4.3 Redirecionamento de Entrada (stdin) — &lt;</h3>
+
+<pre><code># Usar arquivo como entrada
+$ sort &lt; nomes.txt
+
+# Contar palavras de arquivo
+$ wc -w &lt; texto.txt
+
+# Usar heredoc como entrada
+$ cat &lt;&lt; EOF
+Linha 1
+Linha 2
+EOF
+
+# Usar here-string
+$ tr 'a-z' 'A-Z' &lt;&lt;&lt; "hello"
+HELLO
+
+# Redirecionar entrada e saida
+$ sort &lt; nomes.txt &gt; nomes_ordenados.txt
+</code></pre>
+
+<h4>4.3.1 Heredoc (&lt;&lt;)</h4>
+<pre><code># Heredoc basico
+$ cat &lt;&lt; EOF
+Este eh um texto
+com multiplas linhas
+EOF
+
+# Heredoc sem expansao de variaveis (aspas no delimitador)
+$ cat &lt;&lt; 'EOF'
+$HOME nao sera expandido
+EOF
+
+# Heredoc com tab stripping (&lt;&lt;-)
+$ cat &lt;&lt;- EOF
+	Esta linha tera o tab removido
+		Esta tambem
+EOF
+
+# Heredoc em script SQL
+$ mysql -u root &lt;&lt; 'SQL'
+SELECT * FROM usuarios;
+SQL
+</code></pre>
+
+<h4>4.3.2 Here-string (&lt;&lt;&lt;)</h4>
+<pre><code># Passar string como stdin
+$ grep "padrao" &lt;&lt;&lt; "texto com padrao aqui"
+
+# Usar com comando que espera arquivo
+$ base64 &lt;&lt;&lt; "senha123"
+
+# Processar variavel
+$ texto="hello world"
+$ tr 'a-z' 'A-Z' &lt;&lt;&lt; "$texto"
+</code></pre>
+</div>
+
+<div class="section">
+<h3>4.4 Redirecionamento de Erro (stderr) — 2&gt; e 2&gt;&gt;</h3>
+
+<pre><code># Redirecionar apenas erros para arquivo
+$ ./programa 2&gt; erros.log
+
+# Redirecionar erros e descartar
+$ ./programa 2&gt; /dev/null
+
+# Acumular erros
+$ ./programa 2&gt;&gt; erros.log
+
+# Separar stdout e stderr
+$ ./programa &gt; saida.log 2&gt; erros.log
+
+# Juntar stdout e stderr no mesmo arquivo
+$ ./programa &gt; tudo.log 2&gt;&amp;1
+
+# Ordem importa! Isso funciona:
+$ ./programa &gt; tudo.log 2&gt;&amp;1
+
+# Isso NAO funciona como esperado (stderr vai para tela):
+$ ./programa 2&gt;&amp;1 &gt; tudo.log
+</code></pre>
+
+<h4>4.4.1 Combinando stdout e stderr</h4>
+<pre><code># Ambos para o mesmo arquivo
+$ comando &gt; arquivo.log 2&gt;&amp;1
+
+# Ambos para /dev/null
+$ comando &gt; /dev/null 2&gt;&amp;1
+# Atalho em bash 4+: &amp;&gt; /dev/null
+
+# stdout para arquivo, stderr para outro
+$ comando &gt; saida.log 2&gt; erros.log
+
+# stdout para pipe, stderr para arquivo
+$ comando 2&gt; erros.log | outro_comando
+
+# stderr para stdout, depois pipe
+$ comando 2&gt;&amp;1 | grep "erro"
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 Por que 2&gt;&amp;1 e nao 2&gt;1?</div>
+  <p><code>2&gt;1</code> redirecionaria stderr para um <em>arquivo</em> chamado "1". <code>2&gt;&amp;1</code> significa "redirecione stderr (2) para onde stdout (1) esta apontando". O <code>&amp;</code> indica que o numero seguinte eh um descritor de arquivo, nao um nome de arquivo.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>4.5 Pipe (|) — Conectar Comandos</h3>
+<p>O pipe conecta o <strong>stdout</strong> de um comando ao <strong>stdin</strong> de outro. E a caracteristica mais poderosa do shell Unix.</p>
+
+<pre><code># Pipeline basica
+$ ls -la | grep ".txt"
+
+# Multiplos pipes
+$ cat log.txt | grep "erro" | sort | uniq -c | sort -n -r
+
+# Contar processos
+$ ps aux | wc -l
+
+# Top 10 maiores diretorios
+$ du -h /home | sort -h -r | head -10
+
+# Filtrar e processar
+$ cat /etc/passwd | grep "/bin/bash" | cut -d: -f1
+
+# Pipeline com awk
+$ ps aux | awk '{print $2, $11}' | grep "firefox"
+
+# Pipeline com sed
+$ ifconfig | grep "inet " | sed 's/inet //' | awk '{print $1}'
+</code></pre>
+
+<h4>4.5.1 Pipe com stderr</h4>
+<pre><code># Pipe apenas stdout
+$ comando | grep "padrao"
+
+# Pipe stdout e stderr juntos
+$ comando 2&gt;&amp;1 | grep "padrao"
+
+# Pipe apenas stderr (troca stdout e stderr)
+$ comando 3&gt;&amp;1 1&gt;&amp;2 2&gt;&amp;3 | grep "erro"
+</code></pre>
+
+<h4>4.5.2 Process Substitution (&lt;())</h4>
+<pre><code># Comparar saida de dois comandos
+$ diff &lt;(ls dir1) &lt;(ls dir2)
+
+# Usar saida de comando como arquivo
+$ grep "padrao" &lt;(cat arquivo1.txt arquivo2.txt)
+
+# Combinar multiplas saidas
+$ cat &lt;(echo "Header") &lt;(cat dados.txt) &lt;(echo "Footer")
+
+# Process substitution com escrita
+$ tee &gt;(gzip &gt; backup.gz) &lt; arquivo.txt
+</code></pre>
+</div>
+
+<div class="section">
+<h3>4.6 tee — Lê stdin e Escreve em stdout e Arquivos</h3>
+<p>O <code>tee</code> resolve o problema de querer ver a saida na tela E salvar em arquivo ao mesmo tempo.</p>
+
+<pre><code># Ver na tela e salvar em arquivo
+$ ls -la | tee lista.txt
+
+# Anexar em vez de sobrescrever
+$ echo "nova linha" | tee -a log.txt
+
+# Escrever em multiplos arquivos
+$ comando | tee arquivo1.txt arquivo2.txt
+
+# Usar com sudo (permite redirecionamento com privilegios)
+$ echo "config" | sudo tee /etc/arquivo.conf
+
+# Pipe para tee e depois para outro comando
+$ comando | tee log.txt | grep "erro"
+
+# Tee com process substitution
+$ comando | tee &gt;(grep "erro" &gt; erros.log) &gt;(grep "aviso" &gt; avisos.log)
+
+# Tee para /dev/null (apenas log)
+$ comando | tee /dev/tty | gzip &gt; saida.gz
+</code></pre>
+
+<div class="ascii">
+       comando
+          │
+          ▼ stdout
+       ┌─────┐
+       │ tee │──────→ stdout (tela)
+       └─────┘
+          │
+          ▼
+      arquivo.txt
+</div>
+</div>
+
+<div class="section">
+<h3>4.7 Redirecionamentos Avancados</h3>
+
+<h4>4.7.1 Redirecionar Múltiplos Descritores</h4>
+<pre><code># Fechar stdin
+$ comando &lt;&amp;-
+
+# Fechar stdout
+$ comando &gt;&amp;-
+
+# Duplicar descritores
+$ comando 3&gt;&amp;1  # fd 3 aponta para stdout
+$ comando 1&gt;&amp;3  # stdout aponta para fd 3
+
+# Trocar stdout e stderr
+$ comando 3&gt;&amp;1 1&gt;&amp;2 2&gt;&amp;3
+
+# Redirecionar stdin e stdout de/para o mesmo arquivo
+$ sed -i 's/foo/bar/' arquivo.txt
+# (sed -i faz isso internamente)
+</code></pre>
+
+<h4>4.7.2 Here-document em Scripts</h4>
+<pre><code>#!/bin/bash
+
+# Criar arquivo de configuracao
+config=$(cat &lt;&lt;- 'CFG'
+[database]
+host=localhost
+port=3306
+user=admin
+pass=secret
+
+[server]
+port=8080
+debug=false
+CFG
+)
+
+echo "$config" &gt; config.ini
+
+# Executar SQL
+mysql -u root &lt;&lt;- 'SQL'
+CREATE DATABASE IF NOT EXISTS meu_db;
+USE meu_db;
+CREATE TABLE usuarios (id INT, nome VARCHAR(100));
+SQL
+</code></pre>
+
+<h4>4.7.3 /dev/null e /dev/zero</h4>
+<pre><code># Descartar toda saida
+$ comando &gt; /dev/null 2&gt;&amp;1
+
+# Fornecer zeros como entrada
+$ dd if=/dev/zero of=arquivo.img bs=1M count=100
+
+# Fornecer dados aleatorios
+$ head -c 100 /dev/urandom &gt; aleatorio.bin
+
+# Fornecer dados aleatorios criptograficamente seguros
+$ head -c 100 /dev/random &gt; seguro.bin
+# /dev/random pode bloquear esperando entropia
+</code></pre>
+
+<h4>4.7.4 Named Pipes (FIFOs)</h4>
+<pre><code># Criar named pipe
+$ mkfifo meu_pipe
+
+# Em um terminal: escrever no pipe
+$ echo "dados" &gt; meu_pipe
+
+# Em outro terminal: ler do pipe
+$ cat meu_pipe
+dados
+
+# Usar em pipeline complexo
+$ mkfifo pipe1 pipe2
+$ comando1 &gt; pipe1 &amp;
+$ comando2 &lt; pipe1 &gt; pipe2 &amp;
+$ comando3 &lt; pipe2
+
+# Remover pipe
+$ rm meu_pipe
+</code></pre>
+
+<div class="box box-success">
+  <div class="box-title">✅ Resumo de Redirecionamentos</div>
+  <table>
+  <tr><th>Redirecionamento</th><th>Significado</th></tr>
+  <tr><td><code>cmd &gt; file</code></td><td>stdout para arquivo (sobrescreve)</td></tr>
+  <tr><td><code>cmd &gt;&gt; file</code></td><td>stdout para arquivo (anexa)</td></tr>
+  <tr><td><code>cmd 2&gt; file</code></td><td>stderr para arquivo</td></tr>
+  <tr><td><code>cmd &amp;&gt; file</code></td><td>stdout e stderr para arquivo</td></tr>
+  <tr><td><code>cmd &gt; file 2&gt;&amp;1</code></td><td>stdout e stderr para arquivo</td></tr>
+  <tr><td><code>cmd &lt; file</code></td><td>stdin de arquivo</td></tr>
+  <tr><td><code>cmd &lt;&lt; EOF</code></td><td>stdin de heredoc</td></tr>
+  <tr><td><code>cmd &lt;&lt;&lt; string</code></td><td>stdin de here-string</td></tr>
+  <tr><td><code>cmd1 | cmd2</code></td><td>stdout de cmd1 para stdin de cmd2</td></tr>
+  <tr><td><code>cmd | tee file</code></td><td>stdout para tela E arquivo</td></tr>
+  <tr><td><code>cmd &gt; /dev/null</code></td><td>Descarta stdout</td></tr>
+  </table>
+</div>
+</div>
+
+<!-- EXERCICIOS VOLUME 4 -->
+<div class="exercise">
+<h4>🏋️ Exercicios — Volume 4</h4>
+<ol>
+  <li>Execute <code>ls /nao_existe &gt; saida.txt 2&gt; erro.txt</code>. Verifique o conteudo de cada arquivo. O que acontece?</li>
+  <li>Execute <code>ls /nao_existe &gt; tudo.txt 2&gt;&amp;1</code>. Verifique o arquivo. Por que a ordem <code>2&gt;&amp;1</code> importa?</li>
+  <li>Crie uma pipeline que: lista todos os processos, filtra os do seu usuario, ordena por %CPU, e mostra os top 5.</li>
+  <li>Use <code>tee</code> para executar <code>ps aux</code>, salvar em <code>processos.txt</code>, e filtrar apenas "firefox" na tela.</li>
+  <li>Crie um heredoc que gere um arquivo HTML completo com <code>cat &gt; pagina.html</code>.</li>
+  <li>Use process substitution para comparar <code>ls /bin</code> e <code>ls /usr/bin</code> com <code>diff</code>.</li>
+  <li>Crie um script que execute um comando, salve stdout em <code>ok.log</code> e stderr em <code>erro.log</code>, separadamente.</li>
+  <li>Use <code>find</code> com <code>-exec</code> e redirecionamento para criar um arquivo com a lista de todos os <code>.conf</code> em <code>/etc</code>.</li>
+  <li>Crie um named pipe e use-o para passar dados entre dois terminais.</li>
+  <li>Escreva uma pipeline de 5+ comandos que processe <code>/var/log/syslog</code> e gere um relatorio de erros por hora.</li>
+</ol>
+</div>
+
+
+
+<!-- ============================================================ -->
+<!-- VOLUME 5 — GERENCIAMENTO DE PROCESSOS -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<div class="volume-header" id="vol5">
+  <h2>📚 Volume 5 — Gerenciamento de Processos</h2>
+  <div class="vol-desc">Entender, monitorar e controlar processos é essencial para dominar Linux.</div>
+</div>
+
+<div class="section">
+<h3>5.1 O que é um Processo?</h3>
+<p>Um <strong>processo</strong> é uma instância em execução de um programa. Cada processo tem:</p>
+<ul>
+  <li><strong>PID</strong> (Process ID): identificador único</li>
+  <li><strong>PPID</strong> (Parent PID): PID do processo pai</li>
+  <li><strong>UID/GID</strong>: usuário e grupo dono</li>
+  <li><strong>Espaço de memória</strong>: código, dados, heap, stack</li>
+  <li><strong>Descritores de arquivo</strong>: stdin (0), stdout (1), stderr (2), e outros</li>
+  <li><strong>Variáveis de ambiente</strong></li>
+  <li><strong>Diretório de trabalho</strong></li>
+  <li><strong>Estado</strong>: running, sleeping, stopped, zombie</li>
+</ul>
+
+<div class="ascii">
+┌─────────────────────────────────────────┐
+│           PROCESSO (PID 1234)           │
+│                                         │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐ │
+│  │  Código │  │  Dados  │  │  Heap   │ │
+│  │ (text)  │  │ (data)  │  │         │ │
+│  └─────────┘  └─────────┘  └─────────┘ │
+│  ┌─────────┐  ┌─────────────────────┐  │
+│  │  Stack  │  │  Descritores (fd)   │  │
+│  │         │  │  0=stdin, 1=stdout  │  │
+│  └─────────┘  │  2=stderr, 3=arquivo │  │
+│               └─────────────────────┘  │
+│  ┌─────────┐  ┌─────────────────────┐  │
+│  │  PID    │  │  Variáveis de Amb.  │  │
+│  │  PPID   │  │  PATH, HOME, USER   │  │
+│  │  UID/GID│  └─────────────────────┘  │
+│  └─────────┘                            │
+└─────────────────────────────────────────┘
+</div>
+</div>
+
+<div class="section">
+<h3>5.2 ps — Report Process Status</h3>
+<p>O <code>ps</code> exibe informações sobre processos ativos. É um snapshot do momento da execução.</p>
+
+<h4>5.2.1 Uso Básico</h4>
+<pre><code># Processos do terminal atual
+$ ps
+  PID TTY          TIME CMD
+ 1234 pts/0    00:00:00 bash
+ 5678 pts/0    00:00:00 ps
+
+# Todos os processos do usuário
+$ ps -u $(whoami)
+
+# Todos os processos (estilo BSD)
+$ ps aux
+
+# Todos os processos (estilo UNIX)
+$ ps -ef
+
+# Processos em formato customizado
+$ ps -eo pid,ppid,cmd,%mem,%cpu
+
+# Processos de um usuário específico
+$ ps -u root
+
+# Processos em uma árvore
+$ ps axjf
+</code></pre>
+
+<h4>5.2.2 Colunas do ps aux</h4>
+<table>
+<tr><th>Coluna</th><th>Significado</th></tr>
+<tr><td><code>USER</code></td><td>Usuário dono do processo</td></tr>
+<tr><td><code>PID</code></td><td>Process ID</td></tr>
+<tr><td><code>%CPU</code></td><td>Porcentagem de uso de CPU</td></tr>
+<tr><td><code>%MEM</code></td><td>Porcentagem de uso de memória</td></tr>
+<tr><td><code>VSZ</code></td><td>Virtual Memory Size (KB)</td></tr>
+<tr><td><code>RSS</code></td><td>Resident Set Size (memória física, KB)</td></tr>
+<tr><td><code>TTY</code></td><td>Terminal associado</td></tr>
+<tr><td><code>STAT</code></td><td>Estado do processo</td></tr>
+<tr><td><code>START</code></td><td>Hora de início</td></tr>
+<tr><td><code>TIME</code></td><td>Tempo total de CPU usado</td></tr>
+<tr><td><code>COMMAND</code></td><td>Comando executado</td></tr>
+</table>
+
+<h4>5.2.3 Estados de Processo (STAT)</h4>
+<table>
+<tr><th>Código</th><th>Significado</th></tr>
+<tr><td><code>R</code></td><td>Running (executando ou na fila)</td></tr>
+<tr><td><code>S</code></td><td>Sleeping (interrompível, esperando evento)</td></tr>
+<tr><td><code>D</code></td><td>Disk Sleep (não interrompível, geralmente I/O)</td></tr>
+<tr><td><code>T</code></td><td>Stopped (pausado por sinal)</td></tr>
+<tr><td><code>Z</code></td><td>Zombie (terminado, aguardando reaping pelo pai)</td></tr>
+<tr><td><code>I</code></td><td>Idle (kernel thread inativa)</td></tr>
+</table>
+
+<p>Modificadores:</p>
+<table>
+<tr><th>Código</th><th>Significado</th></tr>
+<tr><td><code>&lt;</code></td><td>Alta prioridade (nice negativo)</td></tr>
+<tr><td><code>N</code></td><td>Baixa prioridade (nice positivo)</td></tr>
+<tr><td><code>+</code></td><td>Processo em foreground</td></tr>
+<tr><td><code>l</code></td><td>Multi-threaded</td></tr>
+<tr><td><code>s</code></td><td>Session leader</td></tr>
+</table>
+
+<h4>5.2.4 ps Avançado</h4>
+<pre><code># Formato customizado com todas as colunas
+$ ps -eo pid,ppid,uid,gid,tty,stat,priority,nice,pcpu,pmem,comm,args
+
+# Processos ordenados por uso de CPU
+$ ps aux --sort=-%cpu | head -10
+
+# Processos ordenados por uso de memória
+$ ps aux --sort=-%mem | head -10
+
+# Processos com threads
+$ ps -eLf | head -10
+
+# Mostrar árvore de processos
+$ ps axjf
+
+# Mostrar apenas PIDs
+$ ps -eo pid=
+
+# Contar processos
+$ ps aux | wc -l
+
+# Encontrar processo por nome
+$ ps aux | grep firefox
+$ pgrep firefox
+
+# Informações detalhadas de um processo
+$ ps -p 1234 -o pid,ppid,cmd,etime,pcpu,pmem
+</code></pre>
+</div>
+
+<div class="section">
+<h3>5.3 top — Display Linux Processes</h3>
+<p>O <code>top</code> é um monitor de processos interativo em tempo real.</p>
+
+<pre><code># Iniciar top
+$ top
+
+# Iniciar com delay de 1 segundo
+$ top -d 1
+
+# Mostrar apenas processos de um usuário
+$ top -u usuario
+
+# Mostrar processos de um PID específico
+$ top -p 1234,5678
+
+# Executar N ciclos e sair
+$ top -n 5
+
+# Salvar saída em batch mode
+$ top -b -n 1 &gt; processos.txt
+</code></pre>
+
+<h4>5.3.1 Comandos Interativos no top</h4>
+<table>
+<tr><th>Tecla</th><th>Ação</th></tr>
+<tr><td><code>h</code> ou <code>?</code></td><td>Ajuda</td></tr>
+<tr><td><code>q</code></td><td>Sair</td></tr>
+<tr><td><code>Space</code></td><td>Atualizar imediatamente</td></tr>
+<tr><td><code>k</code></td><td>Matar processo (kill)</td></tr>
+<tr><td><code>r</code></td><td>Renice (mudar prioridade)</td></tr>
+<tr><td><code>u</code></td><td>Filtrar por usuário</td></tr>
+<tr><td><code>M</code></td><td>Ordenar por memória</td></tr>
+<tr><td><code>P</code></td><td>Ordenar por CPU</td></tr>
+<tr><td><code>T</code></td><td>Ordenar por tempo</td></tr>
+<tr><td><code>c</code></td><td>Mostrar caminho completo do comando</td></tr>
+<tr><td><code>1</code></td><td>Mostrar CPUs individuais</td></tr>
+<tr><td><code>d</code></td><td>Mudar delay de atualização</td></tr>
+<tr><td><code>W</code></td><td>Salvar configuração</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>5.4 htop — Interactive Process Viewer</h3>
+<p>O <code>htop</code> é uma alternativa mais amigável ao <code>top</code>, com interface colorida e navegação por teclas de seta.</p>
+
+<pre><code># Instalar htop
+$ sudo apt install htop
+
+# Iniciar htop
+$ htop
+
+# Filtrar por nome
+$ htop -p 1234
+
+# Mostrar árvore
+$ htop -t
+
+# Ordenar por coluna específica
+# Use F6 para selecionar a coluna de ordenação
+</code></pre>
+
+<h4>5.4.1 Atalhos do htop</h4>
+<table>
+<tr><th>Tecla</th><th>Ação</th></tr>
+<tr><td><code>F1</code> ou <code>h</code></td><td>Ajuda</td></tr>
+<tr><td><code>F2</code> ou <code>S</code></td><td>Setup (configuração)</td></tr>
+<tr><td><code>F3</code> ou <code>/</code></td><td>Buscar processo</td></tr>
+<tr><td><code>F4</code> ou <code>\</code></td><td>Filtrar</td></tr>
+<tr><td><code>F5</code> ou <code>t</code></td><td>Modo árvore</td></tr>
+<tr><td><code>F6</code> ou <code>&gt;</code></td><td>Ordenar por coluna</td></tr>
+<tr><td><code>F9</code> ou <code>k</code></td><td>Matar processo</td></tr>
+<tr><td><code>F10</code> ou <code>q</code></td><td>Sair</td></tr>
+<tr><td><code>Space</code></td><td>Selecionar/desmarcar processo</td></tr>
+<tr><td><code>u</code></td><td>Filtrar por usuário</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>5.5 pstree — Display Process Tree</h3>
+<p>O <code>pstree</code> mostra processos em formato de árvore, facilitando a visualização da hierarquia.</p>
+
+<pre><code># Árvore de todos os processos
+$ pstree
+
+# Árvore com PIDs
+$ pstree -p
+
+# Árvore de um usuário específico
+$ pstree usuario
+
+# Árvore de um PID específico
+$ pstree 1
+
+# Mostrar argumentos completos
+$ pstree -a
+
+# Mostrar threads
+$ pstree -t
+
+# Mostrar PGIDs
+$ pstree -g
+
+# Destacar ancestral do processo atual
+$ pstree -h
+
+# Combinar opções
+$ pstree -pahlu
+</code></pre>
+
+<div class="ascii">
+systemd(1)─┬─accounts-daemon(567)
+           ├─cron(589)
+           ├─dbus-daemon(576)
+           ├─sshd(612)───sshd(1234)───bash(1235)───pstree(5678)
+           ├─systemd-journal(345)
+           └─systemd-logind(456)
+</div>
+</div>
+
+<div class="section">
+<h3>5.6 Jobs, Foreground e Background</h3>
+<p>O shell pode gerenciar múltiplos processos em uma sessão. Processos podem rodar em <strong>foreground</strong> (interativo) ou <strong>background</strong> (não-interativo).</p>
+
+<h4>5.6.1 Controle de Jobs</h4>
+<pre><code># Executar em background
+$ sleep 60 &amp;
+[1] 1234
+
+# Listar jobs
+$ jobs
+[1]+  Running                 sleep 60 &amp;
+
+# Trazer para foreground
+$ fg %1
+
+# Mandar para background
+# Ctrl+Z para suspender, depois:
+$ bg %1
+
+# Suspender processo em foreground
+# Ctrl+Z
+
+# Matar um job
+$ kill %1
+
+# Trazer último job para foreground
+$ fg
+
+# Trazer job específico
+$ fg %2
+
+# Trazer job pelo nome
+$ fg %sleep
+</code></pre>
+
+<h4>5.6.2 Estados de Jobs</h4>
+<table>
+<tr><th>Estado</th><th>Significado</th></tr>
+<tr><td><code>Running</code></td><td>Executando em background</td></tr>
+<tr><td><code>Stopped</code></td><td>Suspenso (Ctrl+Z)</td></tr>
+<tr><td><code>Done</code></td><td>Terminado com sucesso</td></tr>
+<tr><td><code>Done(code)</code></td><td>Terminado com código de saída</td></tr>
+<tr><td><code>Terminated</code></td><td>Terminado por sinal</td></tr>
+</table>
+
+<h4>5.6.3 nohup — Run Command Immune to Hangups</h4>
+<pre><code># Executar comando que sobrevive ao logout
+$ nohup ./script.sh &amp;
+[1] 1234
+nohup: ignoring input and appending output to 'nohup.out'
+
+# Especificar arquivo de saída
+$ nohup ./script.sh &gt; meu_log.txt 2&gt;&amp;1 &amp;
+
+# Combinar com disown
+$ ./script.sh &amp;
+$ disown %1
+# O processo continua mesmo se o terminal fechar
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 nohup vs. disown vs. screen/tmux</div>
+  <ul>
+    <li><code>nohup</code>: Executa comando ignorando SIGHUP. Simples, mas sem interação.</li>
+    <li><code>disown</code>: Remove job da tabela de jobs do shell. O processo continua, mas sem controle fácil.</li>
+    <li><code>screen</code>/<code>tmux</code>: Emuladores de terminal persistentes. Permitem reconectar posteriormente. Recomendado para sessões longas.</li>
+  </ul>
+</div>
+</div>
+
+<div class="section">
+<h3>5.7 kill, killall, pkill — Enviar Sinais</h3>
+<p>Processos no Linux se comunicam via <strong>sinais</strong>. O comando <code>kill</code> envia sinais para processos.</p>
+
+<h4>5.7.1 Sinais Importantes</h4>
+<table>
+<tr><th>Sinal</th><th>Número</th><th>Ação</th><th>Uso</th></tr>
+<tr><td><code>SIGHUP</code></td><td>1</td><td>Hang up</td><td>Recarregar config (daemon)</td></tr>
+<tr><td><code>SIGINT</code></td><td>2</td><td>Interrupt</td><td>Ctrl+C</td></tr>
+<tr><td><code>SIGQUIT</code></td><td>3</td><td>Quit</td><td>Ctrl+\, gera core dump</td></tr>
+<tr><td><code>SIGKILL</code></td><td>9</td><td>Kill</td><td>Matar imediatamente (não capturável)</td></tr>
+<tr><td><code>SIGTERM</code></td><td>15</td><td>Terminate</td><td>Terminar graciosamente (padrão)</td></tr>
+<tr><td><code>SIGSTOP</code></td><td>19</td><td>Stop</td><td>Ctrl+Z, não capturável</td></tr>
+<tr><td><code>SIGCONT</code></td><td>18</td><td>Continue</td><td>Continuar processo parado</td></tr>
+<tr><td><code>SIGUSR1</code></td><td>10</td><td>User 1</td><td>Uso definido pelo programa</td></tr>
+<tr><td><code>SIGUSR2</code></td><td>12</td><td>User 2</td><td>Uso definido pelo programa</td></tr>
+</table>
+
+<h4>5.7.2 Uso do kill</h4>
+<pre><code># Enviar SIGTERM (padrão) para um PID
+$ kill 1234
+
+# Enviar SIGKILL (forçado)
+$ kill -9 1234
+$ kill -SIGKILL 1234
+
+# Enviar SIGHUP (recarregar config)
+$ kill -HUP 1234
+$ kill -1 1234
+
+# Enviar SIGINT (equivalente a Ctrl+C)
+$ kill -INT 1234
+
+# Enviar SIGSTOP (pausar)
+$ kill -STOP 1234
+
+# Enviar SIGCONT (continuar)
+$ kill -CONT 1234
+
+# Listar todos os sinais disponíveis
+$ kill -l
+
+# Verificar se processo existe
+$ kill -0 1234
+# Código 0 = processo existe; código != 0 = não existe
+</code></pre>
+
+<h4>5.7.3 killall — Kill by Name</h4>
+<pre><code># Matar todos os processos com nome
+$ killall firefox
+
+# Matar com sinal específico
+$ killall -9 firefox
+
+# Listar processos que seriam mortos (simulação)
+$ killall -i firefox
+
+# Matar por usuário
+$ sudo killall -u usuario firefox
+
+# Matar processos mais antigos que N segundos
+$ killall -o 1h firefox
+
+# Matar processos mais novos que N segundos
+$ killall -y 1m firefox
+
+# Considerar nome exato
+$ killall -e firefox
+</code></pre>
+
+<h4>5.7.4 pkill — Kill by Pattern</h4>
+<pre><code># Matar por padrão no nome
+$ pkill firefox
+
+# Matar por padrão no comando completo
+$ pkill -f "python script.py"
+
+# Matar por usuário
+$ pkill -u usuario
+
+# Matar por terminal
+$ pkill -t pts/0
+
+# Enviar sinal específico
+$ pkill -9 firefox
+
+# Listar PIDs que seriam afetados
+$ pgrep firefox
+
+# Combinar critérios
+$ pkill -u usuario -f "python"
+</code></pre>
+
+<div class="box box-warning">
+  <div class="box-title">⚠️ killall pode ser perigoso</div>
+  <p><code>killall</code> mata TODOS os processos com aquele nome. Em alguns sistemas Unix (Solaris, AIX), <code>killall</code> mata TODOS os processos do sistema! Sempre use <code>pgrep</code> primeiro para verificar quais processos seriam afetados.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>5.8 nice e renice — Ajustar Prioridade</h3>
+<p>A <strong>nice value</strong> (-20 a 19) determina a prioridade de um processo. Valores mais baixos = maior prioridade.</p>
+
+<pre><code># Iniciar processo com prioridade baixa (nice alto)
+$ nice -n 10 ./script.sh
+
+# Iniciar com prioridade alta (requer root)
+$ sudo nice -n -10 ./script.sh
+
+# Alterar prioridade de processo em execução
+$ renice -n 5 -p 1234
+
+# Alterar prioridade de todos os processos de um usuário
+$ sudo renice -n 5 -u usuario
+
+# Alterar prioridade por nome
+$ sudo renice -n -5 $(pgrep firefox)
+
+# Ver nice value
+$ ps -eo pid,comm,nice | grep firefox
+</code></pre>
+
+<table>
+<tr><th>Nice Value</th><th>Prioridade</th><th>Uso</th></tr>
+<tr><td>-20</td><td>Máxima</td><td>Processos críticos de tempo real</td></tr>
+<tr><td>-10</td><td>Alta</td><td>Compilações, builds</td></tr>
+<tr><td>0</td><td>Normal</td><td>Padrão</td></tr>
+<tr><td>10</td><td>Baixa</td><td>Backups, indexação</td></tr>
+<tr><td>19</td><td>Mínima</td><td>Tarefas de manutenção</td></tr>
+</table>
+</div>
+
+<!-- EXERCÍCIOS VOLUME 5 -->
+<div class="exercise">
+<h4>🏋️ Exercícios — Volume 5</h4>
+<ol>
+  <li>Execute <code>ps aux</code> e identifique: seu shell, o processo init (systemd), e 3 processos do sistema.</li>
+  <li>Use <code>ps -eo pid,ppid,stat,cmd</code> e encontre um processo em estado <code>Z</code> (zombie). Se não houver, pesquise como criar um.</li>
+  <li>Abra <code>top</code>, pressione <code>1</code> para ver CPUs individuais, <code>M</code> para ordenar por memória, e identifique o processo que mais consome recursos.</li>
+  <li>Instale e use <code>htop</code>. Explore a interface, filtre por usuário, e mude a ordenação.</li>
+  <li>Use <code>pstree -p</code> para ver a árvore completa do sistema. Encontre o seu shell e trace até o PID 1.</li>
+  <li>Execute <code>sleep 300</code>, suspenda com Ctrl+Z, verifique com <code>jobs</code>, e continue em background com <code>bg</code>.</li>
+  <li>Use <code>nohup</code> para executar um comando longo, feche o terminal, e verifique se o processo ainda está rodando em outro terminal.</li>
+  <li>Use <code>kill -l</code> para listar todos os sinais. Envie SIGTERM e depois SIGKILL para um processo de teste. Qual a diferença?</li>
+  <li>Use <code>nice</code> para iniciar um processo com prioridade 10 e <code>renice</code> para mudar para 5.</li>
+  <li>Crie um script que monitore o uso de CPU de um processo específico a cada 2 segundos usando <code>ps</code>.</li>
+</ol>
+</div>
+
+
+
+<!-- ============================================================ -->
+<!-- VOLUME 6 — REDES NO LINUX -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<div class="volume-header" id="vol6">
+  <h2>📚 Volume 6 — Redes no Linux</h2>
+  <div class="vol-desc">Diagnosticar, configurar e entender redes é fundamental para sistemas e seguranca.</div>
+</div>
+
+<div class="section">
+<h3>6.1 ip — Show/Manipulate Routing, Devices, Policy Routing and Tunnels</h3>
+<p>O <code>ip</code> é o comando moderno para gerenciamento de rede no Linux, substituindo <code>ifconfig</code>, <code>route</code>, <code>arp</code>, e outros.</p>
+
+<h4>6.1.1 Interfaces de Rede</h4>
+<pre><code># Listar todas as interfaces
+$ ip link show
+
+# Listar interfaces com estado
+$ ip link show up
+
+# Ver detalhes de uma interface
+$ ip link show eth0
+
+# Habilitar interface
+$ sudo ip link set eth0 up
+
+# Desabilitar interface
+$ sudo ip link set eth0 down
+
+# Alterar MTU
+$ sudo ip link set eth0 mtu 9000
+
+# Alterar MAC address
+$ sudo ip link set eth0 address 00:11:22:33:44:55
+
+# Listar interfaces de forma resumida
+$ ip -s link
+
+# Estatísticas de interface
+$ ip -s link show eth0
+</code></pre>
+
+<h4>6.1.2 Endereços IP</h4>
+<pre><code># Listar endereços IP
+$ ip addr show
+$ ip a
+
+# Listar endereços de uma interface
+$ ip addr show eth0
+
+# Adicionar endereço IP
+$ sudo ip addr add 192.168.1.100/24 dev eth0
+
+# Remover endereço IP
+$ sudo ip addr del 192.168.1.100/24 dev eth0
+
+# Limpar todos os endereços de uma interface
+$ sudo ip addr flush dev eth0
+
+# Mostrar apenas IPv4
+$ ip -4 addr show
+
+# Mostrar apenas IPv6
+$ ip -6 addr show
+</code></pre>
+
+<h4>6.1.3 Rotas</h4>
+<pre><code># Mostrar tabela de rotas
+$ ip route show
+$ ip r
+
+# Adicionar rota
+$ sudo ip route add 10.0.0.0/8 via 192.168.1.1
+
+# Adicionar rota padrão
+$ sudo ip route add default via 192.168.1.1
+
+# Remover rota
+$ sudo ip route del 10.0.0.0/8
+
+# Mostrar rota para destino específico
+$ ip route get 8.8.8.8
+
+# Mostrar tabela de rotas com detalhes
+$ ip route show table main
+$ ip route show table local
+
+# Mostrar cache de rotas
+$ ip route show cache
+</code></pre>
+
+<h4>6.1.4 Vizinhos (ARP)</h4>
+<pre><code># Mostrar tabela ARP
+$ ip neigh show
+$ ip n
+
+# Adicionar entrada ARP estática
+$ sudo ip neigh add 192.168.1.1 lladdr 00:11:22:33:44:55 dev eth0
+
+# Remover entrada
+$ sudo ip neigh del 192.168.1.1 dev eth0
+
+# Limpar cache ARP
+$ sudo ip neigh flush all
+</code></pre>
+</div>
+
+<div class="section">
+<h3>6.2 ping — Send ICMP ECHO_REQUEST</h3>
+<p>O <code>ping</code> testa conectividade com outro host usando pacotes ICMP.</p>
+
+<pre><code># Ping básico
+$ ping google.com
+
+# Ping com contagem limitada
+$ ping -c 4 google.com
+
+# Ping com intervalo específico (segundos)
+$ ping -i 2 google.com
+
+# Ping flood (requer root, cuidado!)
+$ sudo ping -f google.com
+
+# Ping com tamanho de pacote
+$ ping -s 1400 google.com
+
+# Ping com timeout
+$ ping -w 10 google.com
+
+# Ping com TTL específico
+$ ping -t 64 google.com
+
+# Ping com timestamp
+$ ping -D google.com
+
+# Ping para IPv6
+$ ping6 google.com
+$ ping -6 google.com
+
+# Ping para broadcast
+$ ping -b 192.168.1.255
+</code></pre>
+
+<h4>6.2.1 Interpretando Resultados do ping</h4>
+<pre><code>$ ping -c 4 google.com
+PING google.com (142.250.80.46) 56(84) bytes of data.
+64 bytes from ...: icmp_seq=1 ttl=117 time=15.3 ms
+64 bytes from ...: icmp_seq=2 ttl=117 time=14.8 ms
+64 bytes from ...: icmp_seq=3 ttl=117 time=15.1 ms
+64 bytes from ...: icmp_seq=4 ttl=117 time=14.9 ms
+
+--- google.com ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3004ms
+rtt min/avg/max/mdev = 14.812/15.050/15.312/0.183 ms</code></pre>
+
+<table>
+<tr><th>Campo</th><th>Significado</th></tr>
+<tr><td><code>icmp_seq</code></td><td>Sequência do pacote ICMP</td></tr>
+<tr><td><code>ttl</code></td><td>Time To Live (saltos restantes)</td></tr>
+<tr><td><code>time</code></td><td>Round-trip time (RTT)</td></tr>
+<tr><td><code>packet loss</code></td><td>Porcentagem de pacotes perdidos</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>6.3 ss — Investigate Sockets</h3>
+<p>O <code>ss</code> é o substituto moderno do <code>netstat</code>, mais rápido e informativo.</p>
+
+<pre><code># Listar todas as conexões
+$ ss
+
+# Listar todas as sockets (TCP, UDP, UNIX)
+$ ss -a
+
+# Listar apenas sockets TCP
+$ ss -t
+
+# Listar apenas sockets UDP
+$ ss -u
+
+# Listar sockets em estado LISTEN
+$ ss -l
+
+# Listar sockets com processos
+$ ss -tp
+
+# Listar sockets com numeração (não resolve nomes)
+$ ss -n
+
+# Combinar opções
+$ ss -tlnp   # TCP, listening, numeric, processes
+$ ss -tunap  # TCP+UDP, all, numeric, processes
+
+# Filtrar por estado
+$ ss state established
+$ ss state listening
+$ ss state time-wait
+
+# Filtrar por porta
+$ ss -tlnp sport = :80
+$ ss -tlnp sport = :ssh
+
+# Filtrar por endereço
+$ ss -tlnp src 192.168.1.1
+
+# Mostrar estatísticas
+$ ss -s
+
+# Mostrar sockets UNIX
+$ ss -x
+
+# Mostrar sockets raw
+$ ss -w
+
+# Mostrar socket memory usage
+$ ss -m
+</code></pre>
+
+<h4>6.3.1 Estados de Conexão TCP</h4>
+<table>
+<tr><th>Estado</th><th>Significado</th></tr>
+<tr><td><code>ESTAB</code></td><td>Conexão estabelecida</td></tr>
+<tr><td><code>SYN-SENT</code></td><td>Enviou SYN, aguardando SYN-ACK</td></tr>
+<tr><td><code>SYN-RCVD</code></td><td>Recebeu SYN, enviou SYN-ACK</td></tr>
+<tr><td><code>FIN-WAIT-1</code></td><td>Enviou FIN, aguardando ACK</td></tr>
+<tr><td><code>FIN-WAIT-2</code></td><td>Recebeu ACK do FIN, aguardando FIN do peer</td></tr>
+<tr><td><code>TIME-WAIT</code></td><td>Aguardando 2xMSL antes de fechar</td></tr>
+<tr><td><code>CLOSE-WAIT</code></td><td>Recebeu FIN, aguardando aplicação fechar</td></tr>
+<tr><td><code>LAST-ACK</code></td><td>Enviou FIN, aguardando ACK final</td></tr>
+<tr><td><code>LISTEN</code></td><td>Aguardando conexões</td></tr>
+<tr><td><code>CLOSING</code></td><td>Simultaneous close</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>6.4 netstat — Network Statistics</h3>
+<p>O <code>netstat</code> é o comando legado para estatísticas de rede. Ainda útil, mas <code>ss</code> é preferido.</p>
+
+<pre><code># Listar todas as conexões
+$ netstat -a
+
+# Listar conexões TCP
+$ netstat -at
+
+# Listar conexões UDP
+$ netstat -au
+
+# Listar sockets em listening
+$ netstat -l
+
+# Listar com processos
+$ sudo netstat -tlnp
+
+# Listar com nomes resolvidos
+$ netstat -tln
+
+# Estatísticas de protocolo
+$ netstat -s
+
+# Tabela de rotas
+$ netstat -r
+$ netstat -rn
+
+# Estatísticas de interface
+$ netstat -i
+
+# Conexões ativas com timers
+$ netstat -o
+
+# Mostrar multicast
+$ netstat -g
+</code></pre>
+</div>
+
+<div class="section">
+<h3>6.5 curl — Transfer Data from URLs</h3>
+<p>O <code>curl</code> é uma ferramenta poderosa para transferir dados com URLs. Suporta HTTP, HTTPS, FTP, SFTP, e muitos outros protocolos.</p>
+
+<pre><code># GET simples
+$ curl https://api.example.com/dados
+
+# Salvar em arquivo
+$ curl -o arquivo.json https://api.example.com/dados
+
+# Salvar com nome do servidor
+$ curl -O https://example.com/arquivo.zip
+
+# Seguir redirects
+$ curl -L https://bit.ly/xyz
+
+# Mostrar headers
+$ curl -I https://example.com
+
+# Mostrar headers e corpo
+$ curl -i https://example.com
+
+# Headers customizados
+$ curl -H "Authorization: Bearer token123" https://api.example.com
+
+# POST com dados
+$ curl -X POST -d "nome=Joao&amp;idade=25" https://api.example.com/usuarios
+
+# POST com JSON
+$ curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"nome":"Joao","idade":25}' \
+  https://api.example.com/usuarios
+
+# POST com arquivo
+$ curl -X POST -d @dados.json https://api.example.com/usuarios
+
+# PUT
+$ curl -X PUT -d @atualizacao.json https://api.example.com/usuarios/1
+
+# DELETE
+$ curl -X DELETE https://api.example.com/usuarios/1
+
+# Autenticação básica
+$ curl -u usuario:senha https://api.example.com
+
+# Autenticação com arquivo .netrc
+$ curl --netrc https://api.example.com
+
+# Ignorar certificado SSL (INSEGURO!)
+$ curl -k https://self-signed.example.com
+
+# Usar certificado específico
+$ curl --cacert ca.crt https://example.com
+
+# Verbose (debug)
+$ curl -v https://example.com
+
+# Verbose com headers completos
+$ curl -vv https://example.com
+
+# Silent (sem progresso)
+$ curl -s https://example.com
+
+# Silent mas mostra erros
+$ curl -sS https://example.com
+
+# Mostrar apenas código HTTP
+$ curl -s -o /dev/null -w "%{http_code}" https://example.com
+
+# Download com resume
+$ curl -C - -o arquivo.zip https://example.com/arquivo.zip
+
+# Limitar velocidade de download
+$ curl --limit-rate 100K -o arquivo.zip https://example.com/arquivo.zip
+
+# Timeout
+$ curl --connect-timeout 10 --max-time 30 https://example.com
+
+# Download paralelo (múltiplas conexões)
+$ curl -Z -o arquivo.zip https://example.com/arquivo.zip
+
+# FTP
+$ curl ftp://ftp.example.com/arquivo.txt
+$ curl -u usuario:senha ftp://ftp.example.com/arquivo.txt
+
+# Upload FTP
+$ curl -T arquivo.txt ftp://ftp.example.com/
+
+# SFTP
+$ curl -u usuario sftp://servidor.com/arquivo.txt
+
+# SCP
+$ curl -u usuario scp://servidor.com/arquivo.txt
+</code></pre>
+
+<h4>6.5.1 curl Avançado</h4>
+<pre><code># Cookies
+$ curl -c cookies.txt https://example.com/login
+$ curl -b cookies.txt https://example.com/perfil
+
+# Proxy
+$ curl -x http://proxy:8080 https://example.com
+$ curl -x socks5://proxy:1080 https://example.com
+
+# User-Agent customizado
+$ curl -A "Mozilla/5.0" https://example.com
+
+# Referer
+$ curl -e "https://google.com" https://example.com
+
+# Enviar arquivo multipart/form-data
+$ curl -F "arquivo=@foto.jpg" https://example.com/upload
+$ curl -F "nome=Joao" -F "arquivo=@foto.jpg" https://example.com/upload
+
+# WebSocket (com upgrade)
+$ curl -i -N \
+  -H "Connection: Upgrade" \
+  -H "Upgrade: websocket" \
+  https://example.com/ws
+
+# Formatar JSON de saída (com jq)
+$ curl -s https://api.example.com/dados | jq
+</code></pre>
+</div>
+
+<div class="section">
+<h3>6.6 wget — The Non-Interactive Network Downloader</h3>
+<p>O <code>wget</code> é especializado em downloads. Diferente de <code>curl</code>, ele é não-interativo e ideal para scripts de download.</p>
+
+<pre><code># Download simples
+$ wget https://example.com/arquivo.zip
+
+# Download com nome customizado
+$ wget -O meu_arquivo.zip https://example.com/arquivo.zip
+
+# Download em background
+$ wget -b https://example.com/arquivo_grande.zip
+
+# Continuar download interrompido
+$ wget -c https://example.com/arquivo_grande.zip
+
+# Download recursivo (site inteiro)
+$ wget -r https://example.com
+
+# Download recursivo com limite de profundidade
+$ wget -r -l 2 https://example.com
+
+# Download apenas arquivos específicos
+$ wget -r -A "*.pdf" https://example.com/documentos
+
+# Rejeitar certos arquivos
+$ wget -r -R "*.jpg,*.png" https://example.com
+
+# Download com autenticação
+$ wget --user=usuario --password=senha https://example.com/protegido
+
+# Download via FTP
+$ wget ftp://ftp.example.com/arquivo.txt
+
+# Mirror de site
+$ wget --mirror --convert-links --adjust-extension \
+  --page-requisites --no-parent https://example.com/pagina
+
+# Limitar velocidade
+$ wget --limit-rate=200k https://example.com/arquivo.zip
+
+# Tentativas
+$ wget --tries=10 https://example.com/arquivo.zip
+
+# Timeout
+$ wget --timeout=30 https://example.com/arquivo.zip
+
+# Spoof user-agent
+$ wget --user-agent="Mozilla/5.0" https://example.com
+
+# Download de lista de URLs
+$ wget -i urls.txt
+
+# Não sobrescrever arquivos existentes
+$ wget -nc https://example.com/arquivo.zip
+
+# Forçar sobrescrita
+$ wget -N https://example.com/arquivo.zip
+
+# Log de download
+$ wget -o log.txt https://example.com/arquivo.zip
+
+# Quiet mode
+$ wget -q https://example.com/arquivo.zip
+</code></pre>
+</div>
+
+<div class="section">
+<h3>6.7 traceroute — Trace Route to Host</h3>
+<p>O <code>traceroute</code> mostra o caminho (saltos) que os pacotes fazem até chegar ao destino.</p>
+
+<pre><code># Traceroute básico
+$ traceroute google.com
+
+# Traceroute com ICMP (ao invés de UDP)
+$ traceroute -I google.com
+
+# Traceroute com TCP
+$ traceroute -T google.com
+
+# Traceroute com porta específica
+$ traceroute -p 80 google.com
+
+# Limitar número de saltos
+$ traceroute -m 15 google.com
+
+# Timeout por sonda
+$ traceroute -w 5 google.com
+
+# Número de sondas por salto
+$ traceroute -q 3 google.com
+
+# Não resolver nomes (mais rápido)
+$ traceroute -n google.com
+
+# Traceroute IPv6
+$ traceroute6 google.com
+
+# Usar interface específica
+$ traceroute -i eth0 google.com
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 Interpretando traceroute</div>
+  <p>Cada linha representa um salto (router). Os três tempos são RTT de três sondas. <code>* * *</code> significa timeout (firewall bloqueando ICMP/UDP, ou router não responde). Saltos altos de RTT indicam congestionamento ou rota subótima.</p>
+</div>
+</div>
+
+<div class="section">
+<h3>6.8 dig — DNS Lookup Utility</h3>
+<p>O <code>dig</code> é a ferramenta mais completa para consultas DNS.</p>
+
+<pre><code># Consulta A record
+$ dig google.com
+
+# Consulta específica
+$ dig google.com A
+$ dig google.com AAAA
+$ dig google.com MX
+$ dig google.com NS
+$ dig google.com TXT
+$ dig google.com CNAME
+$ dig google.com SOA
+
+# Consulta reversa (IP para nome)
+$ dig -x 8.8.8.8
+
+# Consultar servidor DNS específico
+$ dig @8.8.8.8 google.com
+
+# Consulta curta (apenas resposta)
+$ dig +short google.com
+
+# Consulta com trace completo
+$ dig +trace google.com
+
+# Mostrar apenas seção de resposta
+$ dig +noall +answer google.com
+
+# Consulta com timeout
+$ dig +time=5 google.com
+
+# Consulta com tentativas
+$ dig +retry=3 google.com
+
+# Não usar search domains
+$ dig +nostdns google.com
+
+# Consulta ANY (todos os registros)
+$ dig google.com ANY
+
+# Transferência de zona (requer permissão)
+$ dig @ns.example.com example.com AXFR
+
+# Consulta DNSSEC
+$ dig +dnssec google.com
+
+# Verificar assinatura DNSSEC
+$ dig +sigchase google.com
+
+# Consulta com IPv6
+$ dig -6 google.com
+</code></pre>
+
+<h4>6.8.1 Interpretando saída do dig</h4>
+<pre><code>$ dig +noall +answer google.com
+google.com.     285     IN      A       142.250.80.46
+
+# google.com.  → nome consultado
+# 285          → TTL (segundos)
+# IN           → classe (Internet)
+# A            → tipo de registro
+# 142.250...   → valor</code></pre>
+</div>
+
+<div class="section">
+<h3>6.9 nslookup — Query Internet Name Servers</h3>
+<p>O <code>nslookup</code> é uma alternativa mais simples ao <code>dig</code>, embora considerado legado.</p>
+
+<pre><code># Consulta básica
+$ nslookup google.com
+
+# Consulta tipo específico
+$ nslookup -query=MX google.com
+
+# Consultar servidor específico
+$ nslookup google.com 8.8.8.8
+
+# Modo interativo
+$ nslookup
+&gt; server 8.8.8.8
+&gt; set type=MX
+&gt; google.com
+&gt; exit
+
+# Consulta reversa
+$ nslookup 8.8.8.8
+</code></pre>
+</div>
+
+<!-- EXERCÍCIOS VOLUME 6 -->
+<div class="exercise">
+<h4>🏋️ Exercícios — Volume 6</h4>
+<ol>
+  <li>Use <code>ip addr show</code> e identifique: seu IP local, máscara de rede, e MAC address.</li>
+  <li>Use <code>ip route show</code> para encontrar seu gateway padrão. Use <code>ip route get 8.8.8.8</code> e interprete a saída.</li>
+  <li>Execute <code>ping -c 10 google.com</code> e analise: TTL, RTT médio, packet loss.</li>
+  <li>Use <code>ss -tlnp</code> para listar todos os serviços escutando em portas TCP. Identifique 3 serviços.</li>
+  <li>Use <code>curl -I</code> para ver os headers HTTP de um site. Identique: servidor, content-type, status code.</li>
+  <li>Use <code>curl</code> para fazer um POST com JSON para <code>httpbin.org/post</code> e verifique a resposta.</li>
+  <li>Use <code>wget --mirror</code> para fazer mirror de um site pequeno (use um site de teste).</li>
+  <li>Execute <code>traceroute google.com</code> e conte quantos saltos até o destino. Identifique algum salto com latência anômala.</li>
+  <li>Use <code>dig +trace</code> para ver a resolução completa de um domínio, desde os root servers.</li>
+  <li>Use <code>dig</code> para consultar registros MX, NS, e TXT de um domínio.</li>
+  <li>Use <code>ss</code> para encontrar todas as conexões estabelecidas do seu sistema. Identifique para onde elas vão.</li>
+  <li>Crie um script que use <code>curl</code> para verificar se um site está online (HTTP 200) e logue o resultado.</li>
+</ol>
+</div>
+
+
+
+<!-- ============================================================ -->
+<!-- VOLUME 7 — GERENCIAMENTO DE PACOTES -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<div class="volume-header" id="vol7">
+  <h2>📚 Volume 7 — Gerenciamento de Pacotes</h2>
+  <div class="vol-desc">Instalar, atualizar e remover software no Debian/Ubuntu com apt e dpkg.</div>
+</div>
+
+<div class="section">
+<h3>7.1 apt — Advanced Package Tool</h3>
+<p>O <code>apt</code> é a interface de alto nível para gerenciamento de pacotes em sistemas Debian/Ubuntu. Ele lida com dependências, repositórios, e resolução de conflitos.</p>
+
+<h4>7.1.1 Atualizar Informações de Pacotes</h4>
+<pre><code># Atualizar lista de pacotes disponíveis
+$ sudo apt update
+
+# Atualizar com debug
+$ sudo apt update -o Debug::Acquire::http=true
+
+# Atualizar apenas um componente
+$ sudo apt update -o Dir::Etc::sourcelist="sources.list.d/meu_repo.list"
+</code></pre>
+
+<h4>7.1.2 Instalar Pacotes</h4>
+<pre><code># Instalar pacote
+$ sudo apt install nginx
+
+# Instalar múltiplos pacotes
+$ sudo apt install nginx mysql-server php
+
+# Instalar sem recomendações
+$ sudo apt install --no-install-recommends nginx
+
+# Instalar versão específica
+$ sudo apt install nginx=1.18.0-0ubuntu1
+
+# Simular instalação (não instala, apenas mostra o que faria)
+$ sudo apt install --simulate nginx
+$ sudo apt install -s nginx
+
+# Baixar apenas (não instalar)
+$ sudo apt install --download-only nginx
+# Pacotes vão para /var/cache/apt/archives/
+
+# Instalar de arquivo .deb
+$ sudo apt install ./pacote.deb
+
+# Instalar com confirmação automática
+$ sudo apt install -y nginx
+
+# Instalar com reinstalação completa
+$ sudo apt install --reinstall nginx
+</code></pre>
+
+<h4>7.1.3 Remover Pacotes</h4>
+<pre><code># Remover pacote (mantém configurações)
+$ sudo apt remove nginx
+
+# Remover completamente (incluindo configurações)
+$ sudo apt purge nginx
+$ sudo apt remove --purge nginx
+
+# Remover pacotes órfãos (dependências não mais necessárias)
+$ sudo apt autoremove
+
+# Remover pacotes órfãos com confirmação
+$ sudo apt autoremove -y
+
+# Remover pacotes baixados do cache
+$ sudo apt clean
+
+# Remover pacotes antigos do cache
+$ sudo apt autoclean
+</code></pre>
+
+<h4>7.1.4 Atualizar Sistema</h4>
+<pre><code># Atualizar pacotes instalados (sem remover nada)
+$ sudo apt upgrade
+
+# Atualizar com remoção de pacotes obsoletos
+$ sudo apt full-upgrade
+# (antigamente: apt dist-upgrade)
+
+# Atualização não-interativa
+$ sudo apt upgrade -y
+
+# Atualizar apenas pacotes de segurança
+$ sudo apt upgrade -y -o APT::Get::Upgrade-Allow-New=false
+
+# Simular atualização
+$ sudo apt upgrade --simulate
+</code></pre>
+
+<h4>7.1.5 Buscar e Informações</h4>
+<pre><code># Buscar pacote por nome/descrição
+$ apt search nginx
+
+# Buscar com regex
+$ apt search ^nginx
+
+# Informações detalhadas do pacote
+$ apt show nginx
+
+# Listar dependências
+$ apt depends nginx
+
+# Listar dependências reversas (quem depende deste)
+$ apt rdepends nginx
+
+# Listar arquivos de um pacote instalado
+$ dpkg -L nginx
+
+# Listar pacotes instalados
+$ apt list --installed
+
+# Verificar se pacote está instalado
+$ apt list --installed | grep nginx
+
+# Verificar versão instalada
+$ apt list --installed nginx
+
+# Política de versões (repositórios)
+$ apt policy nginx
+
+# Cache de pacotes
+$ apt cache show nginx
+</code></pre>
+
+<h4>7.1.6 Gerenciar Repositórios</h4>
+<pre><code># Listar repositórios configurados
+$ cat /etc/apt/sources.list
+$ ls /etc/apt/sources.list.d/
+
+# Adicionar repositório (Debian/Ubuntu)
+$ sudo add-apt-repository ppa:usuario/repo
+
+# Adicionar repositório manualmente
+$ echo "deb http://repo.example.com/ubuntu jammy main" | sudo tee /etc/apt/sources.list.d/meu_repo.list
+
+# Adicionar chave GPG
+$ wget -qO - https://repo.example.com/key.gpg | sudo apt-key add -
+# ou (moderno):
+$ sudo wget -qO /usr/share/keyrings/meu_repo.gpg https://repo.example.com/key.gpg
+
+# Remover repositório
+$ sudo add-apt-repository --remove ppa:usuario/repo
+$ sudo rm /etc/apt/sources.list.d/meu_repo.list
+
+# Editar sources.list com editor seguro
+$ sudo apt edit-sources
+</code></pre>
+</div>
+
+<div class="section">
+<h3>7.2 dpkg — Debian Package Manager</h3>
+<p>O <code>dpkg</code> é a ferramenta de baixo nível para manipular pacotes .deb. Não resolve dependências automaticamente — use <code>apt</code> para isso.</p>
+
+<h4>7.2.1 Instalar e Remover</h4>
+<pre><code># Instalar pacote .deb
+$ sudo dpkg -i pacote.deb
+
+# Instalar com resolução de dependências (use apt)
+$ sudo apt install ./pacote.deb
+
+# Remover pacote
+$ sudo dpkg -r pacote
+
+# Remover completamente
+$ sudo dpkg -P pacote
+
+# Reconfigurar pacote
+$ sudo dpkg-reconfigure pacote
+
+# Reconfigurar todos os pacotes
+$ sudo dpkg-reconfigure -a
+</code></pre>
+
+<h4>7.2.2 Consultar Informações</h4>
+<pre><code># Listar pacotes instalados
+$ dpkg -l
+$ dpkg -l | grep nginx
+
+# Informações de um pacote
+$ dpkg -s nginx
+
+# Listar arquivos de um pacote
+$ dpkg -L nginx
+
+# Descobrir qual pacote possui um arquivo
+$ dpkg -S /usr/bin/nginx
+$ dpkg -S /etc/nginx/nginx.conf
+
+# Status de um pacote
+$ dpkg -s nginx | grep Status
+
+# Listar arquivos de configuração
+$ dpkg -L nginx | grep /etc/
+
+# Verificar integridade de pacotes
+$ dpkg -V
+$ dpkg -V nginx
+</code></pre>
+
+<h4>7.2.3 Depuração e Reparo</h4>
+<pre><code># Verificar pacotes quebrados
+$ dpkg -C
+
+# Reconfigurar pacotes desconfigurados
+$ sudo dpkg --configure -a
+
+# Forçar reinstalação
+$ sudo dpkg -i --force-all pacote.deb
+
+# Ignorar conflitos
+$ sudo dpkg -i --force-overwrite pacote.deb
+
+# Remover forçado
+$ sudo dpkg -r --force-depends pacote
+
+# Limpar estado de pacote
+$ sudo dpkg --clear-avail
+
+# Atualizar banco de dados
+$ sudo dpkg --update-avail
+</code></pre>
+</div>
+
+<div class="section">
+<h3>7.3 apt-cache — Query the APT Cache</h3>
+<pre><code># Buscar pacotes
+$ apt-cache search nginx
+
+# Informações detalhadas
+$ apt-cache show nginx
+
+# Dependências
+$ apt-cache depends nginx
+
+# Dependências reversas
+$ apt-cache rdepends nginx
+
+# Estatísticas do cache
+$ apt-cache stats
+
+# Política de versão
+$ apt-cache policy nginx
+
+# Listar pacotes disponíveis
+$ apt-cache pkgnames
+$ apt-cache pkgnames nginx
+</code></pre>
+</div>
+
+<div class="section">
+<h3>7.4 apt-get vs. apt</h3>
+<table>
+<tr><th>Comando</th><th>apt-get</th><th>apt</th></tr>
+<tr><td>Atualizar lista</td><td><code>apt-get update</code></td><td><code>apt update</code></td></tr>
+<tr><td>Instalar</td><td><code>apt-get install</code></td><td><code>apt install</code></td></tr>
+<tr><td>Remover</td><td><code>apt-get remove</code></td><td><code>apt remove</code></td></tr>
+<tr><td>Purge</td><td><code>apt-get purge</code></td><td><code>apt purge</code></td></tr>
+<tr><td>Upgrade</td><td><code>apt-get upgrade</code></td><td><code>apt upgrade</code></td></tr>
+<tr><td>Full-upgrade</td><td><code>apt-get dist-upgrade</code></td><td><code>apt full-upgrade</code></td></tr>
+<tr><td>Autoremove</td><td><code>apt-get autoremove</code></td><td><code>apt autoremove</code></td></tr>
+<tr><td>Clean</td><td><code>apt-get clean</code></td><td><code>apt clean</code></td></tr>
+<tr><td>Buscar</td><td><code>apt-cache search</code></td><td><code>apt search</code></td></tr>
+<tr><td>Mostrar</td><td><code>apt-cache show</code></td><td><code>apt show</code></td></tr>
+<tr><td>Progresso</td><td>Sem barra</td><td>Com barra de progresso</td></tr>
+<tr><td>Output</td><td>Mais técnico</td><td>Mais amigável</td></tr>
+</table>
+
+<div class="box box-info">
+  <div class="box-title">💡 Recomendação</div>
+  <p>Use <code>apt</code> para uso interativo (mais amigável). Use <code>apt-get</code> em scripts (mais estável, output mais previsível). <code>apt</code> é um wrapper que chama <code>apt-get</code> e <code>apt-cache</code> por baixo.</p>
+</div>
+</div>
+
+<!-- EXERCÍCIOS VOLUME 7 -->
+<div class="exercise">
+<h4>🏋️ Exercícios — Volume 7</h4>
+<ol>
+  <li>Execute <code>apt update</code> e observe a saída. Quantos pacotes podem ser atualizados?</li>
+  <li>Use <code>apt search</code> para encontrar 3 pacotes relacionados a "editor de texto".</li>
+  <li>Use <code>apt show</code> para ver informações detalhadas de um pacote instalado. Identifique: versão, tamanho, dependências, descrição.</li>
+  <li>Use <code>dpkg -l</code> e conte quantos pacotes estão instalados no seu sistema.</li>
+  <li>Use <code>dpkg -S</code> para descobrir qual pacote fornece o comando <code>ls</code>.</li>
+  <li>Use <code>apt list --installed</code> e filtre apenas pacotes que começam com "lib".</li>
+  <li>Verifique <code>apt policy</code> de um pacote e interprete: qual versão está instalada? Qual está disponível? De qual repositório?</li>
+  <li>Execute <code>apt autoremove --simulate</code> e veja quais pacotes seriam removidos. Execute de verdade se fizer sentido.</li>
+  <li>Use <code>apt-cache depends</code> e <code>apt-cache rdepends</code> para um pacote e trace a árvore de dependências.</li>
+  <li>Crie um script que verifique se há atualizações pendentes e envie um alerta se houver.</li>
+</ol>
+</div>
+
+
+
+<!-- ============================================================ -->
+<!-- VOLUME 8 — BASH SCRIPTING -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<div class="volume-header" id="vol8">
+  <h2>📚 Volume 8 — Bash Scripting</h2>
+  <div class="vol-desc">Automatize tarefas, crie ferramentas e domine a programacao no shell.</div>
+</div>
+
+<div class="section">
+<h3>8.1 Shebang e Estrutura de um Script</h3>
+
+<pre><code>#!/bin/bash
+#===============================================================================
+# Nome: backup.sh
+# Descricao: Faz backup de diretorios importantes
+# Autor: Seu Nome
+# Data: 2024-06-14
+# Uso: ./backup.sh [diretorio]
+#===============================================================================
+
+set -euo pipefail
+# -e: sai se algum comando falhar
+# -u: erro ao usar variavel nao definida
+# -o pipefail: pipeline falha se qualquer comando falhar
+
+# Variaveis
+BACKUP_DIR="/backup"
+DATA=$(date +%Y-%m-%d)
+LOG="$BACKUP_DIR/backup_$DATA.log"
+
+# Funcoes
+log() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG"
+}
+
+# Codigo principal
+log "Iniciando backup..."
+# ...
+log "Backup concluido!"
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 Shebangs Comuns</div>
+  <table>
+  <tr><th>Shebang</th><th>Significado</th></tr>
+  <tr><td><code>#!/bin/bash</code></td><td>Bash (caminho absoluto)</td></tr>
+  <tr><td><code>#!/usr/bin/env bash</code></td><td>Bash (mais portavel)</td></tr>
+  <tr><td><code>#!/bin/sh</code></td><td>Shell POSIX (mais portavel ainda)</td></tr>
+  <tr><td><code>#!/bin/bash -x</code></td><td>Modo debug (mostra cada comando)</td></tr>
+  <tr><td><code>#!/bin/bash -e</code></td><td>Exit on error</td></tr>
+  </table>
+</div>
+</div>
+
+<div class="section">
+<h3>8.2 Variaveis</h3>
+
+<h4>8.2.1 Declaracao e Uso</h4>
+<pre><code>#!/bin/bash
+
+# Declaracao (SEM espacos ao redor de =)
+NOME="Joao"
+IDADE=25
+PI=3.14159
+
+# Uso (com $)
+echo "Ola, $NOME!"
+echo "Voce tem ${IDADE} anos"
+
+# Variavel nao definida (com -u, gera erro)
+# echo "$NAO_EXISTE"  # ERRO!
+
+# Valor padrao
+echo "${NAO_EXISTE:-padrao}"    # imprime "padrao"
+echo "${NAO_EXISTE:=padrao}"    # define e imprime "padrao"
+echo "${EXISTE:?"nao definida"}" # erro se nao definida
+
+# Remover prefixo/sufixo
+ARQUIVO="documento.txt"
+echo "${ARQUIVO%.txt}"     # documento
+
+echo "${ARQUIVO#doc}"      # umento.txt
+
+# Substituicao
+TEXTO="hello world hello"
+echo "${TEXTO/hello/HI}"   # HI world hello (primeira)
+echo "${TEXTO//hello/HI}"  # HI world HI (todas)
+
+# Maiusculas/minusculas
+echo "${TEXTO^^}"          # HELLO WORLD HELLO
+echo "${TEXTO,,}"          # hello world hello
+
+# Comprimento
+echo "${#TEXTO}"           # 17
+
+# Substring
+TEXTO="abcdef"
+echo "${TEXTO:2}"          # cdef (a partir do indice 2)
+echo "${TEXTO:2:3}"        # cde (3 caracteres a partir do 2)
+</code></pre>
+
+<h4>8.2.2 Variaveis de Ambiente</h4>
+<pre><code># Ver todas
+$ env
+$ printenv
+
+# Ver uma especifica
+$ echo $HOME
+$ echo $PATH
+$ echo $USER
+$ echo $SHELL
+
+# Definir temporariamente
+$ VAR=valor comando
+
+# Exportar para subprocessos
+$ export MINHA_VAR="valor"
+
+# Remover
+$ unset MINHA_VAR
+
+# Variaveis importantes do bash
+$ echo $0        # nome do script
+$ echo $1 $2 $3  # argumentos posicionais
+$ echo $@        # todos os argumentos (lista)
+$ echo $*        # todos os argumentos (string)
+$ echo $#        # numero de argumentos
+$ echo $?        # codigo de saida do ultimo comando
+$ echo $$        # PID do shell atual
+$ echo $!        # PID do ultimo job em background
+$ echo $_        # ultimo argumento do ultimo comando
+</code></pre>
+
+<h4>8.2.3 Arrays</h4>
+<pre><code>#!/bin/bash
+
+# Declarar array
+FRUTAS=("maca" "banana" "laranja")
+
+# Acessar elementos
+echo "${FRUTAS[0]}"     # maca
+echo "${FRUTAS[1]}"     # banana
+
+# Todos os elementos
+echo "${FRUTAS[@]}"     # maca banana laranja
+echo "${FRUTAS[*]}"     # maca banana laranja
+
+# Numero de elementos
+echo "${#FRUTAS[@]}"    # 3
+
+# Adicionar elemento
+FRUTAS+=("uva")
+
+# Iterar
+for fruta in "${FRUTAS[@]}"; do
+    echo "Fruta: $fruta"
+done
+
+# Iterar com indice
+for i in "${!FRUTAS[@]}"; do
+    echo "$i: ${FRUTAS[$i]}"
+done
+
+# Remover elemento
+unset FRUTAS[1]
+
+# Array associativo (bash 4+)
+declare -A USUARIOS
+USUARIOS[joao]=25
+USUARIOS[maria]=30
+echo "${USUARIOS[joao]}"  # 25
+
+# Todas as chaves
+echo "${!USUARIOS[@]}"    # joao maria
+</code></pre>
+</div>
+
+<div class="section">
+<h3>8.3 Condicionais — if, case</h3>
+
+<h4>8.3.1 if</h4>
+<pre><code>#!/bin/bash
+
+# Basico
+if [ "$IDADE" -ge 18 ]; then
+    echo "Maior de idade"
+fi
+
+# if-else
+if [ "$IDADE" -ge 18 ]; then
+    echo "Maior de idade"
+else
+    echo "Menor de idade"
+fi
+
+# if-elif-else
+if [ "$NOTA" -ge 90 ]; then
+    echo "A"
+elif [ "$NOTA" -ge 80 ]; then
+    echo "B"
+elif [ "$NOTA" -ge 70 ]; then
+    echo "C"
+else
+    echo "D"
+fi
+
+# Testes com && e ||
+[ -f "$ARQUIVO" ] &amp;&amp; echo "Existe" || echo "Nao existe"
+
+# Teste inverso
+if ! [ -f "$ARQUIVO" ]; then
+    echo "Arquivo nao existe"
+fi
+</code></pre>
+
+<h4>8.3.2 Operadores de Teste</h4>
+<table>
+<tr><th>Operador</th><th>Significado</th></tr>
+<tr><td colspan="2"><strong>Strings</strong></td></tr>
+<tr><td><code>-z "$VAR"</code></td><td>String vazia</td></tr>
+<tr><td><code>-n "$VAR"</code></td><td>String nao vazia</td></tr>
+<tr><td><code>"$A" = "$B"</code></td><td>Iguais</td></tr>
+<tr><td><code>"$A" != "$B"</code></td><td>Diferentes</td></tr>
+<tr><td colspan="2"><strong>Numeros</strong></td></tr>
+<tr><td><code>-eq</code></td><td>Igual (equal)</td></tr>
+<tr><td><code>-ne</code></td><td>Diferente (not equal)</td></tr>
+<tr><td><code>-lt</code></td><td>Menor que (less than)</td></tr>
+<tr><td><code>-le</code></td><td>Menor ou igual</td></tr>
+<tr><td><code>-gt</code></td><td>Maior que (greater than)</td></tr>
+<tr><td><code>-ge</code></td><td>Maior ou igual</td></tr>
+<tr><td colspan="2"><strong>Arquivos</strong></td></tr>
+<tr><td><code>-e</code></td><td>Existe</td></tr>
+<tr><td><code>-f</code></td><td>Arquivo regular</td></tr>
+<tr><td><code>-d</code></td><td>Diretorio</td></tr>
+<tr><td><code>-L</code></td><td>Link simbolico</td></tr>
+<tr><td><code>-r</code></td><td>Legivel</td></tr>
+<tr><td><code>-w</code></td><td>Gravavel</td></tr>
+<tr><td><code>-x</code></td><td>Executavel</td></tr>
+<tr><td><code>-s</code></td><td>Nao vazio (tem conteudo)</td></tr>
+<tr><td><code>-N</code></td><td>Mais novo que</td></tr>
+<tr><td><code>-O</code></td><td>Dono eh o usuario atual</td></tr>
+<tr><td><code>-G</code></td><td>Grupo eh o grupo atual</td></tr>
+</table>
+
+<h4>8.3.3 case</h4>
+<pre><code>#!/bin/bash
+
+case "$1" in
+    start)
+        echo "Iniciando servico..."
+        ;;
+    stop)
+        echo "Parando servico..."
+        ;;
+    restart)
+        echo "Reiniciando servico..."
+        ;;
+    status)
+        echo "Status do servico..."
+        ;;
+    *)
+        echo "Uso: $0 {start|stop|restart|status}"
+        exit 1
+        ;;
+esac
+
+# case com padroes
+ case "$EXT" in
+     *.txt|*.md)
+         echo "Texto"
+         ;;
+     *.jpg|*.png|*.gif)
+         echo "Imagem"
+         ;;
+     *.mp3|*.wav)
+         echo "Audio"
+         ;;
+     *)
+         echo "Desconhecido"
+         ;;
+ esac
+</code></pre>
+</div>
+
+<div class="section">
+<h3>8.4 Loops — for, while, until</h3>
+
+<h4>8.4.1 for</h4>
+<pre><code>#!/bin/bash
+
+# Iterar sobre lista
+for i in 1 2 3 4 5; do
+    echo "Numero: $i"
+done
+
+# Range (bash 4+)
+for i in {1..10}; do
+    echo "$i"
+done
+
+# Range com passo
+for i in {1..10..2}; do
+    echo "$i"  # 1, 3, 5, 7, 9
+ done
+
+# Iterar sobre array
+for fruta in "${FRUTAS[@]}"; do
+    echo "$fruta"
+done
+
+# Iterar sobre arquivos
+for arquivo in *.txt; do
+    echo "Processando: $arquivo"
+done
+
+# C-style for
+for ((i=0; i&lt;10; i++)); do
+    echo "$i"
+done
+
+# Ler linhas de arquivo
+while IFS= read -r linha; do
+    echo "$linha"
+done &lt; arquivo.txt
+
+# Iterar sobre saida de comando
+for usuario in $(cut -d: -f1 /etc/passwd); do
+    echo "Usuario: $usuario"
+done
+
+# Iterar com find (seguro para nomes com espacos)
+while IFS= read -r -d '' arquivo; do
+    echo "Arquivo: $arquivo"
+done &lt; &lt;(find . -name "*.txt" -print0)
+</code></pre>
+
+<h4>8.4.2 while</h4>
+<pre><code>#!/bin/bash
+
+# Loop basico
+CONTADOR=0
+while [ "$CONTADOR" -lt 10 ]; do
+    echo "$CONTADOR"
+    ((CONTADOR++))
+done
+
+# Ler arquivo linha por linha
+while IFS= read -r linha; do
+    echo "Linha: $linha"
+done &lt; arquivo.txt
+
+# Loop infinito
+while true; do
+    echo "Executando..."
+    sleep 5
+done
+
+# Loop com condicao de arquivo
+while [ -f "/tmp/lock" ]; do
+    echo "Aguardando..."
+    sleep 1
+done
+
+# Loop com read (input do usuario)
+while true; do
+    read -p "Digite 'sair' para encerrar: " resposta
+    [ "$resposta" = "sair" ] &amp;&amp; break
+done
+</code></pre>
+
+<h4>8.4.3 until</h4>
+<pre><code>#!/bin/bash
+
+# Executa ATE a condicao ser verdadeira
+CONTADOR=0
+until [ "$CONTADOR" -ge 10 ]; do
+    echo "$CONTADOR"
+    ((CONTADOR++))
+done
+
+# Esperar arquivo aparecer
+until [ -f "/tmp/pronto" ]; do
+    echo "Aguardando arquivo..."
+    sleep 1
+done
+</code></pre>
+
+<h4>8.4.4 Controle de Loop</h4>
+<pre><code>#!/bin/bash
+
+# break: sai do loop
+for i in {1..10}; do
+    [ "$i" -eq 5 ] &amp;&amp; break
+    echo "$i"
+done
+# Sai no 5, imprime 1-4
+
+# continue: pula para proxima iteracao
+for i in {1..10}; do
+    [ "$i" -eq 5 ] &amp;&amp; continue
+    echo "$i"
+done
+# Pula o 5, imprime 1-4, 6-10
+
+# break N: sai de N niveis de loop
+for i in {1..3}; do
+    for j in {1..3}; do
+        [ "$j" -eq 2 ] &amp;&amp; break 2
+        echo "$i-$j"
+    done
+done
+# Sai dos dois loops
+</code></pre>
+</div>
+
+<div class="section">
+<h3>8.5 Funcoes</h3>
+
+<pre><code>#!/bin/bash
+
+# Declaracao basica
+minha_funcao() {
+    echo "Ola da funcao!"
+}
+
+# Ou
+function minha_funcao {
+    echo "Ola da funcao!"
+}
+
+# Chamada
+minha_funcao
+
+# Com parametros
+soma() {
+    local a=$1
+    local b=$2
+    echo $((a + b))
+}
+
+RESULTADO=$(soma 5 3)
+echo "Resultado: $RESULTADO"
+
+# Retorno (codigo de saida)
+verificar_arquivo() {
+    if [ -f "$1" ]; then
+        return 0  # sucesso
+    else
+        return 1  # falha
+    fi
+}
+
+if verificar_arquivo "/etc/passwd"; then
+    echo "Arquivo existe"
+else
+    echo "Arquivo nao existe"
+fi
+
+# Variaveis locais
+funcao() {
+    local VAR="local"
+    echo "$VAR"
+}
+funcao
+echo "$VAR"  # vazio (nao definido no escopo global)
+
+# Funcao recursiva
+fatorial() {
+    local n=$1
+    if [ "$n" -le 1 ]; then
+        echo 1
+    else
+        local prev=$(fatorial $((n - 1)))
+        echo $((n * prev))
+    fi
+}
+
+echo "5! = $(fatorial 5)"
+
+# Passar array para funcao
+processar_array() {
+    local arr=("$@")
+    for item in "${arr[@]}"; do
+        echo "Item: $item"
+    done
+}
+
+processar_array "${FRUTAS[@]}"
+</code></pre>
+</div>
+
+<div class="section">
+<h3>8.6 Parametros e Argumentos</h3>
+
+<pre><code>#!/bin/bash
+
+# Nome do script
+SCRIPT="$0"
+
+# Argumentos posicionais
+PRIMEIRO="$1"
+SEGUNDO="$2"
+TERCEIRO="$3"
+
+# Todos os argumentos
+TODOS="$@"
+TODOS_STRING="$*"
+
+# Numero de argumentos
+NUMERO="$#"
+
+# Ultimo argumento
+ULTIMO="${!#}"
+
+# Shift (remove primeiro argumento)
+shift
+echo "Agora \$1 eh: $1"
+
+# Shift N
+shift 2
+
+# getopts (parse de opcoes)
+while getopts "a:b:vh" opt; do
+    case $opt in
+        a)
+            ARG_A="$OPTARG"
+            ;;
+        b)
+            ARG_B="$OPTARG"
+            ;;
+        v)
+            VERBOSE=1
+            ;;
+        h)
+            echo "Uso: $0 -a valor -b valor [-v] [-h]"
+            exit 0
+            ;;
+        \?)
+            echo "Opcao invalida: -$OPTARG" &gt;&amp;2
+            exit 1
+            ;;
+    esac
+done
+shift $((OPTIND - 1))
+
+# Uso: ./script.sh -a valor1 -b valor2 -v arquivo.txt
+
+# Argumentos restantes apos getopts
+echo "Arquivos: $@"
+</code></pre>
+</div>
+
+<div class="section">
+<h3>8.7 Variaveis Especiais</h3>
+
+<table>
+<tr><th>Variavel</th><th>Significado</th></tr>
+<tr><td><code>$0</code></td><td>Nome do script/comando</td></tr>
+<tr><td><code>$1, $2, ... $9</code></td><td>Argumentos posicionais</td></tr>
+<tr><td><code>${10}, ${11}, ...</code></td><td>Argumentos apos o 9o</td></tr>
+<tr><td><code>$@</code></td><td>Todos os argumentos (lista)</td></tr>
+<tr><td><code>$*</code></td><td>Todos os argumentos (string)</td></tr>
+<tr><td><code>$#</code></td><td>Numero de argumentos</td></tr>
+<tr><td><code>$?</code></td><td>Codigo de saida do ultimo comando</td></tr>
+<tr><td><code>$$</code></td><td>PID do shell atual</td></tr>
+<tr><td><code>$!</code></td><td>PID do ultimo job em background</td></tr>
+<tr><td><code>$_</code></td><td>Ultimo argumento do ultimo comando</td></tr>
+<tr><td><code>$-</code></td><td>Flags do shell atuais</td></tr>
+</table>
+
+<h4>8.7.1 Codigos de Saida</h4>
+<table>
+<tr><th>Codigo</th><th>Significado</th></tr>
+<tr><td><code>0</code></td><td>Sucesso</td></tr>
+<tr><td><code>1</code></td><td>Erro generico</td></tr>
+<tr><td><code>2</code></td><td>Uso incorreto do comando</td></tr>
+<tr><td><code>126</code></td><td>Comando nao executavel</td></tr>
+<tr><td><code>127</code></td><td>Comando nao encontrado</td></tr>
+<tr><td><code>128+N</code></td><td>Morto pelo sinal N</td></tr>
+<tr><td><code>130</code></td><td>Morto por Ctrl+C (SIGINT = 2, 128+2=130)</td></tr>
+<tr><td><code>137</code></td><td>Morto por SIGKILL (9, 128+9=137)</td></tr>
+<tr><td><code>255</code></td><td>Erro de saida</td></tr>
+</table>
+</div>
+
+<!-- EXERCICIOS VOLUME 8 -->
+<div class="exercise">
+<h4>🏋️ Exercicios — Volume 8</h4>
+<ol>
+  <li>Crie um script com shebang, comentarios de cabecalho, e <code>set -euo pipefail</code>.</li>
+  <li>Crie um script que receba um nome como argumento e diga "Ola, [nome]!". Use valor padrao se nenhum argumento for passado.</li>
+  <li>Crie um script que verifique se um arquivo existe, se eh legivel, e se tem conteudo. Use operadores de teste.</li>
+  <li>Crie um script com <code>case</code> que simule um menu: 1=backup, 2=restaurar, 3=status, 4=sair.</li>
+  <li>Crie um script com <code>for</code> que processe todos os arquivos <code>.txt</code> de um diretorio e conte as linhas de cada um.</li>
+  <li>Crie um script com <code>while</code> que leia <code>/etc/passwd</code> e imprima apenas usuarios com UID >= 1000.</li>
+  <li>Crie uma funcao que receba dois numeros e retorne a soma. Teste com diferentes valores.</li>
+  <li>Crie um script que use <code>getopts</code> para aceitar <code>-f arquivo</code>, <code>-v</code> (verbose), e <code>-h</code> (ajuda).</li>
+  <li>Crie um array com 5 linguagens de programacao e itere sobre ele, imprimindo cada uma em maiusculas.</li>
+  <li>Crie um script que monitore um diretorio: se um arquivo novo aparecer, imprima uma mensagem (use loop infinito).</li>
+</ol>
+</div>
+
+
+
+<!-- ============================================================ -->
+<!-- VOLUME 9 — FERRAMENTAS PARA DESENVOLVIMENTO -->
+<!-- ============================================================ -->
+<div class="page-break"></div>
+<div class="volume-header" id="vol9">
+  <h2>📚 Volume 9 — Ferramentas para Desenvolvimento</h2>
+  <div class="vol-desc">Compilar, depurar, versionar e transferir codigo como um profissional.</div>
+</div>
+
+<div class="section">
+<h3>9.1 gcc — GNU Compiler Collection</h3>
+<p>O <code>gcc</code> é o compilador C padrão no Linux. Compila codigo C em executaveis, bibliotecas e objetos.</p>
+
+<h4>9.1.1 Compilacao Basica</h4>
+<pre><code># Compilar um arquivo C
+$ gcc programa.c -o programa
+
+# Compilar e executar
+$ gcc programa.c -o programa &amp;&amp; ./programa
+
+# Compilar com warnings
+$ gcc -Wall programa.c -o programa
+
+# Compilar com warnings extras
+$ gcc -Wall -Wextra programa.c -o programa
+
+# Compilar com todas as warnings
+$ gcc -Wall -Wextra -Wpedantic programa.c -o programa
+
+# Compilar com debug info
+$ gcc -g programa.c -o programa
+
+# Compilar com otimizacao
+$ gcc -O2 programa.c -o programa
+
+# Compilar com otimizacao maxima
+$ gcc -O3 programa.c -o programa
+
+# Compilar sem otimizacao (para debug)
+$ gcc -O0 -g programa.c -o programa
+
+# Compilar com sanitizers (deteccao de erros em runtime)
+$ gcc -fsanitize=address programa.c -o programa
+$ gcc -fsanitize=undefined programa.c -o programa
+</code></pre>
+
+<h4>9.1.2 Flags Importantes do gcc</h4>
+<table>
+<tr><th>Flag</th><th>Significado</th></tr>
+<tr><td><code>-o arquivo</code></td><td>Nome do arquivo de saida</td></tr>
+<tr><td><code>-c</code></td><td>Compilar apenas (nao linkar)</td></tr>
+<tr><td><code>-S</code></td><td>Gerar assembly</td></tr>
+<tr><td><code>-E</code></td><td>Preprocessar apenas</td></tr>
+<tr><td><code>-g</code></td><td>Incluir informacoes de debug</td></tr>
+<tr><td><code>-O0</code></td><td>Sem otimizacao</td></tr>
+<tr><td><code>-O1</code></td><td>Otimizacao basica</td></tr>
+<tr><td><code>-O2</code></td><td>Otimizacao padrao</td></tr>
+<tr><td><code>-O3</code></td><td>Otimizacao agressiva</td></tr>
+<tr><td><code>-Os</code></td><td>Otimizar para tamanho</td></tr>
+<tr><td><code>-Wall</code></td><td>Warnings comuns</td></tr>
+<tr><td><code>-Wextra</code></td><td>Warnings extras</td></tr>
+<tr><td><code>-Werror</code></td><td>Tratar warnings como erros</td></tr>
+<tr><td><code>-std=c11</code></td><td>Padrao C11</td></tr>
+<tr><td><code>-std=c17</code></td><td>Padrao C17</td></tr>
+<tr><td><code>-I dir</code></td><td>Diretorio de includes</td></tr>
+<tr><td><code>-L dir</code></td><td>Diretorio de bibliotecas</td></tr>
+<tr><td><code>-l lib</code></td><td>Linkar com biblioteca</td></tr>
+<tr><td><code>-static</code></td><td>Linkagem estatica</td></tr>
+<tr><td><code>-shared</code></td><td>Criar biblioteca compartilhada</td></tr>
+<tr><td><code>-fPIC</code></td><td>Position Independent Code</td></tr>
+<tr><td><code>-D MACRO</code></td><td>Definir macro</td></tr>
+<tr><td><code>-U MACRO</code></td><td>Remover macro</td></tr>
+<tr><td><code>-M</code></td><td>Gerar dependencias</td></tr>
+<tr><td><code>-MM</code></td><td>Gerar dependencias (sem sistema)</td></tr>
+</table>
+
+<h4>9.1.3 Compilacao em Multiplos Passos</h4>
+<pre><code># 1. Preprocessar
+$ gcc -E programa.c -o programa.i
+
+# 2. Compilar para assembly
+$ gcc -S programa.i -o programa.s
+
+# 3. Montar (assembler)
+$ gcc -c programa.s -o programa.o
+
+# 4. Linkar
+$ gcc programa.o -o programa
+
+# Ou tudo de uma vez:
+$ gcc programa.c -o programa
+
+# Compilar multiplos arquivos
+$ gcc -c main.c -o main.o
+$ gcc -c utils.c -o utils.o
+$ gcc main.o utils.o -o programa
+</code></pre>
+
+<div class="ascii">
+Codigo C (.c)
+    |
+    v
+Preprocessador (cpp)  →  Codigo preprocessado (.i)
+    |
+    v
+Compilador (cc1)      →  Assembly (.s)
+    |
+    v
+Assembler (as)        →  Objeto (.o)
+    |
+    v
+Linker (ld)           →  Executavel
+</div>
+</div>
+
+<div class="section">
+<h3>9.2 make — Build Automation</h3>
+<p>O <code>make</code> automatiza a compilacao, gerenciando dependencias entre arquivos.</p>
+
+<h4>9.2.1 Makefile Basico</h4>
+<pre><code># Makefile
+
+CC = gcc
+CFLAGS = -Wall -Wextra -g -O2
+TARGET = programa
+SRCS = main.c utils.c
+OBJS = $(SRCS:.c=.o)
+
+.PHONY: all clean
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CC) $(OBJS) -o $(TARGET)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $&lt; -o $@
+
+clean:
+	rm -f $(OBJS) $(TARGET)
+
+# Uso:
+# make        → compila tudo
+# make clean  → remove objetos e executavel
+# make main.o → compila apenas main.c
+</code></pre>
+
+<h4>9.2.2 Variaveis Automaticas do make</h4>
+<table>
+<tr><th>Variavel</th><th>Significado</th></tr>
+<tr><td><code>$@</code></td><td>Nome do alvo (target)</td></tr>
+<tr><td><code>$&lt;</code></td><td>Primeira dependencia</td></tr>
+<tr><td><code>$^</code></td><td>Todas as dependencias</td></tr>
+<tr><td><code>$?</code></td><td>Dependencias mais novas que o alvo</td></tr>
+<tr><td><code>$*</code></td><td>Stem (parte do padrao %)</td></tr>
+</table>
+
+<h4>9.2.3 Makefile Avancado</h4>
+<pre><code># Makefile avancado
+
+CC = gcc
+CFLAGS = -Wall -Wextra -g -O2
+LDFLAGS = -lm -lpthread
+TARGET = programa
+SRCDIR = src
+OBJDIR = obj
+BINDIR = bin
+
+SRCS = $(wildcard $(SRCDIR)/*.c)
+OBJS = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCS))
+
+.PHONY: all clean dirs debug release
+
+all: dirs $(BINDIR)/$(TARGET)
+
+dirs:
+	mkdir -p $(OBJDIR) $(BINDIR)
+
+$(BINDIR)/$(TARGET): $(OBJS)
+	$(CC) $(OBJS) -o $@ $(LDFLAGS)
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	$(CC) $(CFLAGS) -c $&lt; -o $@
+
+clean:
+	rm -rf $(OBJDIR) $(BINDIR)
+
+debug: CFLAGS = -Wall -Wextra -g -O0 -DDEBUG
+debug: all
+
+release: CFLAGS = -Wall -Wextra -O3 -DNDEBUG
+release: all
+
+# Uso:
+# make          → build padrao
+# make debug    → build com debug
+# make release  → build otimizada
+# make clean    → limpa tudo
+</code></pre>
+</div>
+
+<div class="section">
+<h3>9.3 gdb — GNU Debugger</h3>
+<p>O <code>gdb</code> é o depurador para C/C++. Permite inspecionar variaveis, breakpoints, stack trace, e muito mais.</p>
+
+<h4>9.3.1 Iniciar o gdb</h4>
+<pre><code># Compilar com debug info
+$ gcc -g programa.c -o programa
+
+# Iniciar gdb
+$ gdb ./programa
+
+# Iniciar e passar argumentos
+$ gdb --args ./programa arg1 arg2
+
+# Analisar core dump
+$ gdb ./programa core
+
+# Anexar a processo em execucao
+$ gdb -p 1234
+</code></pre>
+
+<h4>9.3.2 Comandos do gdb</h4>
+<table>
+<tr><th>Comando</th><th>Abrev</th><th>Descricao</th></tr>
+<tr><td><code>run</code></td><td><code>r</code></td><td>Executar programa</td></tr>
+<tr><td><code>break</code></td><td><code>b</code></td><td>Definir breakpoint</td></tr>
+<tr><td><code>continue</code></td><td><code>c</code></td><td>Continuar execucao</td></tr>
+<tr><td><code>next</code></td><td><code>n</code></td><td>Proxima linha (nao entra em funcoes)</td></tr>
+<tr><td><code>step</code></td><td><code>s</code></td><td>Proxima linha (entra em funcoes)</td></tr>
+<tr><td><code>finish</code></td><td></td><td>Executa ate sair da funcao atual</td></tr>
+<tr><td><code>print</code></td><td><code>p</code></td><td>Imprimir valor de expressao</td></tr>
+<tr><td><code>display</code></td><td></td><td>Mostrar valor a cada parada</td></tr>
+<tr><td><code>backtrace</code></td><td><code>bt</code></td><td>Stack trace</td></tr>
+<tr><td><code>info locals</code></td><td></td><td>Variaveis locais</td></tr>
+<tr><td><code>info args</code></td><td></td><td>Argumentos da funcao</td></tr>
+<tr><td><code>list</code></td><td><code>l</code></td><td>Mostrar codigo fonte</td></tr>
+<tr><td><code>set var</code></td><td></td><td>Alterar valor de variavel</td></tr>
+<tr><td><code>watch</code></td><td></td><td>Breakpoint em mudanca de valor</td></tr>
+<tr><td><code>delete</code></td><td><code>d</code></td><td>Remover breakpoints</td></tr>
+<tr><td><code>quit</code></td><td><code>q</code></td><td>Sair</td></tr>
+</table>
+
+<h4>9.3.3 Exemplo de Sessao gdb</h4>
+<pre><code>$ gdb ./programa
+(gdb) break main
+(gdb) run
+(gdb) next
+(gdb) print variavel
+(gdb) continue
+(gdb) backtrace
+(gdb) info locals
+(gdb) quit
+</code></pre>
+
+<h4>9.3.4 gdb Avancado</h4>
+<pre><code># Breakpoint condicional
+(gdb) break main.c:25 if x &gt; 10
+
+# Breakpoint em funcao
+(gdb) break minha_funcao
+
+# Breakpoint com comando automatico
+(gdb) break main.c:30
+(gdb) commands
+&gt; silent
+&gt; print variavel
+&gt; continue
+&gt; end
+
+# Watchpoint (parar quando valor muda)
+(gdb) watch variavel
+(gdb) watch *(int*)0x12345678
+
+# Reverse debugging
+(gdb) record
+(gdb) reverse-next
+(gdb) reverse-step
+(gdb) reverse-continue
+
+# Core dump analysis
+$ ulimit -c unlimited
+$ ./programa  # gera core dump em crash
+$ gdb ./programa core
+(gdb) bt full
+(gdb) info registers
+(gdb) x/10i $pc
+
+# TUI mode (interface grafica no terminal)
+(gdb) layout src
+(gdb) layout asm
+(gdb) layout regs
+(gdb) focus cmd
+
+# Pretty printing
+(gdb) set print pretty on
+(gdb) p array
+
+# Scripts gdb
+$ gdb -x script.gdb ./programa
+</code></pre>
+</div>
+
+<div class="section">
+<h3>9.4 git — Version Control</h3>
+<p>O <code>git</code> é o sistema de controle de versao mais usado no mundo. Essencial para qualquer desenvolvedor.</p>
+
+<h4>9.4.1 Comandos Essenciais</h4>
+<pre><code># Inicializar repositorio
+$ git init
+
+# Clonar repositorio
+$ git clone https://github.com/usuario/repo.git
+$ git clone https://github.com/usuario/repo.git meu_repo
+
+# Ver status
+$ git status
+
+# Adicionar arquivo ao stage
+$ git add arquivo.txt
+$ git add .                    # todos
+$ git add -p                   # interativo (patch)
+
+# Commit
+$ git commit -m "Mensagem do commit"
+$ git commit -am "Mensagem"    # add + commit (arquivos rastreados)
+
+# Ver log
+$ git log
+$ git log --oneline
+$ git log --graph --oneline --all
+$ git log -p                   # com diff
+$ git log --stat               # com estatisticas
+
+# Ver diff
+$ git diff                     # working vs staged
+$ git diff --staged            # staged vs last commit
+$ git diff HEAD~1              # diff com commit anterior
+</code></pre>
+
+<h4>9.4.2 Branches</h4>
+<pre><code># Listar branches
+$ git branch
+$ git branch -a                # todas (incluindo remotas)
+$ git branch -v                # com ultimo commit
+
+# Criar branch
+$ git branch nova-feature
+
+# Mudar de branch
+$ git checkout nova-feature
+$ git switch nova-feature      # novo comando (git 2.23+)
+
+# Criar e mudar
+$ git checkout -b nova-feature
+$ git switch -c nova-feature   # novo comando
+
+# Merge
+$ git checkout main
+$ git merge nova-feature
+
+# Rebase
+$ git checkout nova-feature
+$ git rebase main
+
+# Deletar branch
+$ git branch -d nova-feature   # merged
+$ git branch -D nova-feature   # force delete
+
+# Renomear branch
+$ git branch -m novo-nome
+</code></pre>
+
+<h4>9.4.3 Remoto</h4>
+<pre><code># Ver remotos
+$ git remote -v
+
+# Adicionar remoto
+$ git remote add origin https://github.com/usuario/repo.git
+
+# Fetch (baixa sem merge)
+$ git fetch origin
+
+# Pull (fetch + merge)
+$ git pull origin main
+
+# Push
+$ git push origin main
+$ git push -u origin main    # upstream
+
+# Push de nova branch
+$ git push -u origin nova-feature
+
+# Deletar branch remota
+$ git push origin --delete nova-feature
+
+# Tags
+$ git tag v1.0.0
+$ git push origin v1.0.0
+$ git push origin --tags
+</code></pre>
+
+<h4>9.4.4 Desfazer e Corrigir</h4>
+<pre><code># Desfazer alteracoes nao staged
+$ git checkout -- arquivo.txt
+$ git restore arquivo.txt      # novo comando
+
+# Unstage
+$ git reset HEAD arquivo.txt
+$ git restore --staged arquivo.txt  # novo comando
+
+# Amend (alterar ultimo commit)
+$ git commit --amend -m "Nova mensagem"
+$ git commit --amend --no-edit   # sem alterar mensagem
+
+# Reset
+$ git reset --soft HEAD~1        # desfaz commit, mantem staged
+$ git reset --mixed HEAD~1       # desfaz commit, mantem working
+$ git reset --hard HEAD~1        # desfaz TUDO (CUIDADO!)
+
+# Stash
+$ git stash
+$ git stash push -m "mensagem"
+$ git stash list
+$ git stash pop                  # aplica e remove
+$ git stash apply                # aplica sem remover
+$ git stash drop                 # remove
+$ git stash clear                # remove todos
+
+# Cherry-pick
+$ git cherry-pick abc1234
+
+# Revert (cria commit que desfaz)
+$ git revert abc1234
+</code></pre>
+
+<h4>9.4.5 git Avancado</h4>
+<pre><code># Bisect (encontrar commit que introduziu bug)
+$ git bisect start
+$ git bisect bad                 # commit atual tem bug
+$ git bisect good v1.0           # versao boa
+# git testa commits intermediarios
+$ git bisect good                # ou bad
+$ git bisect reset               # termina
+
+# Reflog (historico de todas as operacoes)
+$ git reflog
+
+# Blame (quem escreveu cada linha)
+$ git blame arquivo.c
+
+# Log com filtro
+$ git log --author="Joao"
+$ git log --since="2 weeks ago"
+$ git log --grep="bugfix"
+
+# Diff entre branches
+$ git diff main..feature
+
+# Submodules
+$ git submodule add https://github.com/usuario/lib.git
+$ git submodule update --init --recursive
+
+# Worktree (multiplos working directories)
+$ git worktree add ../repo-fix fix-branch
+
+# Hooks
+$ ls .git/hooks/
+# pre-commit, post-commit, pre-push, etc.
+</code></pre>
+</div>
+
+<div class="section">
+<h3>9.5 ssh — Secure Shell</h3>
+<p>O <code>ssh</code> permite acesso remoto seguro a servidores Linux.</p>
+
+<h4>9.5.1 Conexao Basica</h4>
+<pre><code># Conectar a servidor remoto
+$ ssh usuario@servidor.com
+
+# Conectar com porta especifica
+$ ssh -p 2222 usuario@servidor.com
+
+# Conectar com chave privada
+$ ssh -i ~/.ssh/minha_chave usuario@servidor.com
+
+# Executar comando remoto
+$ ssh usuario@servidor.com "ls -la"
+
+# Executar comando remoto com stdin local
+$ cat arquivo.txt | ssh usuario@servidor.com "cat &gt; /remoto/arquivo.txt"
+</code></pre>
+
+<h4>9.5.2 Gerenciamento de Chaves</h4>
+<pre><code># Gerar par de chaves
+$ ssh-keygen -t ed25519 -C "email@example.com"
+$ ssh-keygen -t rsa -b 4096 -C "email@example.com"
+
+# Copiar chave publica para servidor
+$ ssh-copy-id usuario@servidor.com
+
+# Ou manualmente:
+$ cat ~/.ssh/id_ed25519.pub | ssh usuario@servidor.com "mkdir -p ~/.ssh &amp;&amp; cat &gt;&gt; ~/.ssh/authorized_keys"
+
+# Iniciar agente SSH
+$ eval "$(ssh-agent -s)"
+$ ssh-add ~/.ssh/id_ed25519
+
+# Listar chaves no agente
+$ ssh-add -l
+
+# Remover chave do agente
+$ ssh-add -d ~/.ssh/id_ed25519
+
+# Remover todas as chaves
+$ ssh-add -D
+</code></pre>
+
+<h4>9.5.3 Configuracao SSH</h4>
+<pre><code># ~/.ssh/config
+
+Host meu-servidor
+    HostName servidor.com
+    User usuario
+    Port 2222
+    IdentityFile ~/.ssh/minha_chave
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+
+Host github
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/github_key
+
+# Uso:
+$ ssh meu-servidor
+$ git clone github:usuario/repo.git
+</code></pre>
+
+<h4>9.5.4 Tunelamento (Port Forwarding)</h4>
+<pre><code># Local forward: porta local -> porta remota
+$ ssh -L 8080:localhost:80 usuario@servidor.com
+# Acesse localhost:8080 para chegar ao servidor:80
+
+# Remote forward: porta remota -> porta local
+$ ssh -R 9090:localhost:3000 usuario@servidor.com
+# No servidor, acesse localhost:9090 para chegar ao seu :3000
+
+# Dynamic forward (SOCKS proxy)
+$ ssh -D 1080 usuario@servidor.com
+# Configure navegador para usar SOCKS5 localhost:1080
+
+# Background (nao trava terminal)
+$ ssh -f -N -L 8080:localhost:80 usuario@servidor.com
+
+# Gateway ports (permitir acesso externo ao tunnel)
+$ ssh -L 0.0.0.0:8080:localhost:80 usuario@servidor.com
+</code></pre>
+</div>
+
+<div class="section">
+<h3>9.6 scp — Secure Copy</h3>
+<p>O <code>scp</code> copia arquivos entre hosts via SSH.</p>
+
+<pre><code># Copiar local para remoto
+$ scp arquivo.txt usuario@servidor:/home/usuario/
+
+# Copiar remoto para local
+$ scp usuario@servidor:/home/usuario/arquivo.txt ./
+
+# Copiar diretorio recursivamente
+$ scp -r diretorio/ usuario@servidor:/home/usuario/
+
+# Copiar com porta especifica
+$ scp -P 2222 arquivo.txt usuario@servidor:/home/usuario/
+
+# Copiar com chave especifica
+$ scp -i ~/.ssh/minha_chave arquivo.txt usuario@servidor:/home/usuario/
+
+# Copiar preservando atributos
+$ scp -p arquivo.txt usuario@servidor:/home/usuario/
+
+# Copiar com compressao
+$ scp -C arquivo.txt usuario@servidor:/home/usuario/
+
+# Copiar com limite de banda (KB/s)
+$ scp -l 1000 arquivo.txt usuario@servidor:/home/usuario/
+
+# Copiar multiplos arquivos
+$ scp arquivo1.txt arquivo2.txt usuario@servidor:/home/usuario/
+
+# Copiar com verbose
+$ scp -v arquivo.txt usuario@servidor:/home/usuario/
+</code></pre>
+
+<div class="box box-info">
+  <div class="box-title">💡 Preferencia moderna: rsync</div>
+  <p>Para transferencias frequentes ou grandes, <code>rsync</code> eh geralmente preferido ao <code>scp</code> porque resume transferencias interrompidas, sincroniza apenas diferencas, e eh mais eficiente:</p>
+  <pre><code>$ rsync -avz --progress arquivo.txt usuario@servidor:/home/usuario/
+$ rsync -avz --delete diretorio/ usuario@servidor:/home/usuario/diretorio/</code></pre>
+</div>
+</div>
+
+<!-- EXERCICIOS VOLUME 9 -->
+<div class="exercise">
+<h4>🏋️ Exercicios — Volume 9</h4>
+<ol>
+  <li>Escreva um programa C simples, compile com <code>gcc -Wall -Wextra -g</code>, e execute. Depois compile com <code>-O3</code> e compare o tamanho do executavel.</li>
+  <li>Crie um Makefile para um projeto com <code>main.c</code> e <code>utils.c</code>. Teste <code>make</code>, <code>make clean</code>, e <code>make debug</code>.</li>
+  <li>Escreva um programa C com um bug (ex: acesso a array fora dos limites). Compile com <code>-g</code> e depure com <code>gdb</code>. Encontre o bug usando <code>break</code>, <code>run</code>, e <code>backtrace</code>.</li>
+  <li>Inicialize um repositorio git, faca 3 commits com mensagens descritivas, e use <code>git log --oneline --graph</code> para visualizar.</li>
+  <li>Crie uma branch, faca alteracoes, faca merge de volta para main, e depois delete a branch.</li>
+  <li>Use <code>git diff</code> para ver as diferencas entre working directory e staged. Use <code>git diff --staged</code> para ver staged vs last commit.</li>
+  <li>Gere um par de chaves SSH com <code>ssh-keygen</code> e configure o <code>~/.ssh/config</code> para um servidor ficticio.</li>
+  <li>Use <code>scp</code> para transferir um arquivo para um servidor remoto (ou simule com localhost).</li>
+  <li>Crie um tunel SSH local (<code>ssh -L</code>) e acesse um servico remoto atraves de uma porta local.</li>
+  <li>Use <code>git stash</code> para guardar alteracoes nao commitadas, faca outra tarefa, e depois recupere com <code>git stash pop</code>.</li>
+</ol>
+</div>
+
+
+
+<!-- ==================== RODAPE ==================== -->
+<div class="footer">
+  <p>🐧 Linux: Fundamentos e Terminal</p>
+  <p>Ebook completo • 10 volumes • Exemplos Praticos • Exercicios</p>
+  <p>Feito para quem quer dominar Linux, C e sistemas operacionais.</p>
+</div>
+
+</div>
+</body>
+</html>
