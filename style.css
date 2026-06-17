@@ -531,3 +531,25 @@ blockquote{
 
     transform:translateY(0);
 }
+.btn-voltar {
+    display: inline-block;
+    margin: 20px 0;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #e94560, #c73650);
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 12px rgba(233,69,96,0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-voltar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(233,69,96,0.5);
+}
+
+.btn-voltar:active {
+    transform: translateY(0);
+}

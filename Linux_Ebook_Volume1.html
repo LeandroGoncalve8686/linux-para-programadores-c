@@ -301,6 +301,28 @@ tr:hover { background: rgba(233,69,96,0.05); }
   font-size: 0.9em;
   font-style: italic;
 }
+.btn-voltar {
+    display: inline-block;
+    margin: 20px 0;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #e94560, #c73650);
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 12px rgba(233,69,96,0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-voltar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(233,69,96,0.5);
+}
+
+.btn-voltar:active {
+    transform: translateY(0);
+}
 </style>
 <base target="_blank">
 </head>
@@ -315,6 +337,8 @@ tr:hover { background: rgba(233,69,96,0.05); }
   <div class="meta">
     <p>Um guia completo e pesado para quem quer dominar Linux, o terminal e os fundamentos de sistemas operacionais.</p>
     <p style="margin-top:15px;">📘 10 Volumes • ~300 Páginas • Exemplos Práticos • Exercícios</p>
+    <a href="index.html" class="btn-voltar">
+    ← Voltar ao Índice </a>
   </div>
 </div>
 
@@ -905,6 +929,8 @@ $ setfacl -d -m u:outro_usuario:rwx diretorio/
     <li><a href="Linux_Ebook_Volume7.html" target="_blank"><span class="vol-num">Vol 7</span> Gerenciamento de Pacotes</a></li>
     <li><a href="Linux_Ebook_Volume8.html" target="_blank"><span class="vol-num">Vol 8</span> Bash Scripting</a></li>
     <li><a href="Linux_Ebook_Volume9.html" target="_blank"><span class="vol-num">Vol 9</span> Ferramentas para Desenvolvimento</a></li>
+    <a href="index.html" class="btn-voltar">
+    ← Voltar ao Índice </a>
   </ul>
 </div>
 
